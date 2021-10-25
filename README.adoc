@@ -1,11 +1,43 @@
+// Settings:
+:idprefix:
+:idseparator: -
+:toc: macro
+:toclevels: 2
+:experimental:
+//ifdef::env-idea[:status:]
+//:status:
+//:toc: preamble
+//:toclevels: 3
+//endif::[]
+ifndef::env-github[:icons: font]
+ifdef::env-github,env-browser[]
+:status:
+:!toc-title:
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+//ifdef::env-idea[:toc: right]
+ifdef::env-idea[:!toc:]
+//ifdef::env-idea[:!status:]
+ifdef::env-idea[:status:]
+
+
 = Commons Security
 
+ifdef::status[]
 image:https://img.shields.io/github/workflow/status/Avec112/commons-security/Build?logo=github[Build status]
 image:https://img.shields.io/github/workflow/status/Avec112/commons-security/CodeQL?label=CodeQL&logo=github[CodeQL]
 image:https://img.shields.io/github/license/avec112/commons-security[License]
 image:https://img.shields.io/github/last-commit/Avec112/commons-security[Last Commit]
+endif::[]
 
+// ":toc: macro" writes to this one
+toc::[]
 
+== Overview
 *Commons Security* is a Java library with several encryption features made for _Java 11_ or higher. The library hides the implementation behind a simple and easy to use api.
 
  * *RSA asymmetric encryption* and decryption with a _public key_ and _private key_. Implemented with the `java.security` api.
@@ -34,7 +66,9 @@ It involves the use of two mathematically related keys. The public key (the one 
 
 Asymmetric encryption use a _public key_ for encryption and a _private_ key for decryption. Useful when you want to
 share secrets with others. You may encrypt a file with someone's _public key_, so they will be able to decrypt with
-their matching _private key_. Used to share small files or text with one user. For large files use AES symmetric
+their matching _private key_.
+
+TIP: Used to share small files or text with one user. For large files use AES symmetric
 encryption. The AES Password can then be shared encrypted with RSA public key if the recipient do not have the AES key
 in hand.
 
@@ -43,7 +77,7 @@ in hand.
 RSA requires a _private key_ and a matching _public key_. Supported key sizes (encryption strength) are `1024`, `2048`
 and `4096`.
 
-NOTE: Any secret encrypted with a _public key_ can only be decrypted with the associated _private key_.
+TIP: Any secret encrypted with a _public key_ can only be decrypted with the associated _private key_.
 
 [source,java]
 .Using `KeyUtils` to generate a `4096` bit `KeyPair`
@@ -53,8 +87,8 @@ KeyPair keyPair = KeyUtils.generateKeyPair4096();
 [source,java]
 .Alternative
 ----
-RsaCipher cipher = new RsaCipher();
-KeyPair keyPair = cipher.generateKeyPair(KeySize.BIT_4096);
+RsaCipher rsaCipher = new RsaCipher();
+KeyPair keyPair = rsaCipher.generateKeyPair(KeySize.BIT_4096);
 ----
 
 === RSA Encryption and Decryption
@@ -80,7 +114,9 @@ PlainText plainText = rsaCipher.decrypt(cipherText, keyPair.getPrivateKey());
 [quote]
 There’s a single shared key that’s used for encryption and decryption.
 
-Symmetric encryption use same key for encryption and decryption. Useful for encryption larger files compared to
+Symmetric encryption use same key for encryption and decryption.
+
+TIP: Useful for encryption larger files compared to
 asymmetric encryption. A symmetric key can always be shared (distributed) by using RSA encryption if needed or even
 Sharmir's secret sharing.
 
@@ -95,10 +131,10 @@ PlainText plainText = CryptoUtils.aesDecrypt(cipherText, password);
 ----
 
 [source,java]
-.Alternative
+.Alternative (`AES/CTR/NoPadding`@`192`-bit)
 ----
 Password password = new Password("SecretPassword123!");
-AesCipher aesCipher = new AesCipher(); // Defaults to AES/GCM/NoPadding 256-bit
+AesCipher aesCipher = new AesCipher(EncryptionMode.CTR, EncryptionStrength.BIT_192);
 CiperText ciperText = aesCipher.encrypt("Secret text", password);
 PlainText plainText = aesCipher.decrypt(cipherText, password);
 ----
@@ -148,4 +184,3 @@ Five employees are selected to have access to the vault and there must be at lea
 ** Create `Shares` for `List<Password>`
 ** Maybe have `Secret` for `PlainText`
 * Concider making this project a library on _Maven Central_ (seems to be a lot of work)
-
