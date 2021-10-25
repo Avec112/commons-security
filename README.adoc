@@ -1,0 +1,151 @@
+= Commons Security
+
+//image:https://img.shields.io/github/workflow/status/Avec112/commons-security/Build?logo=github[Build status]
+//image:https://img.shields.io/github/workflow/status/Avec112/commons-security/CodeQL?label=CodeQL&logo=github[CodeQL]
+//image:hhttps://img.shields.io/github/license/avec112/commons-security[License]
+//image:https://img.shields.io/github/last-commit/Avec112/commons-security[Last Commit]
+
+*Commons Security* is a Java library with several encryption features made for _Java 11_ or higher. The library hides the implementation behind a simple and easy to use api.
+
+ * *RSA asymmetric encryption* and decryption with a _public key_ and _private key_. Implemented with the `java.security` api.
+ * *AES symmetric encryption* and decryption with one secret key. Implemented with `java.security` api.
+ * *Shamir's Secret Sharing* is a way to split a secret into shares. The secret can be created when a minimum amount of required shares are put back together. The implementation are using https://github.com/codahale/shamir[Coda Hale's project Shamir].
+
+You may use the simple delegate class `CryptoUtils` or you can access classes like `RsaCipher`, `AesCipher`, `Shamir`, etc. directly. The latter might give you more options. Implementation alternatives are shown in examples below.
+
+== Some common objects
+
+* `PlainText` holds a text string ready for encryption or as a result after decryption. +
+`PlainText plainText = new PlainText("My secret plaintext");`
+* `CipherText` holds an encrypted string ready for decryption or as a result after encryption. +
+`CipherText cipherText = new CipherText("ymEIVhbBPhWAIzDx7MalbeLoccwnw=");`
+* `Password` a text string used for encryption and decryption. +
+`Password password = new Password("SecretPassword123!");`
+* `PublicKey` holds the _public key_ derived from `java.security.KeyPair` and can be used for encryption. +
+`PublicKey publicKey = keyPair.getPublicKey();`
+* `PrivateKey` holds the _private key_ derived from `java.security.KeyPair` and can be used for decryption. +
+`PrivateKey privateKey = keyPair.getPrivateKey();`
+
+== RSA asymmetric encryption
+
+[quote]
+It involves the use of two mathematically related keys. The public key (the one that’s known to everybody) and the private key (which is only known by you) are required for encrypting and decrypting the message. The public key can be derived from the private key but not the other way.
+
+Asymmetric encryption use a _public key_ for encryption and a _private_ key for decryption. Useful when you want to
+share secrets with others. You may encrypt a file with someone's _public key_, so they will be able to decrypt with
+their matching _private key_. Used to share small files or text with one user. For large files use AES symmetric
+encryption. The AES Password can then be shared encrypted with RSA public key if the recipient do not have the AES key
+in hand.
+
+=== RSA KeyPair
+
+RSA requires a _private key_ and a matching _public key_. Supported key sizes (encryption strength) are `1024`, `2048`
+and `4096`.
+
+NOTE: Any secret encrypted with a _public key_ can only be decrypted with the associated _private key_.
+
+[source,java]
+.Using `KeyUtils` to generate a `4096` bit `KeyPair`
+----
+KeyPair keyPair = KeyUtils.generateKeyPair4096();
+----
+[source,java]
+.Alternative
+----
+RsaCipher cipher = new RsaCipher();
+KeyPair keyPair = cipher.generateKeyPair(KeySize.BIT_4096);
+----
+
+=== RSA Encryption and Decryption
+
+[source,java]
+.RSA encryption and decryption using `CryptoUtils`
+----
+KeyPair keyPair = CryptoUtils.generateKeyPair4096();
+CipherText cipherText = CryptoUtils.rsaEncrypt("My secret", keyPair.getPublicKey());
+PlainText plainText = CryptoUtils.rsaDecrypt(cipherText, keyPair.getPrivateKey());
+----
+
+[source,java]
+.Alternative
+----
+RsaCipher rsaCipher = new RsaCipher();
+KeyPair keyPair = rsaCipher.generateKeyPair(KeySize.BIT_4096);
+CipherText cipherText = rsaCipher.encrypt("My secret", keyPair.getPublicKey());
+PlainText plainText = rsaCipher.decrypt(cipherText, keyPair.getPrivateKey());
+----
+
+== AES symmetric encryption
+[quote]
+There’s a single shared key that’s used for encryption and decryption.
+
+Symmetric encryption use same key for encryption and decryption. Useful for encryption larger files compared to
+asymmetric encryption. A symmetric key can always be shared (distributed) by using RSA encryption if needed or even
+Sharmir's secret sharing.
+
+=== AES Encryption and Decryption
+
+[source,java]
+.AES encryption and decryption using `CryptoUtils` with `AES/GCM/NoPadding`@`256`-bit
+----
+Password password = new Password("SecretPassword123!");
+CiperText ciperText = CryptoUtils.aesEncrypt("Secret text", password);
+PlainText plainText = CryptoUtils.aesDecrypt(cipherText, password);
+----
+
+[source,java]
+.Alternative
+----
+Password password = new Password("SecretPassword123!");
+AesCipher aesCipher = new AesCipher(); // Defaults to AES/GCM/NoPadding 256-bit
+CiperText ciperText = aesCipher.encrypt("Secret text", password);
+PlainText plainText = aesCipher.decrypt(cipherText, password);
+----
+
+== Shamir's Secret Sharing
+
+This implementation is based on the work of https://github.com/codahale/shamir[Coda Hale]. 
+
+https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing[Shamir's Secret Sharing] is used to share a secret in a
+distributed way, most often to secure other encryption keys. These shares are used to reconstruct the original secret.
+
+To unlock the secret via Shamir's secret sharing, a minimum number of shares are needed. This is called the
+threshold, and is used to denote the minimum number of shares needed to unlock the secret.
+
+[source,java]
+.Shamir's Secret Sharing using `CryptoUtils`
+----
+int keysTotal = 5; // total shares
+int keysMinimum = 2; // minimum shares to recreate secret aka PlainText
+
+// password == shares in this context
+List<Password> passwords = CryptoUtils.shamirSplit("Secret text", keysTotal, keysMinimum);
+PlainText plainText = CryptoUtils.shamirJoin(passwords); // where passwords >= keysMinimum
+----
+
+[source,java]
+.Alternative
+----
+int keysTotal = 5; // total shares
+int keysMinimum = 2; // minimum shares to recreate secret aka PlainText
+
+// password == shares in this context
+List<Password> passwords = Shamir.getShares(plainText, keysTotal, keysMinimum);
+PlainText plainText = Shamir.getSecret(passwords);
+----
+
+=== Shamir example
+A bank have a vault full of money. The bank's policy requires that nobody should be able to open the vault alone.
+Five employees are selected to have access to the vault and there must be at least two (2) employees at any time when opening the vault.
+
+* *Split phase:* Five (5) keys are being distributed. `Bob`, `Alice`, `Eve`, `Tom` and `Lisa` all get one _share_ each using _Shamir's Secret Sharing_ by splitting the secret into shares.
+* *Join phase:* It's time to open the safe. The requirement is two (2) shares to open the vault. `Bob` and `Alice` bring their shares. By using _Shamir's Secret Sharing_ their shares can be joined and the secret recreated
+
+== TODO
+* Do Continuous build and code quality
+* Improve the API for _Sharmir's Secret Sharing_
+** Create `Share` for `Password`
+** Create `Shares` for `List<Password>`
+** Maybe have `Secret` for `PlainText`
+* Concider making this project a library on _Maven Central_ (seems to be a lot of work)
+
