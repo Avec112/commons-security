@@ -63,10 +63,10 @@
         </plugins>
     </build>
 
-<!--    <scm>-->
-<!--        <url>https://github.com/Avec112/commons-security</url>-->
-<!--        <connection>scm:git:git@github.com:Avec112/commons-security.git</connection>-->
-<!--        <developerConnection>scm:git:git@github.com:Avec112/commons-security.git</developerConnection>-->
-<!--    </scm>-->
+    <scm>
+        <url>https://github.com/Avec112/commons-security</url>
+        <connection>scm:git:git@github.com:Avec112/commons-security.git</connection>
+        <developerConnection>scm:git:git@github.com:Avec112/commons-security.git</developerConnection>
+    </scm>
 
 </project>

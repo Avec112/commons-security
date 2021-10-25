@@ -1,9 +1,10 @@
 = Commons Security
 
-//image:https://img.shields.io/github/workflow/status/Avec112/commons-security/Build?logo=github[Build status]
-//image:https://img.shields.io/github/workflow/status/Avec112/commons-security/CodeQL?label=CodeQL&logo=github[CodeQL]
-//image:hhttps://img.shields.io/github/license/avec112/commons-security[License]
-//image:https://img.shields.io/github/last-commit/Avec112/commons-security[Last Commit]
+image:https://img.shields.io/github/workflow/status/Avec112/commons-security/Build?logo=github[Build status]
+image:https://img.shields.io/github/workflow/status/Avec112/commons-security/CodeQL?label=CodeQL&logo=github[CodeQL]
+image:https://img.shields.io/github/license/avec112/commons-security[License]
+image:https://img.shields.io/github/last-commit/Avec112/commons-security[Last Commit]
+
 
 *Commons Security* is a Java library with several encryption features made for _Java 11_ or higher. The library hides the implementation behind a simple and easy to use api.
 
@@ -142,7 +143,6 @@ Five employees are selected to have access to the vault and there must be at lea
 * *Join phase:* It's time to open the safe. The requirement is two (2) shares to open the vault. `Bob` and `Alice` bring their shares. By using _Shamir's Secret Sharing_ their shares can be joined and the secret recreated
 
 == TODO
-* Do Continuous build and code quality
 * Improve the API for _Sharmir's Secret Sharing_
 ** Create `Share` for `Password`
 ** Create `Shares` for `List<Password>`
