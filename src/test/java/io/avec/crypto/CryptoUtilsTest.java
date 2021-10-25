@@ -5,13 +5,15 @@ import io.avec.crypto.domain.Password;
 import io.avec.crypto.domain.PlainText;
 import io.avec.crypto.rsa.KeySize;
 import io.avec.crypto.rsa.KeyUtils;
+import io.avec.crypto.shared.Secret;
+import io.avec.crypto.shared.Share;
+import io.avec.crypto.shared.Shares;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import java.security.KeyPair;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -53,12 +55,12 @@ class CryptoUtilsTest {
     }
 
     @Test
-    void shamirSplit() {
-        final PlainText plainTextExpected = new PlainText("Shamirs Secret Shared");
-        final List<Password> passwords = CryptoUtils.shamirSplit(plainTextExpected, 5, 3);
-        final PlainText plainText = CryptoUtils.shamirJoin(passwords.get(1), passwords.get(3), passwords.get(2));
+    void getShamirShares() {
+        final Secret secretExpected = new Secret("Shamirs Secret Shared");
+        final Shares shares = CryptoUtils.getShamirShares(secretExpected, 5, 3);
+        final Secret secret = CryptoUtils.getShamirSecret(shares.get(1), shares.get(3), shares.get(2));
 
-        assertEquals(plainTextExpected, plainText);
+        assertEquals(secretExpected, secret);
     }
 
     @ParameterizedTest
@@ -68,7 +70,7 @@ class CryptoUtilsTest {
             "MythR0tGUFFvQkJwNDZ3L0dUcWc5bWRtSGJKS1Fv, NCtMM0grSlJGUDhWWEFua0Zxc3E3K1kxUUUwYzNJ, NStWNUxadGlLZkNmZ0RUNi9aNDQ2c2N1ekFaSGIr", // 3, 4, 5
             "NStWNUxadGlLZkNmZ0RUNi9aNDQ2c2N1ekFaSGIr, MStLNHRHL2xxaWk0MlF0STNCTkZSeVF0Q2x4OTVT, MythR0tGUFFvQkJwNDZ3L0dUcWc5bWRtSGJKS1Fv", // 5, 1, 3
     })
-    void shamirJoin(Password pass1, Password pass2, Password pass3) {
-        assertEquals("Shamirs Secret Shared", CryptoUtils.shamirJoin(pass1, pass2, pass3).getValue());
+    void getShamirSecret(Share share1, Share share2, Share share3) {
+        assertEquals("Shamirs Secret Shared", CryptoUtils.getShamirSecret(share1, share2, share3).getValue());
     }
 }

@@ -5,11 +5,13 @@ import io.avec.crypto.domain.CipherText;
 import io.avec.crypto.domain.Password;
 import io.avec.crypto.domain.PlainText;
 import io.avec.crypto.rsa.RsaCipher;
+import io.avec.crypto.shared.Secret;
 import io.avec.crypto.shared.Shamir;
+import io.avec.crypto.shared.Share;
+import io.avec.crypto.shared.Shares;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.List;
 
 public class CryptoUtils {
 
@@ -33,11 +35,11 @@ public class CryptoUtils {
         return cipher.decrypt(ciperText, privateKey);
     }
 
-    public static List<Password> shamirSplit(PlainText plainText, int keysTotal, int keysMinimum) {
-        return Shamir.getShares(plainText, keysTotal, keysMinimum);
+    public static Shares getShamirShares(Secret secret, int keysTotal, int keysMinimum) {
+        return Shamir.getShares(secret, keysTotal, keysMinimum);
     }
 
-    public static PlainText shamirJoin(Password...passwords) {
-        return Shamir.getSecret(passwords);
+    public static Secret getShamirSecret(Share...shares) {
+        return Shamir.getSecret(shares);
     }
 }

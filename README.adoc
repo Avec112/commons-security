@@ -152,35 +152,30 @@ threshold, and is used to denote the minimum number of shares needed to unlock t
 [source,java]
 .Shamir's Secret Sharing using `CryptoUtils`
 ----
-int keysTotal = 5; // total shares
-int keysMinimum = 2; // minimum shares to recreate secret aka PlainText
+int totalShares = 5;
+int minShares = 2; // threshold
 
-// password == shares in this context
-List<Password> passwords = CryptoUtils.shamirSplit("Secret text", keysTotal, keysMinimum);
-PlainText plainText = CryptoUtils.shamirJoin(passwords); // where passwords >= keysMinimum
+Shares shares = CryptoUtils.getShamirShares("Secret text", totalShares, minShares);
+Secret secret = CryptoUtils.getShamirSecret(shares); // where shares >= minShares
 ----
 
 [source,java]
 .Alternative
 ----
-int keysTotal = 5; // total shares
-int keysMinimum = 2; // minimum shares to recreate secret aka PlainText
+int totalShares = 5;
+int minShares = 2; // threshold
 
-// password == shares in this context
-List<Password> passwords = Shamir.getShares(plainText, keysTotal, keysMinimum);
-PlainText plainText = Shamir.getSecret(passwords);
+Shares shares = Shamir.getShares("Secret text", totalShares, minShares);
+Secret secret = Shamir.getSecret(shares); // where shares >= minShares
 ----
 
 === Shamir example
 A bank have a vault full of money. The bank's policy requires that nobody should be able to open the vault alone.
 Five employees are selected to have access to the vault and there must be at least two (2) employees at any time when opening the vault.
 
-* *Split phase:* Five (5) keys are being distributed. `Bob`, `Alice`, `Eve`, `Tom` and `Lisa` all get one _share_ each using _Shamir's Secret Sharing_ by splitting the secret into shares.
-* *Join phase:* It's time to open the safe. The requirement is two (2) shares to open the vault. `Bob` and `Alice` bring their shares. By using _Shamir's Secret Sharing_ their shares can be joined and the secret recreated
+* *Split phase:* Five (5) keys are being distributed. `Bob`, `Alice`, `Eve`, `Tom` and `Lisa` all get one _share_ each using _Shamir's Secret Sharing_ to split the secret into five shares.
+* *Join phase:* It's time to open the safe. The requirement is two (2) shares to open the vault. `Bob` and `Alice` bring their shares. By using _Shamir's Secret Sharing_ the shares from both will be joined and the secret recreated.
 
 == TODO
-* Improve the API for _Sharmir's Secret Sharing_
-** Create `Share` for `Password`
-** Create `Shares` for `List<Password>`
-** Maybe have `Secret` for `PlainText`
+* Add support for generating safe and secure passwords with help of http://www.passay.org[Passay] library
 * Concider making this project a library on _Maven Central_ (seems to be a lot of work)
