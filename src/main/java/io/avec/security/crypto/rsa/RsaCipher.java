@@ -2,7 +2,7 @@ package io.avec.security.crypto.rsa;
 
 import io.avec.security.crypto.domain.CipherText;
 import io.avec.security.crypto.domain.PlainText;
-import io.avec.security.encoding.Base64;
+import io.avec.security.encoding.EncodingUtils;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
@@ -21,13 +21,13 @@ public class RsaCipher {
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
         final byte[] cipherText = cipher.doFinal(plainText.getValue().getBytes(StandardCharsets.UTF_8));
 
-        return new CipherText(Base64.encode(cipherText));
+        return new CipherText(EncodingUtils.base64Encode(cipherText));
     }
 
     public PlainText decrypt(CipherText cipherText, PrivateKey privateKey) throws Exception {
         final Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
-        final byte[] cipherTextDecoded = Base64.decode(cipherText.getValue());
+        final byte[] cipherTextDecoded = EncodingUtils.base64Decode(cipherText.getValue());
         final byte[] plainText = cipher.doFinal(cipherTextDecoded);
         return new PlainText(new String(plainText));
     }

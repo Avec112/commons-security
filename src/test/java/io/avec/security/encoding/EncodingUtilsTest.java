@@ -1,12 +1,11 @@
 package io.avec.security.encoding;
 
-import io.avec.security.encoding.Base64;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class Base64Test {
+class EncodingUtilsTest {
 
     @ParameterizedTest
     @CsvSource({
@@ -16,7 +15,7 @@ class Base64Test {
     })
     void encode(String input, String expected) {
         byte [] src = input.getBytes();
-        assertEquals(expected, Base64.encode(src));
+        assertEquals(expected, EncodingUtils.base64Encode(src));
     }
 
     @ParameterizedTest
@@ -26,7 +25,7 @@ class Base64Test {
             "1234!#&, MTIzNCEjJg=="
     })
     void decode(String expected, String input) {
-        final String actual = new String(Base64.decode(input));
+        final String actual = new String(EncodingUtils.base64Decode(input));
         assertEquals(expected, actual);
     }
 }

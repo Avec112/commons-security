@@ -3,7 +3,7 @@ package io.avec.security.crypto.aes;
 import io.avec.security.crypto.domain.CipherText;
 import io.avec.security.crypto.domain.Password;
 import io.avec.security.crypto.domain.PlainText;
-import io.avec.security.encoding.Base64;
+import io.avec.security.encoding.EncodingUtils;
 import io.avec.security.crypto.error.BadCipherTextException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +61,7 @@ public class AesCipher {
                 .put(salt)
                 .put(cText)
                 .array();
-        final String cipherTextEncoded = Base64.encode(cipherText);
+        final String cipherTextEncoded = EncodingUtils.base64Encode(cipherText);
         log.debug("cipherText: {}", cipherTextEncoded);
         return new CipherText(cipherTextEncoded);
     }
@@ -71,7 +71,7 @@ public class AesCipher {
             log.debug("{}@{}", getAlgorithm(), getKeyLength().getLength());
             final String cipherTextEncoded = cipherText.getValue();
             log.debug("cipherText: {}", cipherTextEncoded);
-            final byte[] cipherTextBytes = Base64.decode(cipherTextEncoded);
+            final byte[] cipherTextBytes = EncodingUtils.base64Decode(cipherTextEncoded);
 
             ByteBuffer bb = ByteBuffer.wrap(cipherTextBytes); // IV+SALT+CIPHERTEXT
 
