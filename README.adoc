@@ -20,12 +20,15 @@ ifdef::env-github,env-browser[]
 :warning-caption: :warning:
 endif::[]
 //ifdef::env-idea[:toc: right]
-ifdef::env-idea[:!toc:]
-//ifdef::env-idea[:!status:]
-ifdef::env-idea[:status:]
+ifdef::env-idea[]
+:title-page:
+:author: Avec112
+//:toc-title: toc title
+:toc:
+:!status:
+endif::[]
 
-
-= Commons Security
+= Commons Security: Encryption done easy
 
 ifdef::status[]
 image:https://img.shields.io/github/workflow/status/Avec112/commons-security/Build?logo=github[Build status]
@@ -36,6 +39,8 @@ endif::[]
 
 // ":toc: macro" writes to this one
 toc::[]
+
+<<<
 
 == Overview
 *Commons Security* is a Java library with several encryption features made for _Java 11_ or higher. The library hides the implementation behind a simple and easy to use api.
