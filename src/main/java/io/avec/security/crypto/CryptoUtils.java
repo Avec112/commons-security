@@ -19,13 +19,15 @@ public class CryptoUtils {
     }
 
     public static CipherText aesEncrypt(PlainText plainText, Password password) throws Exception {
-        AesCipher cipher = new AesCipher();
-        return cipher.encrypt(plainText, password);
+//        AesCipher cipher = new AesCipher();
+//        return cipher.encrypt(plainText, password);
+        return AesCipher.withPassword(password.getValue()).encrypt(plainText);
     }
 
     public static PlainText aesDecrypt(CipherText ciperText, Password password) throws Exception {
-        AesCipher cipher = new AesCipher();
-        return cipher.decrypt(ciperText, password);
+//        AesCipher cipher = new AesCipher();
+//        return cipher.decrypt(ciperText, password);
+        return AesCipher.withPassword(password.getValue()).decrypt(ciperText);
     }
 
     public static CipherText rsaEncrypt(PlainText plainText, PublicKey publicKey) throws Exception {

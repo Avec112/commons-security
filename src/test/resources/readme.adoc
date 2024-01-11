@@ -1,0 +1,15 @@
+.Create RSA keypair as PEM
+----
+> openssl genrsa -out private-1024.pem 1024
+> openssl rsa -in private-1024.pem -pubout -out public-1024.pem
+----
+
+.Create DER formats so Java can read them
+----
+> openssl pkcs8 -topk8 -inform PEM -outform DER -in private-1024.pem -out private-1024.der -nocrypt
+> openssl rsa -in private-1024.pem -pubout -outform DER -out public-1024.der
+----
+
+.Openssl Resources
+* https://www.scottbrady91.com/openssl/creating-rsa-keys-using-openssl
+* https://stackoverflow.com/questions/11410770/load-rsa-public-key-from-file

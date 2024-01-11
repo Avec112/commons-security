@@ -40,7 +40,7 @@ public class AesCipherUtils {
     public static SecretKey getAESKeyFromPassword(char[] password, byte[] salt, EncryptionStrength keyLength) throws NoSuchAlgorithmException, InvalidKeySpecException {
         log.debug("AES key length: {} bits", keyLength.getLength());
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-        // iterationCount = 65536
+        // PBE = Password-based Encryption
         KeySpec spec = new PBEKeySpec(password, salt, 65536, keyLength.getLength());
         return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
     }

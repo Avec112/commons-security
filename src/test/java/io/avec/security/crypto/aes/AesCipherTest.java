@@ -4,49 +4,51 @@ import io.avec.security.crypto.domain.CipherText;
 import io.avec.security.crypto.domain.Password;
 import io.avec.security.crypto.domain.PlainText;
 import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AesCipherTest {
 
 
-    @Order(1)
-    @ParameterizedTest
-    @CsvSource({
-            "CTR, 128",
-            "CTR, 192",
-            "CTR, 256",
-            "GCM, 128",
-            "GCM, 192",
-            "GCM, 256"
-    })
-    void testAesCipherConstructors(String mode, int strength) {
-        final EncryptionMode encryptionMode = EncryptionMode.valueOf(mode);
-        final EncryptionStrength encryptionStrength = EncryptionStrength.getAESKeyLength(strength);
+    @Test
+    void aesDefaultWithObjects() throws Exception {
 
-        final AesCipher aesCipher1 = new AesCipher(mode, strength); // string + int
-        final AesCipher aesCipher2 = new AesCipher(encryptionMode, encryptionStrength); // enums
+        // Arrange
+        final PlainText plaintextExpected = new PlainText("My secret text!");
+        final Password password = new Password("SecretPassword123");
 
-        validateAesCipher(encryptionMode, encryptionStrength, aesCipher1);
-        validateAesCipher(encryptionMode, encryptionStrength, aesCipher2);
+        // Act
+        CipherText cipherText = AesCipher.withPassword(password)
+                .encrypt(plaintextExpected);
+
+        PlainText plainTextActual = AesCipher.withPassword(password)
+                .decrypt(cipherText);
+
+        // Assert
+        assertThat(plainTextActual).isEqualTo(plaintextExpected);
     }
 
     @Test
-    void testAesCipherDefaultConstructor() {
-        AesCipher aesCipher = new AesCipher();
-        validateAesCipher(EncryptionMode.GCM, EncryptionStrength.BIT_256, aesCipher);
-    }
+    void aesDefaultWithStrings() throws Exception {
 
+        // Arrange
+        final String plaintextExpected = "My secret text!";
+        final String password = "SecretPassword123";
 
-    private void validateAesCipher(EncryptionMode encryptionMode, EncryptionStrength encryptionStrength, AesCipher aesCipher) {
-        assertEquals(encryptionMode, aesCipher.getAlgorithm());
-        assertEquals(encryptionStrength, aesCipher.getKeyLength());
+        // Act
+        String cipherText = AesCipher.withPassword(password)
+                .encrypt(plaintextExpected);
+
+        String plainTextActual = AesCipher.withPassword(password)
+                .decrypt(cipherText);
+
+        // Assert
+        assertThat(plainTextActual).isEqualTo(plaintextExpected);
     }
 
     @ParameterizedTest
@@ -58,17 +60,56 @@ class AesCipherTest {
             "GCM, 192",
             "GCM, 256"
     })
-    void testAesCipher(String encryptionMode, int encryptionStrength) throws Exception {
-        final AesCipher aesCipher = new AesCipher(encryptionMode, encryptionStrength);
+    void aesMoreConfigWithObjects(String mode, int strength) throws Exception {
+        final EncryptionMode encryptionMode = EncryptionMode.valueOf(mode);
+        final EncryptionStrength encryptionStrength = EncryptionStrength.getAESKeyLength(strength);
         final PlainText plaintextOriginal = new PlainText("Secret text");
         final Password password = new Password("password");
 
         // encrypt
-        CipherText cipherText = aesCipher.encrypt(plaintextOriginal, password);
+        CipherText cipherText = AesCipher.withPassword(password)
+                .withMode(encryptionMode)
+                .withStrength(encryptionStrength)
+                .encrypt(plaintextOriginal);
 
         // decrypt
-        PlainText plainText = aesCipher.decrypt(cipherText, password);
+        PlainText plainText = AesCipher.withPassword(password)
+                .withMode(encryptionMode)
+                .withStrength(encryptionStrength)
+                .decrypt(cipherText);
 
-        assertEquals(plaintextOriginal, plainText);
+        assertThat(plaintextOriginal).isEqualTo(plainText);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "CTR, 128",
+            "CTR, 192",
+            "CTR, 256",
+            "GCM, 128",
+            "GCM, 192",
+            "GCM, 256"
+    })
+    void aesMoreConfigWithStrings(String mode, int strength) throws Exception {
+
+        // Arrange
+        final EncryptionMode encryptionMode = EncryptionMode.valueOf(mode);
+        final EncryptionStrength encryptionStrength = EncryptionStrength.getAESKeyLength(strength);
+        final String secret = "My secret text!";
+        final String password = "SecretPassword123";
+
+        // Act
+        String cipherText = AesCipher.withPassword(password)
+                .withMode(encryptionMode)
+                .withStrength(encryptionStrength)
+                .encrypt(secret);
+
+        String plainText = AesCipher.withPassword(password)
+                .withMode(encryptionMode)
+                .withStrength(encryptionStrength)
+                .decrypt(cipherText);
+
+        // Assert
+        assertThat(plainText).isEqualTo(secret);
     }
 }

@@ -47,7 +47,7 @@ class CryptoUtilsTest {
     void rsaEncryptAndDecrypt(KeySize keySize) throws Exception {
         final PlainText plainTextExpected = new PlainText("Some text");
 
-        final KeyPair keyPair = KeyUtils.generateKeyPair(keySize);
+        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(keySize);
 
         final CipherText cipherText = CryptoUtils.rsaEncrypt(plainTextExpected, keyPair.getPublic());
         final PlainText plainText = CryptoUtils.rsaDecrypt(cipherText, keyPair.getPrivate());
