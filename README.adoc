@@ -28,8 +28,8 @@ ifdef::env-idea[:status:]
 = Commons Security
 
 ifdef::status[]
-image:https://img.shields.io/github/workflow/status/Avec112/commons-security/Build?logo=github[Build status]
-image:https://img.shields.io/github/workflow/status/Avec112/commons-security/CodeQL?label=CodeQL&logo=github[CodeQL]
+image:https://img.shields.io/github/actions/workflow/status/Avec112/commons-security/maven.yml?logo=github[Build status]
+image:https://img.shields.io/github/actions/workflow/status/Avec112/commons-security/codeql-analysis.yml?label=CodeQL&logo=github[CodeQL]
 image:https://img.shields.io/github/license/avec112/commons-security[License]
 image:https://img.shields.io/github/last-commit/Avec112/commons-security[Last Commit]
 endif::[]
@@ -43,7 +43,7 @@ toc::[]
 .Features
 
 * *Asymmetric encryption* and decryption with _public key_ and _private key_. `RSA` is supported.
-* *Symmetric encryption* and decryption with same key. `AES/CTR` and `AES/GCM` is supported.
+* *Symmetric encryption* and decryption with one (same) key. `AES/CTR` and `AES/GCM` is supported.
 * *Shamir's Secret Sharing* is a way to split a secret into shares. The secret can be recreated by putting the minimum required amount of shares back together.
 * *Password Encoder* uses proven algorithms for hashing passwords in a safe and secure way.
 * *Digest* or message digest is the result of hashing and is a way to integrity check our data. A typical use case could be to compare content (hashed) with a stored hash to verify if the data has been altered.
