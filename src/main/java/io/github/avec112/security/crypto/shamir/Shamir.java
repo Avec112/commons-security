@@ -5,13 +5,14 @@ import io.github.avec112.security.encoding.EncodingUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Shamir {
+
+    private Shamir() {}
 
     public static Shares getShares(Secret secret, int n, int k) {
         Map<Integer, byte[]> shareMap = getShareMap(secret.getValue(), n, k);
