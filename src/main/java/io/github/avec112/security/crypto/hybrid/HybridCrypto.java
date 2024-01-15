@@ -6,7 +6,6 @@ import io.github.avec112.security.crypto.aes.EncryptionStrength;
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.domain.PlainText;
-import com.github.avec112.security.crypto.error.*;
 import io.github.avec112.security.crypto.error.*;
 import io.github.avec112.security.crypto.random.RandomUtils;
 import io.github.avec112.security.crypto.rsa.RsaCipher;
