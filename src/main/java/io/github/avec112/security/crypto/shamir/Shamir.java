@@ -1,6 +1,7 @@
 package io.github.avec112.security.crypto.shamir;
 
 import com.codahale.shamir.Scheme;
+import io.github.avec112.security.encoding.EncodingUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
@@ -16,8 +17,8 @@ public class Shamir {
         Map<Integer, byte[]> shareMap = getShareMap(secret.getValue(), n, k);
         Shares shares = new Shares();
         shareMap.forEach((index, bytes) -> {
-            final String indexAndShare = index + "+" + encode(bytes);
-            final String indexAndShareEncoded = encode(indexAndShare.getBytes(StandardCharsets.UTF_8));
+            final String indexAndShare = index + "+" + EncodingUtils.base64Encode(bytes);
+            final String indexAndShareEncoded = EncodingUtils.base64Encode(indexAndShare.getBytes(StandardCharsets.UTF_8));
             shares.add(new Share(indexAndShareEncoded));
         });
         return shares;
@@ -29,7 +30,7 @@ public class Shamir {
         // start loop
         for(Share share:shares) {
             // decode once
-            final String indexAndShare = new String(decode(share.getValue()), StandardCharsets.UTF_8);
+            final String indexAndShare = new String(EncodingUtils.base64Decode(share.getValue()), StandardCharsets.UTF_8);
             // split out index and encoded share
             Pattern p = Pattern.compile("^(\\d+)\\+(.*)$");
             Matcher m = p.matcher(indexAndShare);
@@ -37,7 +38,7 @@ public class Shamir {
                 String index = m.group(1);
                 String s = m.group(2);
                 // decode second time
-                final byte[] shareDecoded = decode(s);
+                final byte[] shareDecoded = EncodingUtils.base64Decode(s);
                 // add to map
                 providedParts.put(Integer.parseInt(index), shareDecoded);
             } else {
@@ -57,13 +58,5 @@ public class Shamir {
         final Scheme scheme = new Scheme(new SecureRandom(), n, k);
         final byte[] secret = s.getBytes(StandardCharsets.UTF_8);
         return scheme.split(secret);
-    }
-
-    private static String encode(byte[] b) {
-        return Base64.getEncoder().encodeToString(b);
-    }
-
-    private static byte[] decode(String s) {
-        return Base64.getDecoder().decode(s);
     }
 }
