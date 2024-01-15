@@ -3,6 +3,7 @@ package io.github.avec112.security.crypto.sign;
 import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
 import io.github.avec112.security.crypto.rsa.KeySize;
 import io.github.avec112.security.crypto.rsa.RsaCipherTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -91,5 +92,19 @@ class SignatureUtilsTest extends BouncyCastleProviderInitializer {
         // Assert
         assertTrue(verified, "Signature not verified");
 
+    }
+
+    @Test
+    void signAndVerify() throws Exception {
+        // Arrange
+        KeyPair keyPair = RsaCipherTest.loadKeyPair(KeySize.getKeySize(KeySize.BIT_2048.getKeySize()));
+        String data = "Some content";
+
+        // Act
+        final byte[] signature = SignatureUtils.sign(data, keyPair.getPrivate());
+        boolean verified = SignatureUtils.verify(signature, data, keyPair.getPublic());
+
+        // Assert
+        assertTrue(verified, "Signature not verified");
     }
 }
