@@ -5,6 +5,9 @@ import io.github.avec112.security.encoding.EncodingUtils;
 
 import java.security.SecureRandom;
 
+/**
+ * The RandomUtils class provides utility methods for generating random values.
+ */
 public class RandomUtils {
 
     private RandomUtils() {

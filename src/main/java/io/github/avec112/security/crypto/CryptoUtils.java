@@ -4,6 +4,8 @@ import io.github.avec112.security.crypto.aes.AesCipher;
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.domain.PlainText;
+import io.github.avec112.security.crypto.error.BadCipherConfigurationException;
+import io.github.avec112.security.crypto.error.BadCipherTextException;
 import io.github.avec112.security.crypto.rsa.RsaCipher;
 import io.github.avec112.security.crypto.shamir.Secret;
 import io.github.avec112.security.crypto.shamir.Shamir;
@@ -18,15 +20,11 @@ public class CryptoUtils {
     private CryptoUtils() {
     }
 
-    public static CipherText aesEncrypt(PlainText plainText, Password password) throws Exception {
-//        AesCipher cipher = new AesCipher();
-//        return cipher.encrypt(plainText, password);
+    public static CipherText aesEncrypt(PlainText plainText, Password password) throws BadCipherConfigurationException {
         return AesCipher.withPassword(password.getValue()).encrypt(plainText);
     }
 
-    public static PlainText aesDecrypt(CipherText ciperText, Password password) throws Exception {
-//        AesCipher cipher = new AesCipher();
-//        return cipher.decrypt(ciperText, password);
+    public static PlainText aesDecrypt(CipherText ciperText, Password password) throws BadCipherConfigurationException, BadCipherTextException {
         return AesCipher.withPassword(password.getValue()).decrypt(ciperText);
     }
 
