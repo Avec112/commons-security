@@ -54,10 +54,6 @@ public class Validate {
         }
     }
 
-    public static void nonBlank(String argument, @NonNull String argumentName) {
-        nonBlank(argument, () -> new IllegalArgumentException(argumentName + " cannot be null or blank"));
-    }
-
     public static void nonNull(Object argument, @NonNull String argumentName) {
         nonNull(argument, () -> new NullPointerException("Argument " + argumentName + " cannot be null"));
     }
