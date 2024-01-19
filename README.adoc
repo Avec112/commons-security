@@ -258,6 +258,7 @@ include::src/main/java/io/github/avec112/security/crypto/password/PasswordEncode
 ----
 final String encodedPassword = PasswordEncoderUtils.encode(password);
 ----
+[source,java]
 .Alternative encoding with use of `enum PasswordEncoderType`
 ----
 final String encodedPassword = PasswordEncoderUtils.encode(password, PasswordEncoderType.BCRYPT);
@@ -270,6 +271,8 @@ When a user is authenticated they must input their password. This plaintext pass
 ----
 final boolean isMatching = PasswordEncoderUtils.matches(rawPassword, encodedPassword);
 ----
+
+[source,java]
 .Alternative matching with use of `enum PasswordEncoderType`
 ----
 final boolean isMatching = PasswordEncoderUtils.matches(rawPassword, encodedPassword, PasswordEncoderType.BCRYPT);
