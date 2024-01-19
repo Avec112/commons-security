@@ -1,9 +1,10 @@
 package io.github.avec112.security.crypto.hybrid;
 
-import io.github.avec112.security.crypto.aes.AesCipher;
+import io.github.avec112.security.crypto.aes.AesDecryptor;
 import io.github.avec112.security.crypto.aes.EncryptionMode;
 import io.github.avec112.security.crypto.aes.EncryptionStrength;
 import io.github.avec112.security.crypto.domain.CipherText;
+import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.domain.PlainText;
 import io.github.avec112.security.crypto.error.MissingCipherTextException;
 import io.github.avec112.security.crypto.error.MissingEncryptedSymmetricalKeyException;
@@ -13,7 +14,7 @@ import io.github.avec112.security.crypto.validate.Validate;
 
 import java.security.PrivateKey;
 
-public class DecryptBuilder {
+public class HybridDecryptor {
 
     private EncryptionStrength encryptionStrength = EncryptionStrength.BIT_128;
     private EncryptionMode encryptionMode = EncryptionMode.GCM;
@@ -23,31 +24,31 @@ public class DecryptBuilder {
 
     private PrivateKey privateKey;
 
-    private DecryptBuilder() {
+    private HybridDecryptor() {
     }
 
     /**
      * Creates a builder for decryption operations.
      *
-     * @return a DecryptBuilder instance
+     * @return a HybridDecryptor instance
      */
-    public static DecryptBuilder decryptionBuilder() {
-        return new DecryptBuilder();
+    public static HybridDecryptor decryptionBuilder() {
+        return new HybridDecryptor();
     }
 
-    public DecryptBuilder key(PrivateKey privateKey) {
+    public HybridDecryptor key(PrivateKey privateKey) {
         Validate.nonNull(privateKey, MissingPrivateKeyException::new);
         this.privateKey = privateKey;
         return this;
     }
 
-    public DecryptBuilder encryptedSymmetricalKey(String encryptedSymmetricalKey) {
+    public HybridDecryptor encryptedSymmetricalKey(String encryptedSymmetricalKey) {
         Validate.nonBlank(encryptedSymmetricalKey, MissingEncryptedSymmetricalKeyException::new);
         this.encryptedSymmetricalKey = encryptedSymmetricalKey;
         return this;
     }
 
-    public DecryptBuilder cipherText(String cipherText) {
+    public HybridDecryptor cipherText(String cipherText) {
         Validate.nonBlank(cipherText, MissingCipherTextException::new);
         this.cipherText = cipherText;
         return this;
@@ -62,19 +63,19 @@ public class DecryptBuilder {
 
         final RsaCipher rsaCipher = new RsaCipher();
         final PlainText symKey = rsaCipher.decrypt(new CipherText(encryptedSymmetricalKey), privateKey);
-        return new AesCipher.Builder(symKey.getValue())
+        return AesDecryptor.withPasswordAndCipherText(new Password(symKey.getValue()), new CipherText(cipherText))
                 .withMode(encryptionMode)
                 .withStrength(encryptionStrength)
-                .decrypt(cipherText);
+                .decrypt().getValue();
     }
 
-    public DecryptBuilder optional(EncryptionMode encryptionMode) {
+    public HybridDecryptor withEncryptionMode(EncryptionMode encryptionMode) {
         Validate.nonNull(encryptionMode, "encryptionMode");
         this.encryptionMode = encryptionMode;
         return this;
     }
 
-    public DecryptBuilder optional(EncryptionStrength encryptionStrength) {
+    public HybridDecryptor withEncryptionStrength(EncryptionStrength encryptionStrength) {
         Validate.nonNull(encryptionStrength, "encryptionStrength");
         this.encryptionStrength = encryptionStrength;
         return this;

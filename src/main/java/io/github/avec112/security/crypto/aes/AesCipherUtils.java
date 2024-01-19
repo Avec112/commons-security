@@ -1,12 +1,11 @@
 package io.github.avec112.security.crypto.aes;
 
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
+import io.github.avec112.security.crypto.domain.Password;
+
+import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.ArrayList;
@@ -57,10 +56,10 @@ public class AesCipherUtils {
      * @param keyLength The desired key length.
      * @return The generated AES secret key.
      */
-    public static SecretKey getAESKeyFromPassword(char[] password, byte[] salt, EncryptionStrength keyLength) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public static SecretKey getAESKeyFromPassword(char[] password, byte[] salt, int keyLength) throws NoSuchAlgorithmException, InvalidKeySpecException {
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
         // PBE = Password-based Encryption
-        KeySpec spec = new PBEKeySpec(password, salt, 65536, keyLength.getLength());
+        KeySpec spec = new PBEKeySpec(password, salt, 65536, keyLength);
         return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
     }
 
@@ -101,6 +100,13 @@ public class AesCipherUtils {
             index += blockSize;
         }
         return result.toString();
+    }
+
+    public static Cipher createCipher(Password password, byte[] salt, byte[] iv, int mode, EncryptionMode encryptionMode, int keyLength) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, InvalidKeySpecException {
+        Key key = AesCipherUtils.getAESKeyFromPassword(password.getValue().toCharArray(), salt, keyLength);
+        Cipher cipher = Cipher.getInstance(encryptionMode.getAlgorithm());
+        cipher.init(mode, key, encryptionMode.getAlgorithmParameterSpec(iv));
+        return cipher;
     }
 
 }

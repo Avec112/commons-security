@@ -14,38 +14,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AesCipherTest {
 
-
     @Test
-    void aesDefaultWithObjects() throws Exception {
+    void aesDefaultWithStrings() throws Exception {
 
         // Arrange
         final PlainText plaintextExpected = new PlainText("My secret text!");
         final Password password = new Password("SecretPassword123");
 
         // Act
-        CipherText cipherText = AesCipher.withPassword(password)
-                .encrypt(plaintextExpected);
+        CipherText cipherText = AesEncryptor.withPasswordAndText(password, plaintextExpected)
+                .encrypt();
 
-        PlainText plainTextActual = AesCipher.withPassword(password)
-                .decrypt(cipherText);
-
-        // Assert
-        assertThat(plainTextActual).isEqualTo(plaintextExpected);
-    }
-
-    @Test
-    void aesDefaultWithStrings() throws Exception {
-
-        // Arrange
-        final String plaintextExpected = "My secret text!";
-        final String password = "SecretPassword123";
-
-        // Act
-        String cipherText = AesCipher.withPassword(password)
-                .encrypt(plaintextExpected);
-
-        String plainTextActual = AesCipher.withPassword(password)
-                .decrypt(cipherText);
+        PlainText plainTextActual = AesDecryptor.withPasswordAndCipherText(password, cipherText)
+                .decrypt();
 
         // Assert
         assertThat(plainTextActual).isEqualTo(plaintextExpected);
@@ -67,18 +48,18 @@ class AesCipherTest {
         final Password password = new Password("password");
 
         // encrypt
-        CipherText cipherText = AesCipher.withPassword(password)
+        CipherText cipherText = AesEncryptor.withPasswordAndText(password, plaintextOriginal)
                 .withMode(encryptionMode)
                 .withStrength(encryptionStrength)
-                .encrypt(plaintextOriginal);
+                .encrypt();
 
         // decrypt
-        PlainText plainText = AesCipher.withPassword(password)
+        PlainText plainTextResult = AesDecryptor.withPasswordAndCipherText(password, cipherText)
                 .withMode(encryptionMode)
                 .withStrength(encryptionStrength)
-                .decrypt(cipherText);
+                .decrypt();
 
-        assertThat(plaintextOriginal).isEqualTo(plainText);
+        assertThat(plaintextOriginal).isEqualTo(plainTextResult);
     }
 
     @ParameterizedTest
@@ -95,21 +76,21 @@ class AesCipherTest {
         // Arrange
         final EncryptionMode encryptionMode = EncryptionMode.valueOf(mode);
         final EncryptionStrength encryptionStrength = EncryptionStrength.getAESKeyLength(strength);
-        final String secret = "My secret text!";
-        final String password = "SecretPassword123";
+        final PlainText plaintextOriginal = new PlainText("My secret text!");
+        final Password password = new Password("OtherPassword123");
 
         // Act
-        String cipherText = AesCipher.withPassword(password)
+        CipherText cipherText = AesEncryptor.withPasswordAndText(password, plaintextOriginal)
                 .withMode(encryptionMode)
                 .withStrength(encryptionStrength)
-                .encrypt(secret);
+                .encrypt();
 
-        String plainText = AesCipher.withPassword(password)
+        PlainText plainTextResult = AesDecryptor.withPasswordAndCipherText(password, cipherText)
                 .withMode(encryptionMode)
                 .withStrength(encryptionStrength)
-                .decrypt(cipherText);
+                .decrypt();
 
         // Assert
-        assertThat(plainText).isEqualTo(secret);
+        assertThat(plainTextResult).isEqualTo(plaintextOriginal);
     }
 }

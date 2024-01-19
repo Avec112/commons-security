@@ -1,6 +1,7 @@
 package io.github.avec112.security.crypto;
 
-import io.github.avec112.security.crypto.aes.AesCipher;
+import io.github.avec112.security.crypto.aes.AesDecryptor;
+import io.github.avec112.security.crypto.aes.AesEncryptor;
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.domain.PlainText;
@@ -21,11 +22,11 @@ public class CryptoUtils {
     }
 
     public static CipherText aesEncrypt(PlainText plainText, Password password) throws BadCipherConfigurationException {
-        return AesCipher.withPassword(password.getValue()).encrypt(plainText);
+        return AesEncryptor.withPasswordAndText(password, plainText).encrypt();
     }
 
     public static PlainText aesDecrypt(CipherText ciperText, Password password) throws BadCipherConfigurationException, BadCipherTextException {
-        return AesCipher.withPassword(password.getValue()).decrypt(ciperText);
+        return AesDecryptor.withPasswordAndCipherText(password, ciperText).decrypt();
     }
 
     public static CipherText rsaEncrypt(PlainText plainText, PublicKey publicKey) throws Exception {

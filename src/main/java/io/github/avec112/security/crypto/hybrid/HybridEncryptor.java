@@ -1,6 +1,6 @@
 package io.github.avec112.security.crypto.hybrid;
 
-import io.github.avec112.security.crypto.aes.AesCipher;
+import io.github.avec112.security.crypto.aes.AesEncryptor;
 import io.github.avec112.security.crypto.aes.EncryptionMode;
 import io.github.avec112.security.crypto.aes.EncryptionStrength;
 import io.github.avec112.security.crypto.domain.CipherText;
@@ -15,35 +15,35 @@ import io.github.avec112.security.crypto.validate.Validate;
 import java.security.PublicKey;
 
 /**
- * EncryptBuilder class is a builder class for creating instances of HybridEncryptionResult.
+ * HybridEncryptor class is a builder class for creating instances of HybridEncryptionResult.
  * It provides methods for setting the necessary parameters and building the final result.
  */
-public class EncryptBuilder {
+public class HybridEncryptor {
     private EncryptionStrength encryptionStrength = EncryptionStrength.BIT_128;
     private EncryptionMode encryptionMode = EncryptionMode.GCM;
 
     private String plainText;
     private PublicKey publicKey;
 
-    private EncryptBuilder() {
+    private HybridEncryptor() {
     }
 
     /**
      * Returns a builder for encryption operations.
      *
-     * @return the EncryptBuilder instance
+     * @return the HybridEncryptor instance
      */
-    public static EncryptBuilder encryptionBuilder() {
-        return new EncryptBuilder();
+    public static HybridEncryptor encryptionBuilder() {
+        return new HybridEncryptor();
     }
 
     /**
      * Sets the public key to be used for encryption.
      *
      * @param publicKey the public key to be used for encryption
-     * @return the EncryptBuilder object
+     * @return the HybridEncryptor object
      */
-    public EncryptBuilder key(PublicKey publicKey) {
+    public HybridEncryptor key(PublicKey publicKey) {
         Validate.nonNull(publicKey, MissingPublicKeyException::new);
         this.publicKey = publicKey;
         return this;
@@ -53,9 +53,9 @@ public class EncryptBuilder {
      * Sets the plain text to be encrypted.
      *
      * @param plainText the plain text to be encrypted
-     * @return the EncryptBuilder object
+     * @return the HybridEncryptor object
      */
-    public EncryptBuilder plainText(String plainText) {
+    public HybridEncryptor plainText(String plainText) {
         Validate.nonBlank(plainText, MissingPlainTextException::new);
         this.plainText = plainText;
         return this;
@@ -74,35 +74,35 @@ public class EncryptBuilder {
 
         final String randomPassword = RandomUtils.randomString(20);
         final String rsaEncryptedKey = rsaEncryptedKey(publicKey, randomPassword);
-        final String cipherText = new AesCipher.Builder(new Password(randomPassword))
+        final CipherText cipherText = AesEncryptor.withPasswordAndText(new Password(randomPassword), new PlainText(plainText))
                 .withMode(encryptionMode)
                 .withStrength(encryptionStrength)
-                .encrypt(plainText);
+                .encrypt();
 
-        return new HybridEncryptionResult(cipherText, rsaEncryptedKey, encryptionMode, encryptionStrength);
+        return new HybridEncryptionResult(cipherText.getValue(), rsaEncryptedKey, encryptionMode, encryptionStrength);
     }
 
 
     /**
-     * Sets the optional encryption mode for the EncryptBuilder object.
+     * Sets the optional encryption mode for the HybridEncryptor object.
      *
      * @param encryptionMode The encryption mode to set. Valid values are EncryptionMode.GCM or EncryptionMode.CTR.
-     * @return The EncryptBuilder object with the encryption mode set.
+     * @return The HybridEncryptor object with the encryption mode set.
      */
-    public EncryptBuilder optional(EncryptionMode encryptionMode) {
+    public HybridEncryptor optional(EncryptionMode encryptionMode) {
         Validate.nonNull(encryptionMode, "encryptionMode");
         this.encryptionMode = encryptionMode;
         return this;
     }
 
     /**
-     * Sets the optional encryption strength for the EncryptBuilder object.
+     * Sets the optional encryption strength for the HybridEncryptor object.
      *
      * @param encryptionStrength The encryption strength to set.
-     * @return The EncryptBuilder object with the encryption strength set.
+     * @return The HybridEncryptor object with the encryption strength set.
      * @throws NullPointerException if encryptionStrength is null
      */
-    public EncryptBuilder optional(EncryptionStrength encryptionStrength) {
+    public HybridEncryptor optional(EncryptionStrength encryptionStrength) {
         Validate.nonNull(encryptionStrength, "encryptionStrength");
         this.encryptionStrength = encryptionStrength;
         return this;
