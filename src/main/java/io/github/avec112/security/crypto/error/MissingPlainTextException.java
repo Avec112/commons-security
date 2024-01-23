@@ -1,6 +1,7 @@
 package io.github.avec112.security.crypto.error;
 
-public class MissingPlainTextException extends IllegalArgumentException {
+public class MissingPlainTextException extends NullPointerException {
+
     public MissingPlainTextException() {
         this("plainText cannot be null or blank");
     }

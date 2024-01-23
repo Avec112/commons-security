@@ -2,8 +2,7 @@ package io.github.avec112.security.crypto.rsa;
 
 import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
+import java.security.*;
 import java.security.spec.RSAKeyGenParameterSpec;
 
 public class KeyUtils extends BouncyCastleProviderInitializer {
@@ -11,10 +10,9 @@ public class KeyUtils extends BouncyCastleProviderInitializer {
     private KeyUtils() {
     }
 
-    public static KeyPair generateRsaKeyPair(KeySize keySize) throws Exception {
+    public static KeyPair generateRsaKeyPair(KeySize keySize ) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", "BC");
         keyPairGenerator.initialize(new RSAKeyGenParameterSpec(keySize.getKeySize(), RSAKeyGenParameterSpec.F4));
-//        keyPairGenerator.initialize(keySize.getKeySize());
         return keyPairGenerator.generateKeyPair();
     }
 

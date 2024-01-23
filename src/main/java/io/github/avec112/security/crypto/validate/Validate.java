@@ -1,7 +1,6 @@
 package io.github.avec112.security.crypto.validate;
 
 import io.github.avec112.security.crypto.error.MultipleMissingArgumentsError;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,6 +17,7 @@ public class Validate {
     }
 
     public static void all(RunValidation...validations) throws MultipleMissingArgumentsError {
+        Objects.requireNonNull(validations, "Argument validations cannot be null");
 
         final List<Throwable> failures = Arrays.stream(validations).map(runValidation -> {
             // runValidation != null check here
@@ -48,17 +48,22 @@ public class Validate {
 
     }
 
-    public static void nonBlank(String argument, @NonNull Supplier<? extends IllegalArgumentException> exceptionSupplier) {
+    public static void nonBlank(String argument, Supplier<? extends IllegalArgumentException> exceptionSupplier) {
+        Objects.requireNonNull(exceptionSupplier, "Argument exceptionSupplier cannot be null");
         if(StringUtils.isBlank(argument)) {
             throw exceptionSupplier.get();
         }
     }
 
-    public static void nonNull(Object argument, @NonNull String argumentName) {
-        nonNull(argument, () -> new NullPointerException("Argument " + argumentName + " cannot be null"));
+    public static void nonNull(Object argument, String argumentName) {
+        org.apache.commons.lang3.Validate.notBlank(argumentName, "Argument argumentName cannot be null or blank");
+        if(argument == null) {
+            throw new NullPointerException("Argument " + argumentName + " cannot be null");
+        }
     }
 
-    public static void nonNull(Object argument, @NonNull Supplier<? extends NullPointerException> exceptionSupplier) {
+    public static void nonNull(Object argument, Supplier<? extends NullPointerException> exceptionSupplier) {
+        Objects.requireNonNull(exceptionSupplier, "Argument exceptionSupplier cannot be null");
         if(argument == null) {
             throw exceptionSupplier.get();
         }

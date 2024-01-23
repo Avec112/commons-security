@@ -3,6 +3,8 @@ package io.github.avec112.security.crypto.rsa;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.stream.Stream;
+
 @RequiredArgsConstructor
 @Getter
 public enum KeySize {
@@ -13,15 +15,9 @@ public enum KeySize {
     private final int keySize;
 
     public static KeySize getKeySize(int keySize) {
-        if(keySize == BIT_1024.keySize) {
-            return BIT_1024;
-        } else if(keySize == BIT_2048.keySize) {
-            return BIT_2048;
-        } else if(keySize == BIT_3072.keySize) {
-            return BIT_3072;
-        } else if(keySize == BIT_4096.keySize) {
-            return BIT_4096;
-        }
-        throw new IllegalArgumentException("keySize " + keySize + " not supported.");
+        return Stream.of(KeySize.values())
+                .filter(k -> k.keySize == keySize)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("keySize " + keySize + " not supported."));
     }
 }
