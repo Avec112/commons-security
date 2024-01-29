@@ -9,7 +9,7 @@ import java.security.spec.AlgorithmParameterSpec;
 
 
 /**
- * Created by avec112 on 28.08.2020.
+ * Enumeration of encryption modes for AES encryption.
  */
 @Getter
 public enum EncryptionMode {
@@ -27,6 +27,13 @@ public enum EncryptionMode {
         this.ivLength = ivLength;
     }
 
+    /**
+     * Retrieves the AlgorithmParameterSpec for the specified IV based on the encryption mode.
+     *
+     * @param iv The initialization vector (IV) used for encryption or decryption.
+     * @return The AlgorithmParameterSpec object for the specified IV.
+     * @throws NotImplementedException if the encryption mode is not implemented.
+     */
     public AlgorithmParameterSpec getAlgorithmParameterSpec(byte [] iv) {
         if(this.equals(GCM)) {
             int TAG_LENGTH_BIT = 128; // must be one of {128, 120, 112, 104, 96}

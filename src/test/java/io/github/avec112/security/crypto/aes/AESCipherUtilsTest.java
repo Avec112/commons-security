@@ -20,7 +20,7 @@ class AESCipherUtilsTest {
     @Test
     void randomNonceLength() {
         int nonceLength = 10;
-        byte [] nonce = AesCipherUtils.getRandomNonce(nonceLength);
+        byte [] nonce = AesUtils.getRandomNonce(nonceLength);
         assertEquals(nonceLength, nonce.length);
     }
 
@@ -33,7 +33,7 @@ class AESCipherUtilsTest {
     void testForRandomness(int tries) {
         Set<String> randomSet = new HashSet<>();
         for(int i=0;i < tries;i++) {
-            byte[] randomNonce = AesCipherUtils.getRandomNonce(1);
+            byte[] randomNonce = AesUtils.getRandomNonce(1);
             randomSet.add(new String(randomNonce));
         }
         assertEquals(129, randomSet.size());
@@ -48,7 +48,7 @@ class AESCipherUtilsTest {
             128,192,256
     })
     void getAESKey(int bits) throws NoSuchAlgorithmException {
-        assertEquals(bits/8, AesCipherUtils.getAESKey(bits).getEncoded().length);
+        assertEquals(bits/8, AesUtils.getAESKey(bits).getEncoded().length);
     }
 
     @ParameterizedTest
@@ -58,7 +58,7 @@ class AESCipherUtilsTest {
             "AES-256,256"
     })
     void testGetAESKeyFromPasswordSameSalt(String password, int keyLengthInBits)  throws InvalidKeySpecException, NoSuchAlgorithmException {
-        byte [] salt = AesCipherUtils.getRandomNonce(16);
+        byte [] salt = AesUtils.getRandomNonce(16);
         SecretKey keyOne = getAESKeyFromPassword(password, salt, keyLengthInBits);
         SecretKey keyTwo = getAESKeyFromPassword(password, salt, keyLengthInBits);
         String keyOneBase64 = Base64.getEncoder().encodeToString(keyOne.getEncoded());
@@ -74,8 +74,8 @@ class AESCipherUtilsTest {
             "AES-256,256"
     })
     void testGetAESKeyFromPasswordDifferentSalt(String password, int keyLengthInBits)  throws InvalidKeySpecException, NoSuchAlgorithmException {
-        byte [] salt1 = AesCipherUtils.getRandomNonce(16);
-        byte [] salt2 = AesCipherUtils.getRandomNonce(16);
+        byte [] salt1 = AesUtils.getRandomNonce(16);
+        byte [] salt2 = AesUtils.getRandomNonce(16);
         SecretKey keyOne = getAESKeyFromPassword(password, salt1, keyLengthInBits);
         SecretKey keyTwo = getAESKeyFromPassword(password, salt2, keyLengthInBits);
         String keyOneBase64 = Base64.getEncoder().encodeToString(keyOne.getEncoded());
@@ -87,7 +87,7 @@ class AESCipherUtilsTest {
     private SecretKey getAESKeyFromPassword(String password, byte[] salt, int keyLengthInBits) throws InvalidKeySpecException, NoSuchAlgorithmException {
         char[] passwordAsChars = password.toCharArray();
         EncryptionStrength encryptionStrength = EncryptionStrength.getAESKeyLength(keyLengthInBits);
-        return AesCipherUtils.getAESKeyFromPassword(passwordAsChars, salt, encryptionStrength.getLength());
+        return AesUtils.getAESKeyFromPassword(passwordAsChars, salt, encryptionStrength.getLength());
     }
 
 }

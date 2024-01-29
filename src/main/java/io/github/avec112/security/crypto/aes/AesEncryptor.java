@@ -20,6 +20,9 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
+/**
+ * A class that provides AES encryption functionality.
+ */
 @Getter
 public class AesEncryptor {
 
@@ -34,6 +37,14 @@ public class AesEncryptor {
         this.plainText = plainText;
     }
 
+    /**
+     * Creates a new instance of AesEncryptor with the given password and plain text.
+     *
+     * @param password The password for encryption. Cannot be null or blank.
+     * @param plainText The plain text to be encrypted. Cannot be null or blank.
+     * @return A new instance of AesEncryptor.
+     * @throws IllegalArgumentException if either password or plainText is null or blank.
+     */
     public static AesEncryptor withPasswordAndText(Password password, PlainText plainText) {
         Validate.notNull(password, "Password cannot be null");
         Validate.notNull(plainText, "PlainText cannot be null");
@@ -43,6 +54,13 @@ public class AesEncryptor {
         return new AesEncryptor(password, plainText);
     }
 
+    /**
+     * Sets the encryption mode for the AES encryptor.
+     *
+     * @param mode The encryption mode. Cannot be null.
+     * @return The AES encryptor instance.
+     * @throws IllegalArgumentException if mode is null.
+     */
     public AesEncryptor withMode(EncryptionMode mode) {
         Validate.notNull(mode, "Encryption mode cannot be null");
         this.mode = mode;
@@ -50,6 +68,13 @@ public class AesEncryptor {
         return this; // for chaining
     }
 
+    /**
+     * Sets the encryption strength for the AES encryptor.
+     *
+     * @param strength The encryption strength to set. Cannot be null.
+     * @return The AES encryptor instance for method chaining.
+     * @throws IllegalArgumentException if the strength is null.
+     */
     public AesEncryptor withStrength(EncryptionStrength strength) {
         Validate.notNull(strength, "Encryption strength cannot be null");
         this.strength = strength;
@@ -57,6 +82,12 @@ public class AesEncryptor {
         return this; // for chaining
     }
 
+    /**
+     * Encrypts the plain text using AES encryption.
+     *
+     * @return The cipher text.
+     * @throws BadCipherConfigurationException if there is an error in the cipher configuration.
+     */
     public CipherText encrypt() throws BadCipherConfigurationException {
         try {
 
@@ -70,14 +101,21 @@ public class AesEncryptor {
         }
     }
 
+    /**
+     * Encrypts the given plain text using AES encryption with the provided password.
+     *
+     * @param plainText The plain text to be encrypted. Cannot be null.
+     * @param password  The password for encryption. Cannot be null.
+     * @return The encrypted cipher text.
+     */
     private byte[] encryptPlainText(PlainText plainText, Password password) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
-        byte[] salt = AesCipherUtils.getRandomNonce(SALT_LENGTH_BYTE);
-        byte[] iv = AesCipherUtils.getRandomNonce(getMode().getIvLength());
+        byte[] salt = AesUtils.getRandomNonce(SALT_LENGTH_BYTE);
+        byte[] iv = AesUtils.getRandomNonce(getMode().getIvLength());
 
         Charset encoding = StandardCharsets.UTF_8;
         int encryptionMode = Cipher.ENCRYPT_MODE;
 
-        Cipher cipher = AesCipherUtils.createCipher(password, salt, iv, encryptionMode, getMode(), getStrength().getLength());
+        Cipher cipher = AesUtils.createCipher(password, salt, iv, encryptionMode, getMode(), getStrength().getLength());
         byte[] cText = cipher.doFinal(plainText.getValue().getBytes(encoding));
 
         return ByteBuffer.allocate(iv.length + salt.length + cText.length)

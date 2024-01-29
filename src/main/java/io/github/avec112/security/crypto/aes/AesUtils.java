@@ -14,10 +14,10 @@ import java.util.List;
 
 
 /**
- * This class provides utility methods for AES cipher encryption and decryption.
+ * This class provides utility methods for AES encryption and decryption.
  */
-public class AesCipherUtils {
-    private AesCipherUtils() {
+public class AesUtils {
+    private AesUtils() {
     }
 
 
@@ -102,8 +102,20 @@ public class AesCipherUtils {
         return result.toString();
     }
 
+    /**
+     * Creates a Cipher object for encryption or decryption using the specified parameters.
+     *
+     * @param password          The password from which the AES key is derived.
+     * @param salt              The salt used for key derivation.
+     * @param iv                The initialization vector (IV) used for encryption or decryption.
+     * @param mode              The mode of operation for the cipher: Cipher.ENCRYPT_MODE or Cipher.DECRYPT_MODE.
+     * @param encryptionMode    The encryption mode to be used. See {@link EncryptionMode} for available modes.
+     * @param keyLength         The desired length of the AES key.
+     * @return The created Cipher object.
+
+     */
     public static Cipher createCipher(Password password, byte[] salt, byte[] iv, int mode, EncryptionMode encryptionMode, int keyLength) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, InvalidKeySpecException {
-        Key key = AesCipherUtils.getAESKeyFromPassword(password.getValue().toCharArray(), salt, keyLength);
+        Key key = AesUtils.getAESKeyFromPassword(password.getValue().toCharArray(), salt, keyLength);
         Cipher cipher = Cipher.getInstance(encryptionMode.getAlgorithm());
         cipher.init(mode, key, encryptionMode.getAlgorithmParameterSpec(iv));
         return cipher;

@@ -3,9 +3,9 @@ package io.github.avec112.security.crypto.aes;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+
 /**
- *
- * Three possible options for an AES key length.
+ * This enum represents the encryption strength for AES encryption.
  */
 @Slf4j
 @Getter
@@ -20,6 +20,12 @@ public enum EncryptionStrength {
         this.length = length;
     }
 
+    /**
+     * Returns the {@link EncryptionStrength} enum value associated with the specified encryption strength.
+     *
+     * @param encryptionStrength the encryption strength in bits
+     * @return the {@link EncryptionStrength} enum value associated with the specified encryption strength
+     */
     public static EncryptionStrength getAESKeyLength(int encryptionStrength) {
         switch (encryptionStrength) {
             case 128:
