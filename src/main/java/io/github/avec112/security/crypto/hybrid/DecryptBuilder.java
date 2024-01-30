@@ -1,11 +1,13 @@
 package io.github.avec112.security.crypto.hybrid;
 
-import io.github.avec112.security.crypto.aes.AesCipher;
+import io.github.avec112.security.crypto.aes.AesDecryptor;
 import io.github.avec112.security.crypto.aes.EncryptionMode;
 import io.github.avec112.security.crypto.aes.EncryptionStrength;
 import io.github.avec112.security.crypto.domain.CipherText;
+import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.domain.PlainText;
 import io.github.avec112.security.crypto.error.BlankCipherTextException;
+import io.github.avec112.security.crypto.error.MissingCipherTextException;
 import io.github.avec112.security.crypto.error.MissingEncryptedSymmetricalKeyException;
 import io.github.avec112.security.crypto.error.MissingPrivateKeyException;
 import io.github.avec112.security.crypto.rsa.RsaCipher;
@@ -19,7 +21,7 @@ public class DecryptBuilder {
     private EncryptionMode encryptionMode = EncryptionMode.GCM;
 
     private String encryptedSymmetricalKey;
-    private String cipherText;
+    private CipherText cipherText;
 
     private PrivateKey privateKey;
 
@@ -47,25 +49,27 @@ public class DecryptBuilder {
         return this;
     }
 
-    public DecryptBuilder cipherText(String cipherText) {
-        Validate.nonBlank(cipherText, BlankCipherTextException::new);
+    public DecryptBuilder cipherText(CipherText cipherText) {
+        Validate.nonNull(cipherText, MissingCipherTextException::new);
+        Validate.nonBlank(cipherText.getValue(), BlankCipherTextException::new);
         this.cipherText = cipherText;
         return this;
     }
 
-    public String build() throws Exception {
+    public PlainText build() throws Exception {
         Validate.all(
                 () -> Validate.nonNull(privateKey, MissingPrivateKeyException::new),
                 () -> Validate.nonBlank(encryptedSymmetricalKey, MissingEncryptedSymmetricalKeyException::new),
-                () -> Validate.nonBlank(cipherText, BlankCipherTextException::new)
+                () -> Validate.nonNull(cipherText, MissingCipherTextException::new),
+                () -> Validate.nonBlank(cipherText.getValue(), BlankCipherTextException::new)
         );
 
         final RsaCipher rsaCipher = new RsaCipher();
         final PlainText symKey = rsaCipher.decrypt(new CipherText(encryptedSymmetricalKey), privateKey);
-        return new AesCipher.Builder(symKey.getValue())
+        return AesDecryptor.withPasswordAndCipherText(new Password(symKey.getValue()), cipherText)
                 .withMode(encryptionMode)
                 .withStrength(encryptionStrength)
-                .decrypt(cipherText);
+                .decrypt();
     }
 
     public DecryptBuilder optional(EncryptionMode encryptionMode) {

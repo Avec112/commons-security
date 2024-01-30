@@ -1,12 +1,14 @@
 package io.github.avec112.security.crypto.hybrid;
 
-import io.github.avec112.security.crypto.aes.AesCipher;
+
+import io.github.avec112.security.crypto.aes.AesEncryptor;
 import io.github.avec112.security.crypto.aes.EncryptionMode;
 import io.github.avec112.security.crypto.aes.EncryptionStrength;
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.domain.PlainText;
 import io.github.avec112.security.crypto.error.BlankPlainTextException;
+import io.github.avec112.security.crypto.error.MissingPlainTextException;
 import io.github.avec112.security.crypto.error.MissingPublicKeyException;
 import io.github.avec112.security.crypto.random.RandomUtils;
 import io.github.avec112.security.crypto.rsa.RsaCipher;
@@ -22,7 +24,7 @@ public class EncryptBuilder {
     private EncryptionStrength encryptionStrength = EncryptionStrength.BIT_128;
     private EncryptionMode encryptionMode = EncryptionMode.GCM;
 
-    private String plainText;
+    private PlainText plainText;
     private PublicKey publicKey;
 
     private EncryptBuilder() {
@@ -55,8 +57,8 @@ public class EncryptBuilder {
      * @param plainText the plain text to be encrypted
      * @return the EncryptBuilder object
      */
-    public EncryptBuilder plainText(String plainText) {
-        Validate.nonBlank(plainText, BlankPlainTextException::new);
+    public EncryptBuilder plainText(PlainText plainText) {
+        Validate.nonBlank(plainText.getValue(), BlankPlainTextException::new);
         this.plainText = plainText;
         return this;
     }
@@ -69,15 +71,16 @@ public class EncryptBuilder {
      */
     public HybridEncryptionResult build() throws Exception {
         Validate.nonNull(publicKey, MissingPublicKeyException::new);
-        Validate.nonBlank(plainText, BlankPlainTextException::new);
+        Validate.nonNull(plainText, MissingPlainTextException::new);
+        Validate.nonBlank(plainText.getValue(), BlankPlainTextException::new);
 
 
         final String randomPassword = RandomUtils.randomString(20);
         final String rsaEncryptedKey = rsaEncryptedKey(publicKey, randomPassword);
-        final String cipherText = new AesCipher.Builder(new Password(randomPassword))
+        final CipherText cipherText = AesEncryptor.withPasswordAndText(new Password(randomPassword), plainText)
                 .withMode(encryptionMode)
                 .withStrength(encryptionStrength)
-                .encrypt(plainText);
+                .encrypt();
 
         return new HybridEncryptionResult(cipherText, rsaEncryptedKey, encryptionMode, encryptionStrength);
     }

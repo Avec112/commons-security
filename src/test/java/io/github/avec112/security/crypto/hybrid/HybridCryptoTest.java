@@ -2,6 +2,8 @@ package io.github.avec112.security.crypto.hybrid;
 
 import io.github.avec112.security.crypto.aes.EncryptionMode;
 import io.github.avec112.security.crypto.aes.EncryptionStrength;
+import io.github.avec112.security.crypto.domain.CipherText;
+import io.github.avec112.security.crypto.domain.PlainText;
 import io.github.avec112.security.crypto.error.*;
 import io.github.avec112.security.crypto.rsa.KeyUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +29,7 @@ class HybridCryptoTest {
 
     @Test
     void defaultEncryptionAndDecryption() throws Exception {
-        final String plainText = "plainText";
+        final PlainText plainText = new PlainText("plainText");
 
         // Encrypt
         HybridEncryptionResult hybridEncryptionResult = EncryptBuilder.encryptionBuilder()
@@ -36,7 +38,7 @@ class HybridCryptoTest {
                 .build();
 
         // Decrypt
-        String plainTextResult = DecryptBuilder.decryptionBuilder()
+        PlainText plainTextResult = DecryptBuilder.decryptionBuilder()
                 .key(keyPair.getPrivate())
                 .encryptedSymmetricalKey(hybridEncryptionResult.getEncryptedSymmetricalKey())
                 .cipherText(hybridEncryptionResult.getCipherText())
@@ -44,7 +46,7 @@ class HybridCryptoTest {
 
 
         assertAll(
-                () -> assertThat(hybridEncryptionResult.getCipherText()).isNotEqualTo(plainText),
+                () -> assertThat(hybridEncryptionResult.getCipherText().getValue()).isNotEqualTo(plainText.getValue()),
                 () -> assertThat(hybridEncryptionResult.getAesEncryptionStrength()).isEqualTo(EncryptionStrength.BIT_128),
                 () -> assertThat(hybridEncryptionResult.getAesEncryptionMode()).isEqualTo(EncryptionMode.GCM),
                 () -> assertThat(hybridEncryptionResult.getEncryptedSymmetricalKey()).isNotBlank(),
@@ -65,7 +67,7 @@ class HybridCryptoTest {
     void encryptAndDecrypt(String mode, int strength) throws Exception {
         final EncryptionMode encryptionMode = EncryptionMode.valueOf(mode);
         final EncryptionStrength encryptionStrength = EncryptionStrength.getAESKeyLength(strength);
-        final String plainText = "plainText";
+        final PlainText plainText = new PlainText("plainText");
 
         // Encrypt
         HybridEncryptionResult hybridEncryptionResult = EncryptBuilder.encryptionBuilder()
@@ -76,7 +78,7 @@ class HybridCryptoTest {
                 .build();
 
         // Decrypt
-        String plainTextResult = DecryptBuilder.decryptionBuilder()
+        PlainText plainTextResult = DecryptBuilder.decryptionBuilder()
                 .key(keyPair.getPrivate())
                 .encryptedSymmetricalKey(hybridEncryptionResult.getEncryptedSymmetricalKey())
                 .cipherText(hybridEncryptionResult.getCipherText())
@@ -85,7 +87,7 @@ class HybridCryptoTest {
                 .build();
 
         assertAll(
-                () -> assertThat(hybridEncryptionResult.getCipherText()).isNotEqualTo(plainText),
+                () -> assertThat(hybridEncryptionResult.getCipherText().getValue()).isNotEqualTo(plainText.getValue()),
                 () -> assertThat(hybridEncryptionResult.getAesEncryptionStrength()).isEqualTo(encryptionStrength),
                 () -> assertThat(hybridEncryptionResult.getAesEncryptionMode()).isEqualTo(encryptionMode),
                 () -> assertThat(hybridEncryptionResult.getEncryptedSymmetricalKey()).isNotBlank(),
@@ -108,18 +110,19 @@ class HybridCryptoTest {
      */
     @Test
     void decryptionException() {
+        DecryptBuilder builder = DecryptBuilder.decryptionBuilder();
         assertAll(
-                () -> assertThrows(MultipleMissingArgumentsError.class, () -> DecryptBuilder.decryptionBuilder().build()),
-                () -> assertThrows(MissingPrivateKeyException.class, () -> DecryptBuilder.decryptionBuilder().key(null).build()),
-                () -> assertThrows(MissingPrivateKeyException.class, () -> DecryptBuilder.decryptionBuilder().cipherText("cipherText").encryptedSymmetricalKey("symKey").build()),
-                () -> assertThrows(MultipleMissingArgumentsError.class, () -> DecryptBuilder.decryptionBuilder().key(keyPair.getPrivate()).build()),
-                () -> assertThrows(BlankCipherTextException.class, () -> DecryptBuilder.decryptionBuilder().key(keyPair.getPrivate()).cipherText(null).build()),
-                () -> assertThrows(BlankCipherTextException.class, () -> DecryptBuilder.decryptionBuilder().key(keyPair.getPrivate()).cipherText("").build()),
-                () -> assertThrows(BlankCipherTextException.class, () -> DecryptBuilder.decryptionBuilder().key(keyPair.getPrivate()).encryptedSymmetricalKey("symKey").build()),
-                () -> assertThrows(MissingEncryptedSymmetricalKeyException.class, () -> DecryptBuilder.decryptionBuilder().key(keyPair.getPrivate()).cipherText("cipherText").build()),
-                () -> assertThrows(MissingEncryptedSymmetricalKeyException.class, () -> DecryptBuilder.decryptionBuilder().key(keyPair.getPrivate()).cipherText("cipherText").encryptedSymmetricalKey(null).build()),
-                () -> assertThrows(MissingEncryptedSymmetricalKeyException.class, () -> DecryptBuilder.decryptionBuilder().key(keyPair.getPrivate()).cipherText("cipherText").encryptedSymmetricalKey("").build()),
-                () -> assertThrows(BadCipherTextException.class, () -> DecryptBuilder.decryptionBuilder().key(keyPair.getPrivate()).cipherText("cipherText").encryptedSymmetricalKey("symKey").build())
+                () -> assertThrows(MultipleMissingArgumentsError.class, builder::build),
+                () -> assertThrows(MissingPrivateKeyException.class, () -> builder.key(null).build()),
+                () -> assertThrows(MissingPrivateKeyException.class, () -> builder.cipherText(new CipherText("cipherText")).encryptedSymmetricalKey("symKey").build()),
+                () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate()).build()),
+                () -> assertThrows(MissingCipherTextException.class, () -> builder.key(keyPair.getPrivate()).cipherText(null).build()),
+                () -> assertThrows(BlankCipherTextException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("")).build()),
+                () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate()).encryptedSymmetricalKey("symKey").build()),
+                () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("cipherText")).build()),
+                () -> assertThrows(MissingEncryptedSymmetricalKeyException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("cipherText")).encryptedSymmetricalKey(null).build()),
+                () -> assertThrows(MissingEncryptedSymmetricalKeyException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("cipherText")).encryptedSymmetricalKey("").build()),
+                () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("cipherText")).encryptedSymmetricalKey("symKey").build())
         );
     }
 
