@@ -15,6 +15,8 @@ import java.util.List;
 
 /**
  * This class provides utility methods for AES encryption and decryption.
+ * AES = Advanced Encryption Standard.
+ * AES uses the same key for encryption also called symmetrical encryption.
  */
 public class AesUtils {
     private AesUtils() {

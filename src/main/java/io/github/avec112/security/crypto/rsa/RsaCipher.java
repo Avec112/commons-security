@@ -17,7 +17,13 @@ import java.security.*;
 
 /**
  * RsaCipher is a class that provides methods for encrypting and decrypting texts using the RSA encryption algorithm.
- * It extends the BouncyCastleProviderInitializer class, which initializes the BouncyCastle security provider if it is not already initialized.
+ * It extends the BouncyCastleProviderInitializer class, which initializes the BouncyCastle security provider if it is
+ * not already initialized.
+ *
+ * RSA = Rivest-Shamir-Adleman
+ * RSA encryption is a type of asymmetric encryption, which uses two different but linked keys. In RSA cryptography,
+ * both the public and the private keys can encrypt a message. The opposite key from the one used to encrypt a message
+ * is used to decrypt it.
  */
 public class RsaCipher extends BouncyCastleProviderInitializer {
     public static final String RSA_CIPHER = "RSA";
