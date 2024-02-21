@@ -17,7 +17,7 @@ import io.github.avec112.security.crypto.validate.Validate;
 import java.security.PublicKey;
 
 /**
- * EncryptBuilder class is a builder class for creating instances of HybridEncryptionResult.
+ * The EncryptBuilder class is used to build encryption operations in a fluent way.
  * It provides methods for setting the necessary parameters and building the final result.
  */
 public class EncryptBuilder {

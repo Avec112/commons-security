@@ -15,6 +15,10 @@ import io.github.avec112.security.crypto.validate.Validate;
 
 import java.security.PrivateKey;
 
+/**
+ * The DecryptBuilder class is used to build decryption operations in a fluent way.
+ * It provides methods to set the necessary parameters for decryption and to perform the decryption operation.
+ */
 public class DecryptBuilder {
 
     private EncryptionStrength encryptionStrength = EncryptionStrength.BIT_128;

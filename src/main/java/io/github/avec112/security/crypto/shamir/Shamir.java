@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The Shamir class provides methods for generating and recovering secret shares using Shamir's Secret Sharing.
+ */
 public class Shamir {
 
     private Shamir() {}
