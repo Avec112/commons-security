@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -22,7 +23,7 @@ class DigestUtilsTest extends BouncyCastleProviderInitializer {
     })
     void digest(String data) throws Exception {
         // Arrange
-        final byte[] expected = MessageDigest.getInstance("SHA-256", "BC").digest(data.getBytes());
+        final byte[] expected = MessageDigest.getInstance("SHA-256", "BC").digest(data.getBytes(StandardCharsets.UTF_8));
 
         // Act
         final byte[] actual = DigestUtils.digest(data);
@@ -58,8 +59,7 @@ class DigestUtilsTest extends BouncyCastleProviderInitializer {
     void digestWithAlgorithm(DigestAlgorithm digestAlgorithm) throws Exception {
         final String data = "test data";
         final byte[] actual = DigestUtils.digest(data, digestAlgorithm);
-//        System.out.println(digestAlgorithm.getAlgorithm() + ": " + EncodingUtils.hexEncode(actual));
-        final byte[] expected = MessageDigest.getInstance(digestAlgorithm.getAlgorithm()).digest(data.getBytes());
+        final byte[] expected = MessageDigest.getInstance(digestAlgorithm.getAlgorithm()).digest(data.getBytes(StandardCharsets.UTF_8));
         assertArrayEquals(expected, actual);
     }
 }

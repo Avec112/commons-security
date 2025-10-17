@@ -15,6 +15,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -89,7 +90,7 @@ public class AesDecryptor {
     public PlainText decrypt() throws BadCipherConfigurationException, BadCipherTextException {
         try {
             final byte[] bytes = decryptCipherText(cipherText, password);
-            return new PlainText(new String(bytes));
+            return new PlainText(new String(bytes, StandardCharsets.UTF_8));
         } catch (BufferUnderflowException e) {
             throw new BadCipherTextException("Please provide valid cipher text");
         } catch (InvalidAlgorithmParameterException | NoSuchPaddingException | IllegalBlockSizeException |

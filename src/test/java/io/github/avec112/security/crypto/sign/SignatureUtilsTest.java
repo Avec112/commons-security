@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.util.Base64;
 
@@ -64,7 +65,7 @@ class SignatureUtilsTest extends BouncyCastleProviderInitializer {
     void signBytes(int keySize, String expected) throws Exception {
         // Arrange
         KeyPair keyPair = RsaCipherTest.loadKeyPair(KeySize.getKeySize(keySize));
-        final byte[] data = "Testing".getBytes();
+        final byte[] data = "Testing".getBytes(StandardCharsets.UTF_8);
 
         // Act
         final byte[] signature = SignatureUtils.sign(data, keyPair.getPrivate());
@@ -83,7 +84,7 @@ class SignatureUtilsTest extends BouncyCastleProviderInitializer {
     void verifyBytes(int keySize, String signature) throws Exception {
         // Arrange
         KeyPair keyPair = RsaCipherTest.loadKeyPair(KeySize.getKeySize(keySize));
-        final byte[] data = "Testing".getBytes();
+        final byte[] data = "Testing".getBytes(StandardCharsets.UTF_8);
 
         // Act
         byte [] signatureDecoded = Base64.getDecoder().decode(signature);

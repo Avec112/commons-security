@@ -4,6 +4,8 @@ import org.apache.commons.codec.DecoderException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EncodingUtilsTest {
@@ -15,7 +17,7 @@ class EncodingUtilsTest {
             "1234!#&, MTIzNCEjJg=="
     })
     void base64Encode(String input, String expected) {
-        byte [] src = input.getBytes();
+        byte [] src = input.getBytes(StandardCharsets.UTF_8);
         assertEquals(expected, EncodingUtils.base64Encode(src));
     }
 
@@ -26,7 +28,7 @@ class EncodingUtilsTest {
             "1234!#&, MTIzNCEjJg=="
     })
     void base64Decode(String expected, String input) {
-        final String actual = new String(EncodingUtils.base64Decode(input));
+        final String actual = new String(EncodingUtils.base64Decode(input), StandardCharsets.UTF_8);
         assertEquals(expected, actual);
     }
 
@@ -38,7 +40,7 @@ class EncodingUtilsTest {
             "1234!#&, 31323334212326"
     })
     void hexEncode(String input, String expected) {
-        byte [] src = input.getBytes();
+        byte [] src = input.getBytes(StandardCharsets.UTF_8);
         assertEquals(expected, EncodingUtils.hexEncode(src));
     }
 
@@ -49,7 +51,7 @@ class EncodingUtilsTest {
             "1234!#&, 31323334212326"
     })
     void hexDecode(String expected, String input) throws DecoderException {
-        final String actual = new String(EncodingUtils.hexDecode(input));
+        final String actual = new String(EncodingUtils.hexDecode(input), StandardCharsets.UTF_8);
         assertEquals(expected, actual);
     }
 }

@@ -4,6 +4,7 @@ import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
 import io.github.avec112.security.encoding.EncodingUtils;
 import org.apache.commons.lang3.Validate;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Objects;
 
@@ -24,7 +25,7 @@ public class DigestUtils extends BouncyCastleProviderInitializer {
         Validate.notBlank(data);
         MessageDigest digest = MessageDigest.getInstance(DigestAlgorithm.SHA_256.getAlgorithm(), "BC");
 
-        return digest.digest(data.getBytes());
+        return digest.digest(data.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -39,7 +40,7 @@ public class DigestUtils extends BouncyCastleProviderInitializer {
         Objects.requireNonNull(digestAlgorithm);
 
         MessageDigest digest = MessageDigest.getInstance(digestAlgorithm.getAlgorithm(), "BC");
-        return digest.digest(data.getBytes());
+        return digest.digest(data.getBytes(StandardCharsets.UTF_8));
     }
 
     /**

@@ -3,6 +3,7 @@ package io.github.avec112.security.crypto.sign;
 import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
 import org.apache.commons.lang3.Validate;
 
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -17,7 +18,7 @@ public class SignatureUtils extends BouncyCastleProviderInitializer {
         Validate.notBlank(data);
         Objects.requireNonNull(privateKey);
 
-        return sign(data.getBytes(), privateKey);
+        return sign(data.getBytes(StandardCharsets.UTF_8), privateKey);
     }
 
 
@@ -36,7 +37,7 @@ public class SignatureUtils extends BouncyCastleProviderInitializer {
         Validate.notBlank(data);
         Objects.requireNonNull(publicKey);
 
-        return verify(signature, data.getBytes(), publicKey);
+        return verify(signature, data.getBytes(StandardCharsets.UTF_8), publicKey);
     }
 
     public static boolean verify(byte[] signature, byte[] data, PublicKey publicKey) throws Exception {
@@ -44,7 +45,7 @@ public class SignatureUtils extends BouncyCastleProviderInitializer {
         Objects.requireNonNull(data);
         Objects.requireNonNull(publicKey);
 
-        Signature verifySignature = Signature.getInstance("SHA256withRSA");
+        Signature verifySignature = Signature.getInstance("SHA256withRSA", "BC");
         verifySignature.initVerify(publicKey);
         verifySignature.update(data);
         return verifySignature.verify(signature);
