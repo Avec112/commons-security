@@ -32,7 +32,7 @@ endif::[]
 
 ifdef::status[]
 image:https://img.shields.io/github/actions/workflow/status/Avec112/commons-security/maven.yml?logo=github[Build status]
-image:https://img.shields.io/github/actions/workflow/status/Avec112/commons-security/codeql-analysis.yml?label=CodeQL&logo=github[CodeQL]
+image:https://img.shields.io/github/actions/workflow/status/Avec112/commons-security/codeql.yml?label=CodeQL&logo=github[CodeQL]
 image:https://img.shields.io/github/license/avec112/commons-security[License]
 image:https://img.shields.io/github/last-commit/Avec112/commons-security[Last Commit]
 endif::[]
