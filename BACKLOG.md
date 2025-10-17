@@ -19,7 +19,7 @@ Goal: complete modernization, testing, and documentation for internal and educat
 - [ ] **Upgrade signatures to RSASSA-PSS**
   - Use `"SHA256withRSAandMGF1"` (RSASSA-PSS) in `SignatureUtils`.
 
-- [ ] **Fix DigestUtils hex encoding bug**
+- [x] **Fix DigestUtils hex encoding bug**
   - `hexDigest()` currently Base64-encodes output. Replace with `EncodingUtils.hexEncode()`.
 
 ---

@@ -62,6 +62,6 @@ public class DigestUtils extends BouncyCastleProviderInitializer {
      */
     public static String hexDigest(String data) throws Exception {
         byte[] digest = digest(data);
-        return EncodingUtils.base64Encode(digest);
+        return EncodingUtils.hexEncode(digest);
     }
 }

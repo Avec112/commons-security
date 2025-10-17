@@ -9,7 +9,7 @@ This document tracks enhancements and refinements for the test suite across all 
 
 | ✅ / ☐ | Task | Modules |
 |:--:|------|----------|
-| ☐ | Use `StandardCharsets.UTF_8` explicitly in all `getBytes()` / `new String(byte[])` calls | EncodingUtilsTest, DigestUtilsTest, SignatureUtilsTest, PasswordEncoderUtilsTest, CryptoUtilsTest |
+| ✅ | Use `StandardCharsets.UTF_8` explicitly in all `getBytes()` / `new String(byte[])` calls | EncodingUtilsTest, DigestUtilsTest, SignatureUtilsTest, PasswordEncoderUtilsTest, CryptoUtilsTest |
 | ☐ | Add negative AES test: decrypt with wrong password should not equal plaintext | CryptoUtilsTest |
 | ☐ | Add negative RSA test: decrypt with wrong private key should not equal plaintext | CryptoUtilsTest |
 | ☐ | Add password mismatch tests (verify false when password differs) | PasswordEncoderUtilsTest |

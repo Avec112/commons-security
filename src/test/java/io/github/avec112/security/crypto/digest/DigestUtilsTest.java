@@ -45,9 +45,9 @@ class DigestUtilsTest extends BouncyCastleProviderInitializer {
 
     @ParameterizedTest
     @CsvSource({
-            "Hello!, M00Bb3Vc1txYxTqG4YOIL47BT1L7BTRYh8il7dQsh7c=",
-            "æøåö, UPidDtYmr13NOL12KJr2RLpkBZoLbHEjqiEVkFJ86bw=",
-            "1234!#&, RmLkQ2aE6W0lH9ByrQFb1n0fzyBYuTPyZReDqwr2oaE="
+            "Hello!, 334d016f755cd6dc58c53a86e183882f8ec14f52fb05345887c8a5edd42c87b7",
+            "æøåö, 50f89d0ed626af5dcd38bd76289af644ba64059a0b6c7123aa211590527ce9bc",
+            "1234!#&, 4662e4436684e96d251fd072ad015bd67d1fcf2058b933f2651783ab0af6a1a1"
     })
     void hexDigest(String data, String expected) throws Exception {
         final String actual = DigestUtils.hexDigest(data);
