@@ -41,7 +41,7 @@ class ShamirTest {
         byte[] wrongShare = "just wrong".getBytes(StandardCharsets.UTF_8);
         String encodeOnce = encode(wrongShare);
 
-        assertThrows(IllegalStateException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
                 Shamir.getSecret(shares.get(0), shares.get(2), new Share(encodeOnce)));
     }
 
@@ -65,6 +65,27 @@ class ShamirTest {
         final Secret actual = Shamir.getSecret(shares.get(1), shares.get(3));
 
         assertEquals(expectedSecret, actual);
+    }
+
+    @Test
+    void testInvalidThresholdGreaterThanTotal() {
+        assertThrows(IllegalArgumentException.class,
+                () -> Shamir.getShares(expectedSecret, 3, 5),
+                "Should throw when threshold (k) is greater than total shares (n)");
+    }
+
+    @Test
+    void testInvalidThresholdLessThanOne() {
+        assertThrows(IllegalArgumentException.class,
+                () -> Shamir.getShares(expectedSecret, 5, 0),
+                "Should throw when threshold (k) is less than 1");
+    }
+
+    @Test
+    void testInvalidTotalSharesLessThanOne() {
+        assertThrows(IllegalArgumentException.class,
+                () -> Shamir.getShares(expectedSecret, 0, 0),
+                "Should throw when total shares (n) is less than 1");
     }
 
     private String longSecret() {

@@ -14,7 +14,7 @@ This document tracks enhancements and refinements for the test suite across all 
 | ☐ | Add negative RSA test: decrypt with wrong private key should not equal plaintext | CryptoUtilsTest |
 | ☐ | Add password mismatch tests (verify false when password differs) | PasswordEncoderUtilsTest |
 | ☐ | Add signature mismatch tests (wrong key or tampered data) | SignatureUtilsTest |
-| ☐ | Validate Shamir threshold arguments (`threshold > total` or `< 2` should throw) | ShamirTest |
+| ✅ | Validate Shamir threshold arguments (`threshold > total` or `< 2` should throw) | ShamirTest |
 | ☐ | Add at least one known fixed digest vector (e.g. SHA-256 of “OpenAI”) | DigestUtilsTest |
 | ☐ | Add known fixed signature vector regression test | SignatureUtilsTest |
 

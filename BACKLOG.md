@@ -8,7 +8,7 @@ Goal: complete modernization, testing, and documentation for internal and educat
 ## 🔒 Tier 1 – Critical correctness & security fixes
 *(Must be completed before any internal or external use)*
 
-- [ ] **Fix Shamir’s Secret hardcoded parameters**
+- [x] **Fix Shamir’s Secret hardcoded parameters**
   - Replace `new Scheme(new SecureRandom(), 100, 100)` with dynamic `(n, k)` from input.
   - Add validation: ensure at least `k` shares are provided when joining.
 
