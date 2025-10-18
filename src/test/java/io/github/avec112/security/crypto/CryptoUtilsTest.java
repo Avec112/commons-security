@@ -14,6 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
+import javax.crypto.BadPaddingException;
 import java.security.KeyPair;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,6 +41,28 @@ class CryptoUtilsTest {
         final PlainText plainText = CryptoUtils.aesDecrypt(cipherText, password);
 
         assertEquals(plainTextExpected, plainText);
+    }
+
+    @Test
+    void aesDecryptWithWrongPassword_shouldFail() throws Exception {
+        final PlainText plainTextExpected = new PlainText("Sensitive data");
+        final Password correctPassword = new Password("CorrectPassword");
+        final Password wrongPassword = new Password("WrongPassword");
+
+        final CipherText cipherText = CryptoUtils.aesEncrypt(plainTextExpected, correctPassword);
+
+        // Expect project-specific wrapper exception
+        final io.github.avec112.security.crypto.error.BadCipherConfigurationException ex =
+                Assertions.assertThrows(
+                        io.github.avec112.security.crypto.error.BadCipherConfigurationException.class,
+                        () -> CryptoUtils.aesDecrypt(cipherText, wrongPassword),
+                        "Decrypting with the wrong password should fail with a wrapped crypto exception"
+                );
+
+        // Optional: verify the root cause
+        final Throwable cause = ex.getCause();
+        Assertions.assertNotNull(cause, "Wrapped exception should carry the root cause");
+        Assertions.assertInstanceOf(BadPaddingException.class, cause, "Root cause should be BadPaddingException (including AEADBadTagException subclass)");
     }
 
     @ParameterizedTest
