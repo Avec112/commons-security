@@ -12,6 +12,25 @@ import java.security.KeyPairGenerator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for {@link RsaCipher}.
+ * <p>
+ * All tests are executed using the modern RSA transformation
+ * {@code "RSA/ECB/OAEPWithSHA-256AndMGF1Padding"} as defined in {@link RsaCipher}.
+ * This ensures that encryption and decryption are verified against the
+ * recommended OAEP-SHA256 padding scheme rather than legacy PKCS#1 v1.5.
+ * <p>
+ * The tests cover:
+ * <ul>
+ *   <li>Successful round-trip encryption and decryption across key sizes</li>
+ *   <li>Failure when decrypting with the wrong private key</li>
+ *   <li>Failure when cipher text is corrupted or tampered with</li>
+ * </ul>
+ * <p>
+ * These tests guarantee that {@link RsaCipher} behaves correctly and securely
+ * under normal and error conditions using the OAEP-SHA256 configuration.
+ */
+
 public class RsaCipherTest extends BouncyCastleProviderInitializer {
 
     @ParameterizedTest

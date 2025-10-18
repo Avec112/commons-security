@@ -12,7 +12,7 @@ Goal: complete modernization, testing, and documentation for internal and educat
   - Replace `new Scheme(new SecureRandom(), 100, 100)` with dynamic `(n, k)` from input.
   - Add validation: ensure at least `k` shares are provided when joining.
 
-- [ ] **Upgrade RSA to OAEP-SHA256**
+- [x] **Upgrade RSA to OAEP-SHA256**
   - Use `"RSA/ECB/OAEPWithSHA-256AndMGF1Padding"`.
   - Update `RsaCipher` and `EncryptBuilder` accordingly.
 

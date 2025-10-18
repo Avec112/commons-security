@@ -26,7 +26,8 @@ import java.security.*;
  * is used to decrypt it.
  */
 public class RsaCipher extends BouncyCastleProviderInitializer {
-    public static final String RSA_CIPHER = "RSA";
+
+    private static final String RSA_TRANSFORMATION = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
 
     /**
      * Encrypts the provided plain text using the given public key.
@@ -134,8 +135,8 @@ public class RsaCipher extends BouncyCastleProviderInitializer {
             throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException {
 
         Validate.nonNull(key, NullPointerException::new);
-        Cipher cipher = Cipher.getInstance(RSA_CIPHER);
-        cipher.init(encryptMode, key);
+        Cipher cipher = Cipher.getInstance(RSA_TRANSFORMATION);
+        cipher.init(encryptMode, key, new SecureRandom());
         return cipher;
     }
 }

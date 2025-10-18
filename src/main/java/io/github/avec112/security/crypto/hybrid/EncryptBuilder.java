@@ -17,8 +17,35 @@ import io.github.avec112.security.crypto.validate.Validate;
 import java.security.PublicKey;
 
 /**
- * The EncryptBuilder class is used to build encryption operations in a fluent way.
- * It provides methods for setting the necessary parameters and building the final result.
+ * The {@code EncryptBuilder} class provides a fluent API for performing hybrid encryption.
+ * <p>
+ * This hybrid scheme combines two cryptographic algorithms:
+ * <ul>
+ *   <li><b>RSA/ECB/OAEPWithSHA-256AndMGF1Padding</b> (RSA-OAEP-SHA256) — used to encrypt
+ *       the randomly generated AES password. This provides secure key encapsulation with
+ *       modern OAEP padding.</li>
+ *   <li><b>AES-GCM</b> or <b>AES-CTR</b> — used to encrypt the actual data payload, providing
+ *       confidentiality and integrity protection.</li>
+ * </ul>
+ * <p>
+ * The result is a {@link HybridEncryptionResult} that contains:
+ * <ul>
+ *   <li>The AES-encrypted cipher text</li>
+ *   <li>The RSA-encrypted AES password</li>
+ *   <li>Metadata describing the chosen AES mode and strength</li>
+ * </ul>
+ * <p>
+ * Example usage:
+ * <pre>{@code
+ * HybridEncryptionResult result = EncryptBuilder.encryptionBuilder()
+ *     .key(publicKey)
+ *     .plainText(new PlainText("Sensitive message"))
+ *     .optional(EncryptionMode.GCM)
+ *     .optional(EncryptionStrength.BIT_256)
+ *     .build();
+ * }</pre>
+ * <p>
+ * This class automatically uses the modern RSA-OAEP-SHA256 transformation internally via {@link RsaCipher}.
  */
 public class EncryptBuilder {
     private EncryptionStrength encryptionStrength = EncryptionStrength.BIT_128;
