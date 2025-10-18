@@ -15,7 +15,7 @@ This document tracks enhancements and refinements for the test suite across all 
 | ✅ | Add password mismatch tests (verify false when password differs) | PasswordEncoderUtilsTest |
 | ☐ | Add signature mismatch tests (wrong key or tampered data) | SignatureUtilsTest |
 | ✅ | Validate Shamir threshold arguments (`threshold > total` or `< 2` should throw) | ShamirTest |
-| ☐ | Add at least one known fixed digest vector (e.g. SHA-256 of “OpenAI”) | DigestUtilsTest |
+| ✅ | Add at least one known fixed digest vector (e.g. SHA-256 of “OpenAI”) | DigestUtilsTest |
 | ☐ | Add known fixed signature vector regression test | SignatureUtilsTest |
 
 ---
@@ -37,9 +37,9 @@ This document tracks enhancements and refinements for the test suite across all 
 
 | ✅ / ☐ | Task | Modules |
 |:--:|------|----------|
-| ☐ | Use `"BC"` provider explicitly in `MessageDigest` / `Signature.getInstance()` | DigestUtilsTest, SignatureUtilsTest |
+| ❌ | Use `"BC"` provider explicitly in `MessageDigest` / `Signature.getInstance()` | DigestUtilsTest, SignatureUtilsTest |
 | ❌ | Add Argon2 encoding performance sanity check (`@Timeout(2)`) | PasswordEncoderUtilsTest |
-| ☐ | Tag large / slow tests (e.g. 100 KB Shamir secret) with `@Tag("slow")` | ShamirTest |
+| ❌ | Tag large / slow tests (e.g. 100 KB Shamir secret) with `@Tag("slow")` | ShamirTest |
 | ☐ | Add share encoding idempotence test (double-encoded ≠ valid) | ShamirTest |
 | ☐ | Add RSASSA-PSS placeholder tests for upcoming modernization | SignatureUtilsTest |
 

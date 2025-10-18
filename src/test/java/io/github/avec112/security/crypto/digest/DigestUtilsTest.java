@@ -1,6 +1,7 @@
 package io.github.avec112.security.crypto.digest;
 
 import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -62,4 +63,22 @@ class DigestUtilsTest extends BouncyCastleProviderInitializer {
         final byte[] expected = MessageDigest.getInstance(digestAlgorithm.getAlgorithm()).digest(data.getBytes(StandardCharsets.UTF_8));
         assertArrayEquals(expected, actual);
     }
+
+    /**
+     * Verifies the SHA-256 digest against a known fixed test vector ("OpenAI").
+     * Ensures the implementation produces the exact expected hash value.
+     */
+    @Test
+    void knownFixedDigestVector_sha256_OpenAI() throws Exception {
+        // Arrange
+        final String data = "OpenAI";
+        final String expectedHex = "8b7d1a3187ab355dc31bc683aaa71ab5ed217940c12196a9cd5f4ca984babfa4";
+
+        // Act
+        final String actualHex = DigestUtils.hexDigest(data);
+
+        // Assert
+        assertEquals(expectedHex, actualHex);
+    }
+
 }
