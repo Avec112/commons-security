@@ -62,7 +62,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * </ul>
  *
  */
-class CryptoUtilsTest {
+class CryptoUtilsFacadeTest {
 
     @Test
     void aesEncryptAndDecrypt() throws Exception {

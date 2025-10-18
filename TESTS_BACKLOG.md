@@ -50,7 +50,7 @@ This document tracks enhancements and refinements for the test suite across all 
 | ✅ / ☐ | Task | Modules |
 |:--:|------|----------|
 | ❌ | Organize tests into feature packages:<br> `encoding/`, `aes/`, `rsa/`, `signature/`, `password/`, `shamir/`, `crypto/` | All |
-| ☐ | Rename `CryptoUtilsTest` → `CryptoUtilsIntegrationTest` | crypto |
+| ✅ | Rename `CryptoUtilsTest` → `CryptoUtilsIntegrationTest` | crypto |
 | ✅ | Use `@TestMethodOrder` **only** when order truly matters (e.g. key generation) | KeyUtilsTest |
 
 ---
