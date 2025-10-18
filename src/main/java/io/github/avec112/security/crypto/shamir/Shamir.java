@@ -93,6 +93,7 @@ public class Shamir {
             final String indexAndShare = new String(EncodingUtils.base64Decode(share.getValue()), StandardCharsets.UTF_8);
             // split out index and encoded share
             Matcher m = SHARE_PATTERN.matcher(indexAndShare);
+            System.out.println("Decoded: " + indexAndShare);
             if(m.matches()) {
                 String index = m.group(1);
                 String s = m.group(2);

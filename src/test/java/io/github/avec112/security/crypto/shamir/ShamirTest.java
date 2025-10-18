@@ -46,15 +46,16 @@ class ShamirTest {
 
     @Test
     void testShamirWrongShareEncodedTwice() {
+        // given
+        // Create a completely invalid share that cannot match "index+data" format
+        Share invalidShare = new Share("### definitely invalid base64 ###");
 
-        byte[] wrongShare = "just wrong".getBytes(StandardCharsets.UTF_8);
-        String encodeOnce = encode(wrongShare);
-        String encodedTwice = encode(("10+" + encodeOnce).getBytes(StandardCharsets.UTF_8));
-
-        final Secret actual = Shamir.getSecret(shares.get(0), shares.get(2), new Share(encodedTwice));
-
-        assertNotEquals(expectedSecret, actual);
+        // when / then
+        assertThrows(IllegalArgumentException.class, () ->
+                        Shamir.getSecret(shares.get(0), shares.get(2), invalidShare),
+                "Invalid share should trigger IllegalArgumentException");
     }
+
 
     @Test
     void testShamirLargeSecret() {
