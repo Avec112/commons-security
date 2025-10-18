@@ -8,18 +8,18 @@ Goal: complete modernization, testing, and documentation for internal and educat
 ## 🔒 Tier 1 – Critical correctness & security fixes
 *(Must be completed before any internal or external use)*
 
-- [x] **Fix Shamir’s Secret hardcoded parameters**
+- ✅ **Fix Shamir’s Secret hardcoded parameters**
   - Replace `new Scheme(new SecureRandom(), 100, 100)` with dynamic `(n, k)` from input.
   - Add validation: ensure at least `k` shares are provided when joining.
 
-- [x] **Upgrade RSA to OAEP-SHA256**
+- ✅ **Upgrade RSA to OAEP-SHA256**
   - Use `"RSA/ECB/OAEPWithSHA-256AndMGF1Padding"`.
   - Update `RsaCipher` and `EncryptBuilder` accordingly.
 
-- [x] **Upgrade signatures to RSASSA-PSS**
+- ✅ **Upgrade signatures to RSASSA-PSS**
   - Use `"SHA256withRSAandMGF1"` (RSASSA-PSS) in `SignatureUtils`.
 
-- [x] **Fix DigestUtils hex encoding bug**
+- ✅ **Fix DigestUtils hex encoding bug**
   - `hexDigest()` currently Base64-encodes output. Replace with `EncodingUtils.hexEncode()`.
 
 ---
@@ -39,7 +39,7 @@ Goal: complete modernization, testing, and documentation for internal and educat
 - [ ] **Reuse single SecureRandom instance**
   - `private static final SecureRandom RNG = SecureRandom.getInstanceStrong();`
 
-- [ ] **Prioritize BouncyCastle provider**
+- ✅ **Prioritize BouncyCastle provider**
   - Use `Security.insertProviderAt(new BouncyCastleProvider(), 1)`.
 
 ---
@@ -92,16 +92,16 @@ Goal: complete modernization, testing, and documentation for internal and educat
 - [ ] **Add library version metadata**
   - e.g. `public static final String VERSION = "1.0.0";`
 
-- [ ] **Rename minor typos**
+- ✅ **Rename minor typos**
   - e.g. `ciperText` → `cipherText`.
 
-- [ ] **Add/extend unit tests**
-  - [ ] AES encrypt/decrypt roundtrip
-  - [ ] RSA OAEP encrypt/decrypt
-  - [ ] Hybrid encrypt/decrypt roundtrip
-  - [ ] Signature sign/verify
-  - [ ] Shamir split/join
-  - [ ] Password encoder encode/match
+- ✅ **Add/extend unit tests**
+  - ✅ AES encrypt/decrypt roundtrip
+  - ✅ RSA OAEP encrypt/decrypt
+  - ✅ Hybrid encrypt/decrypt roundtrip
+  - ✅ Signature sign/verify
+  - ✅ Shamir split/join
+  - ✅ Password encoder encode/match
 
 - [ ] **Tag release as educational/reference**
   - Clarify in README:  
