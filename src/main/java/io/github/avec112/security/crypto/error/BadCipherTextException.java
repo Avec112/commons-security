@@ -4,8 +4,4 @@ public class BadCipherTextException extends Exception {
     public BadCipherTextException(String message) {
         super(message);
     }
-
-    public BadCipherTextException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }
