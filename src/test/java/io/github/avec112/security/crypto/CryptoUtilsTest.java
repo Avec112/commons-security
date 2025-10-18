@@ -1,10 +1,15 @@
 package io.github.avec112.security.crypto;
 
+import io.github.avec112.security.crypto.aes.AesDecryptor;
+import io.github.avec112.security.crypto.aes.AesEncryptor;
+import io.github.avec112.security.crypto.aes.EncryptionMode;
+import io.github.avec112.security.crypto.aes.EncryptionStrength;
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.domain.PlainText;
 import io.github.avec112.security.crypto.rsa.KeySize;
 import io.github.avec112.security.crypto.rsa.KeyUtils;
+import io.github.avec112.security.crypto.rsa.RsaCipher;
 import io.github.avec112.security.crypto.shamir.Secret;
 import io.github.avec112.security.crypto.shamir.Share;
 import io.github.avec112.security.crypto.shamir.Shares;
@@ -65,6 +70,30 @@ class CryptoUtilsTest {
         Assertions.assertInstanceOf(BadPaddingException.class, cause, "Root cause should be BadPaddingException (including AEADBadTagException subclass)");
     }
 
+    @Test
+    void compareAesEncryptorWithCryptoUtils() throws Exception {
+        final PlainText expected = new PlainText("Sensitive comparison test");
+        final Password password = new Password("StrongPassword123!");
+
+        final AesEncryptor encryptor = AesEncryptor
+                .withPasswordAndText(password, expected)
+                .withMode(EncryptionMode.GCM)
+                .withStrength(EncryptionStrength.BIT_256);
+
+        final CipherText directCipher = encryptor.encrypt();
+        final CipherText utilCipher = CryptoUtils.aesEncrypt(expected, password);
+
+        final PlainText decryptedFromDirect = CryptoUtils.aesDecrypt(directCipher, password);
+        final PlainText decryptedFromUtils = AesDecryptor
+                .withPasswordAndCipherText(password, utilCipher)
+                .withMode(EncryptionMode.GCM)
+                .withStrength(EncryptionStrength.BIT_256)
+                .decrypt();
+
+        assertEquals(expected, decryptedFromDirect);
+        assertEquals(expected, decryptedFromUtils);
+    }
+
     @ParameterizedTest
     @EnumSource(KeySize.class)
     void rsaEncryptAndDecrypt(KeySize keySize) throws Exception {
@@ -76,6 +105,31 @@ class CryptoUtilsTest {
         final PlainText plainText = CryptoUtils.rsaDecrypt(cipherText, keyPair.getPrivate());
 
         assertEquals(plainTextExpected, plainText);
+    }
+
+    @Test
+    void compareRsaCipherWithCryptoUtils() throws Exception {
+        final PlainText expected = new PlainText("RSA interoperability test");
+
+        // Generate RSA key pair (whatever your KeyUtils implementation supports)
+        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+
+        // Encrypt directly with RsaCipher
+        final RsaCipher rsaCipher = new RsaCipher();
+        final CipherText directCipher = rsaCipher.encrypt(expected, keyPair.getPublic());
+
+        // Encrypt via CryptoUtils
+        final CipherText utilCipher = CryptoUtils.rsaEncrypt(expected, keyPair.getPublic());
+
+        // Cross-decrypt both
+        final PlainText decryptedFromDirect = CryptoUtils.rsaDecrypt(directCipher, keyPair.getPrivate());
+        final PlainText decryptedFromUtils = rsaCipher.decrypt(utilCipher, keyPair.getPrivate());
+
+        assertEquals(expected, decryptedFromDirect,
+                "CryptoUtils.rsaDecrypt should correctly decrypt ciphertext from RsaCipher.encrypt");
+
+        assertEquals(expected, decryptedFromUtils,
+                "RsaCipher.decrypt should correctly decrypt ciphertext from CryptoUtils.rsaEncrypt");
     }
 
     @Test
