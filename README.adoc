@@ -52,7 +52,8 @@ toc::[]
 * *Shamir's Secret Sharing* is a way to split a secret into shares. The secret can be recreated by putting the minimum required amount of shares back together.
 * *Password Encoder* uses proven algorithms for hashing passwords in a safe and secure way.
 * *Digest* or message digest is the result of hashing and is a way to integrity check our data. A typical use case could be to compare content (hashed) with a stored hash to verify if the data has been altered.
-* Digital *Signature* and *verification* using RSA keypair. User sign data with their _private key_ and others can verify the signature with originators _public key_.
+* Digital *Signature* and *verification* using RSA keypair and modern `RSASSA-PSS` padding. The user signs data with their _private key_ and others verify the signature with the originator’s _public key_.
+
 
 You may use the simple delegate class `CryptoUtils` or you can access classes like `RsaCipher`, `AesCipher`, `Shamir`, etc. directly. The latter might give you more options. Implementation alternatives are shown in examples below.
 
@@ -294,7 +295,17 @@ final boolean isMatching = PasswordEncoderUtils.matches(rawPassword, encodedPass
 == Signature and verification
 A __digital signature__footnote:[https://en.wikipedia.org/wiki/Digital_signature] is a mathematical scheme for verifying the authenticity of digital messages or documents. A valid digital signature, where the prerequisites are satisfied, gives a recipient very strong reason to believe that the message was created by a known sender (authentication), and that the message was not altered in transit.
 
-#More to come#
+Commons Security uses `RSASSA-PSS` (SHA-256 with MGF1)footnote:[https://www.encryptionconsulting.com/overview-of-rsassa-pss] — the modern and recommended signature scheme replacing legacy `SHA256withRSA`.
+
+[source,java]
+.Signing and verifying data
+----
+KeyPair keyPair = KeyUtils.generateKeyPair2048();
+byte[] signature = SignatureUtils.sign("My data", keyPair.getPrivate());
+boolean verified = SignatureUtils.verify(signature, "My data", keyPair.getPublic());
+----
+TIP: RSASSA-PSS provides probabilistic padding, making it more secure than the traditional PKCS#1 v1.5 (`SHA256withRSA`).
+
 
 == Recommended reading
 * Practical Cryptography for Developersfootnote:[https://cryptobook.nakov.com/] by Svetlin Nakov

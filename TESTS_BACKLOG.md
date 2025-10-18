@@ -41,7 +41,7 @@ This document tracks enhancements and refinements for the test suite across all 
 | ❌ | Add Argon2 encoding performance sanity check (`@Timeout(2)`) | PasswordEncoderUtilsTest |
 | ❌ | Tag large / slow tests (e.g. 100 KB Shamir secret) with `@Tag("slow")` | ShamirTest |
 | ✅ | Add share encoding idempotence test (double-encoded ≠ valid) | ShamirTest |
-| ☐ | Add RSASSA-PSS placeholder tests for upcoming modernization | SignatureUtilsTest |
+| ✅ | Add RSASSA-PSS placeholder tests for upcoming modernization | SignatureUtilsTest |
 
 ---
 

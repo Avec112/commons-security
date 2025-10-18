@@ -16,7 +16,7 @@ Goal: complete modernization, testing, and documentation for internal and educat
   - Use `"RSA/ECB/OAEPWithSHA-256AndMGF1Padding"`.
   - Update `RsaCipher` and `EncryptBuilder` accordingly.
 
-- [ ] **Upgrade signatures to RSASSA-PSS**
+- [x] **Upgrade signatures to RSASSA-PSS**
   - Use `"SHA256withRSAandMGF1"` (RSASSA-PSS) in `SignatureUtils`.
 
 - [x] **Fix DigestUtils hex encoding bug**
