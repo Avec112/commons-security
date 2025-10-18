@@ -29,7 +29,7 @@ This document tracks enhancements and refinements for the test suite across all 
 | ✅ | Validate prefix format `{ARGON2}`, `{BCRYPT}`, `{SCRYPT}`, `{PBKDF2}` | PasswordEncoderUtilsTest |
 | ✅ | Verify Argon2 hash does **not** match when checked with BCrypt/Scrypt encoder | PasswordEncoderUtilsTest |
 | ✅ | Compare `CryptoUtils` AES/RSA results with direct `AesEncryptor`/`RsaCipher` results | CryptoUtilsTest |
-| ☐ | Add invalid share handling test — ensure exceptions bubble up | CryptoUtilsTest |
+| ✅ | Add invalid share handling test — ensure exceptions bubble up | CryptoUtilsTest |
 
 ---
 

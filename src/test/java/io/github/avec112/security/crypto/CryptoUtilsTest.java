@@ -24,6 +24,44 @@ import java.security.KeyPair;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Comprehensive test suite for the {@link io.github.avec112.security.crypto.CryptoUtils} facade.
+ *
+ * <p>This class verifies functional correctness, interoperability, and exception handling
+ * across all major cryptographic components in the commons-security library.</p>
+ *
+ * <h2>Test coverage</h2>
+ * <ul>
+ *     <li><b>AES encryption/decryption</b> – Ensures round-trip consistency,
+ *         verifies known ciphertexts, and validates proper exception handling
+ *         on incorrect passwords.</li>
+ *     <li><b>AES interoperability</b> – Confirms {@link CryptoUtils} and
+ *         {@link io.github.avec112.security.crypto.aes.AesEncryptor}/{@link io.github.avec112.security.crypto.aes.AesDecryptor}
+ *         produce compatible results.</li>
+ *     <li><b>RSA encryption/decryption</b> – Tests all {@link io.github.avec112.security.crypto.rsa.KeySize}
+ *         variants and validates bidirectional interoperability between
+ *         {@link CryptoUtils} and {@link io.github.avec112.security.crypto.rsa.RsaCipher}.</li>
+ *     <li><b>Shamir's Secret Sharing</b> – Verifies share generation and
+ *         reconstruction via {@link CryptoUtils#getShamirShares} and {@link CryptoUtils#getShamirSecret}.</li>
+ *     <li><b>Error handling</b> – Confirms that invalid inputs (such as corrupted shares)
+ *         correctly propagate exceptions instead of producing undefined results.</li>
+ * </ul>
+ *
+ * <h2>Purpose</h2>
+ * <p>The goal of this test class is to ensure internal API alignment between
+ * the low-level cryptographic engines (AES, RSA, Shamir) and their unified
+ * entry point {@link CryptoUtils}. It acts as an integration test between
+ * the core components of the library.</p>
+ *
+ * <h2>Execution</h2>
+ * <ul>
+ *     <li>All tests are deterministic except those involving random salt/IVs,
+ *         which are validated through functional equality (not ciphertext equality).</li>
+ *     <li>RSA key generation tests all configured key sizes to ensure compatibility
+ *         with the {@link java.security.KeyPairGenerator} setup and provider configuration.</li>
+ * </ul>
+ *
+ */
 class CryptoUtilsTest {
 
     @Test
@@ -151,4 +189,28 @@ class CryptoUtilsTest {
     void getShamirSecret(Share share1, Share share2, Share share3) {
         Assertions.assertEquals("Shamirs Secret Shared", CryptoUtils.getShamirSecret(share1, share2, share3).getValue());
     }
+
+    @Test
+    void getShamirSecret_withInvalidShare_shouldThrow() {
+        final Secret secretExpected = new Secret("Top secret data");
+        final Shares shares = CryptoUtils.getShamirShares(secretExpected, 5, 3);
+
+        // Use two valid shares and one deliberately corrupted share
+        final Share valid1 = shares.get(0);
+        final Share valid2 = shares.get(1);
+
+        // Construct an invalid share (malformed Base64 or wrong format)
+        final Share invalid = new Share("corrupted_base64_value");
+
+        Exception ex = Assertions.assertThrows(
+                RuntimeException.class, // or your custom type if you have one
+                () -> CryptoUtils.getShamirSecret(valid1, valid2, invalid),
+                "Expected an exception when one of the shares is invalid"
+        );
+
+        // Optional: verify cause chain for debug clarity
+        Assertions.assertNotNull(ex.getMessage());
+        System.out.println("Expected failure message: " + ex.getMessage());
+    }
+
 }
