@@ -24,7 +24,7 @@ class DigestUtilsTest extends BouncyCastleProviderInitializer {
     })
     void digest(String data) throws Exception {
         // Arrange
-        final byte[] expected = MessageDigest.getInstance("SHA-256", "BC").digest(data.getBytes(StandardCharsets.UTF_8));
+        final byte[] expected = MessageDigest.getInstance("SHA-256").digest(data.getBytes(StandardCharsets.UTF_8));
 
         // Act
         final byte[] actual = DigestUtils.digest(data);

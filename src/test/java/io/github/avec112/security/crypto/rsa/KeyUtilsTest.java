@@ -29,7 +29,7 @@ class KeyUtilsTest extends BouncyCastleProviderInitializer {
     @ParameterizedTest
     @EnumSource(KeySize.class)
     void validateRsaKeyPair(KeySize keySize) throws Exception {
-        final KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", "BC");
+        final KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
         generator.initialize(keySize.getKeySize());
         final KeyPair keyPair = generator.generateKeyPair();
 
@@ -49,7 +49,7 @@ class KeyUtilsTest extends BouncyCastleProviderInitializer {
             "4096, 1024"
     })
     void validateRsaKeyPairWrongKeySize(int keySize, int expectedKeySize) throws Exception {
-        final KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", "BC");
+        final KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
         generator.initialize(keySize);
         final KeyPair keyPair = generator.generateKeyPair();
 
@@ -62,12 +62,12 @@ class KeyUtilsTest extends BouncyCastleProviderInitializer {
         assertAll(
                 () -> assertThrows(RsaKeyException.class, () -> validateRsaKeyPair(null, KeySize.BIT_1024)), // missing KeyPair
                 () -> {
-                    final KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", "BC");
+                    final KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
                     generator.initialize(1024);
                     assertThrows(RsaKeyException.class, () -> validateRsaKeyPair(generator.generateKeyPair(), null)); // missing size
                 },
                 () -> {
-                    final KeyPairGenerator generator = KeyPairGenerator.getInstance("DSA", "BC"); // not RSA
+                    final KeyPairGenerator generator = KeyPairGenerator.getInstance("DSA"); // not RSA
                     generator.initialize(1024);
                     assertThrows(RsaKeyException.class, () -> validateRsaKeyPair(generator.generateKeyPair(), KeySize.BIT_1024));
                 }

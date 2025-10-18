@@ -10,8 +10,8 @@ public class KeyUtils extends BouncyCastleProviderInitializer {
     private KeyUtils() {
     }
 
-    public static KeyPair generateRsaKeyPair(KeySize keySize ) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", "BC");
+    public static KeyPair generateRsaKeyPair(KeySize keySize ) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         keyPairGenerator.initialize(new RSAKeyGenParameterSpec(keySize.getKeySize(), RSAKeyGenParameterSpec.F4));
         return keyPairGenerator.generateKeyPair();
     }

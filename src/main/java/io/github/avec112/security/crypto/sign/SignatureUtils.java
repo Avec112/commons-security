@@ -26,7 +26,7 @@ public class SignatureUtils extends BouncyCastleProviderInitializer {
         Objects.requireNonNull(data);
         Objects.requireNonNull(privateKey);
 
-        Signature signature = Signature.getInstance("SHA256withRSA", "BC");
+        Signature signature = Signature.getInstance("SHA256withRSA");
         signature.initSign(privateKey);
         signature.update(data);
         return signature.sign();
@@ -45,7 +45,7 @@ public class SignatureUtils extends BouncyCastleProviderInitializer {
         Objects.requireNonNull(data);
         Objects.requireNonNull(publicKey);
 
-        Signature verifySignature = Signature.getInstance("SHA256withRSA", "BC");
+        Signature verifySignature = Signature.getInstance("SHA256withRSA");
         verifySignature.initVerify(publicKey);
         verifySignature.update(data);
         return verifySignature.verify(signature);

@@ -23,7 +23,7 @@ public class DigestUtils extends BouncyCastleProviderInitializer {
      */
     public static byte[] digest(String data) throws Exception {
         Validate.notBlank(data);
-        MessageDigest digest = MessageDigest.getInstance(DigestAlgorithm.SHA_256.getAlgorithm(), "BC");
+        MessageDigest digest = MessageDigest.getInstance(DigestAlgorithm.SHA_256.getAlgorithm());
 
         return digest.digest(data.getBytes(StandardCharsets.UTF_8));
     }
@@ -39,7 +39,7 @@ public class DigestUtils extends BouncyCastleProviderInitializer {
         Validate.notBlank(data);
         Objects.requireNonNull(digestAlgorithm);
 
-        MessageDigest digest = MessageDigest.getInstance(digestAlgorithm.getAlgorithm(), "BC");
+        MessageDigest digest = MessageDigest.getInstance(digestAlgorithm.getAlgorithm());
         return digest.digest(data.getBytes(StandardCharsets.UTF_8));
     }
 

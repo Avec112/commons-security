@@ -124,7 +124,7 @@ class PasswordEncoderUtilsTest {
     void verifyDelegatingPasswordEncoderResolvesByPrefix(String wrongEncoder, String argon2Hash) {
         assertTrue(
                 PasswordEncoderUtils.matches("Password", argon2Hash, PasswordEncoderType.valueOf(wrongEncoder)),
-                () -> "DelegatingPasswordEncoder should resolve by prefix and still validate regardless of default encoder"
+                "DelegatingPasswordEncoder should resolve by prefix and still validate regardless of default encoder"
         );
     }
 
@@ -138,7 +138,7 @@ class PasswordEncoderUtilsTest {
     void verifyDelegatingPasswordEncoderUsesPrefix(String wrongEncoder, String bcryptHash) {
         assertTrue(
                 PasswordEncoderUtils.matches("Password", bcryptHash, PasswordEncoderType.valueOf(wrongEncoder)),
-                () -> "DelegatingPasswordEncoder should still validate based on {bcrypt} prefix, regardless of default encoder"
+                "DelegatingPasswordEncoder should still validate based on {bcrypt} prefix, regardless of default encoder"
         );
     }
 

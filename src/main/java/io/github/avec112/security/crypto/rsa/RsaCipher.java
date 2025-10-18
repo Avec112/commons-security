@@ -19,7 +19,6 @@ import java.security.*;
  * RsaCipher is a class that provides methods for encrypting and decrypting texts using the RSA encryption algorithm.
  * It extends the BouncyCastleProviderInitializer class, which initializes the BouncyCastle security provider if it is
  * not already initialized.
- *
  * RSA = Rivest-Shamir-Adleman
  * RSA encryption is a type of asymmetric encryption, which uses two different but linked keys. In RSA cryptography,
  * both the public and the private keys can encrypt a message. The opposite key from the one used to encrypt a message
@@ -27,7 +26,6 @@ import java.security.*;
  */
 public class RsaCipher extends BouncyCastleProviderInitializer {
     public static final String RSA_CIPHER = "RSA";
-    public static final String CIPHER_PROVIDER = "BC";
 
     /**
      * Encrypts the provided plain text using the given public key.
@@ -79,7 +77,7 @@ public class RsaCipher extends BouncyCastleProviderInitializer {
      * @param input the input byte array to process
      * @return the output cipher text byte array
      */
-    private byte[] getCipherText(int cipherMode, Key key, byte[] input) throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    private byte[] getCipherText(int cipherMode, Key key, byte[] input) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Validate.nonNull(key, MissingKeyException::new);
         final Cipher cipher = initiateCipher(cipherMode, key);
         return cipher.doFinal(input);
@@ -92,9 +90,9 @@ public class RsaCipher extends BouncyCastleProviderInitializer {
      * @param key the key used for encryption or decryption
      * @return the initialized Cipher object
      */
-    private Cipher initiateCipher(int encryptMode, Key key) throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException {
+    private Cipher initiateCipher(int encryptMode, Key key) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException {
         Validate.nonNull(key, NullPointerException::new);
-        Cipher cipher = Cipher.getInstance(RSA_CIPHER, CIPHER_PROVIDER);
+        Cipher cipher = Cipher.getInstance(RSA_CIPHER);
         cipher.init(encryptMode, key);
         return cipher;
     }

@@ -8,15 +8,15 @@ This document tracks enhancements and refinements for the test suite across all 
 ## 🥇 Top Priority — Correctness & Determinism
 
 | ✅ / ☐ | Task | Modules |
-|:--:|------|----------|
-| ✅ | Use `StandardCharsets.UTF_8` explicitly in all `getBytes()` / `new String(byte[])` calls | EncodingUtilsTest, DigestUtilsTest, SignatureUtilsTest, PasswordEncoderUtilsTest, CryptoUtilsTest |
-| ✅ | Add negative AES test: decrypt with wrong password should not equal plaintext | CryptoUtilsTest |
-| ❌ | Add negative RSA test: decrypt with wrong private key should not equal plaintext | CryptoUtilsTest |
-| ✅ | Add password mismatch tests (verify false when password differs) | PasswordEncoderUtilsTest |
-| ☐ | Add signature mismatch tests (wrong key or tampered data) | SignatureUtilsTest |
-| ✅ | Validate Shamir threshold arguments (`threshold > total` or `< 2` should throw) | ShamirTest |
-| ✅ | Add at least one known fixed digest vector (e.g. SHA-256 of “OpenAI”) | DigestUtilsTest |
-| ☐ | Add known fixed signature vector regression test | SignatureUtilsTest |
+|:-----:|------|----------|
+|   ✅   | Use `StandardCharsets.UTF_8` explicitly in all `getBytes()` / `new String(byte[])` calls | EncodingUtilsTest, DigestUtilsTest, SignatureUtilsTest, PasswordEncoderUtilsTest, CryptoUtilsTest |
+|   ✅   | Add negative AES test: decrypt with wrong password should not equal plaintext | CryptoUtilsTest |
+|   ❌   | Add negative RSA test: decrypt with wrong private key should not equal plaintext | CryptoUtilsTest |
+|   ✅   | Add password mismatch tests (verify false when password differs) | PasswordEncoderUtilsTest |
+|   ✅   | Add signature mismatch tests (wrong key or tampered data) | SignatureUtilsTest |
+|   ✅   | Validate Shamir threshold arguments (`threshold > total` or `< 2` should throw) | ShamirTest |
+|   ✅   | Add at least one known fixed digest vector (e.g. SHA-256 of “OpenAI”) | DigestUtilsTest |
+|       | Add known fixed signature vector regression test | SignatureUtilsTest |
 
 ---
 

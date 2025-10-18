@@ -1,5 +1,6 @@
 package io.github.avec112.security.crypto.aes;
 
+import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
 import io.github.avec112.security.crypto.domain.Password;
 
 import javax.crypto.*;
@@ -18,11 +19,10 @@ import java.util.List;
  * AES = Advanced Encryption Standard.
  * AES uses the same key for encryption also called symmetrical encryption.
  */
-public class AesUtils {
+public class AesUtils extends BouncyCastleProviderInitializer {
+
     private AesUtils() {
     }
-
-
 
     /**
      * Generates a random nonce of the specified number of bytes.

@@ -43,7 +43,7 @@ public class RsaCipherTest extends BouncyCastleProviderInitializer {
     @EnumSource(KeySize.class)
     void encryptAndDecryptWithApplicationGeneratedKeyPair(KeySize keySize) throws Exception {
 
-        KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA", "BC");
+        KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
         keyGenerator.initialize(new RSAKeyGenParameterSpec(keySize.getKeySize(), RSAKeyGenParameterSpec.F4));
         KeyPair keyPair = keyGenerator.generateKeyPair();
 
@@ -118,7 +118,7 @@ public class RsaCipherTest extends BouncyCastleProviderInitializer {
         byte[] privateKeyContent = Files.readAllBytes(Paths.get(ClassLoader.getSystemResource("private-" + keySize.getKeySize() +".der").toURI()));
         byte[] publicKeyContent = Files.readAllBytes(Paths.get(ClassLoader.getSystemResource("public-" + keySize.getKeySize() +".der").toURI()));
 
-        KeyFactory kf = KeyFactory.getInstance("RSA", "BC");
+        KeyFactory kf = KeyFactory.getInstance("RSA");
 
         PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(privateKeyContent);
         PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
