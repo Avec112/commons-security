@@ -16,7 +16,7 @@ This document tracks enhancements and refinements for the test suite across all 
 |   ✅   | Add signature mismatch tests (wrong key or tampered data) | SignatureUtilsTest |
 |   ✅   | Validate Shamir threshold arguments (`threshold > total` or `< 2` should throw) | ShamirTest |
 |   ✅   | Add at least one known fixed digest vector (e.g. SHA-256 of “OpenAI”) | DigestUtilsTest |
-|       | Add known fixed signature vector regression test | SignatureUtilsTest |
+|   ✅   | Add known fixed signature vector regression test | SignatureUtilsTest |
 
 ---
 
@@ -24,7 +24,7 @@ This document tracks enhancements and refinements for the test suite across all 
 
 | ✅ / ☐ | Task | Modules |
 |:--:|------|----------|
-| ☐ | Verify all combinations of threshold shares reconstruct correctly (3-of-5) | ShamirTest |
+| ✅ | Verify all combinations of threshold shares reconstruct correctly (3-of-5) | ShamirTest |
 | ☐ | Verify all generated shares are unique | ShamirTest |
 | ✅ | Validate prefix format `{ARGON2}`, `{BCRYPT}`, `{SCRYPT}`, `{PBKDF2}` | PasswordEncoderUtilsTest |
 | ✅ | Verify Argon2 hash does **not** match when checked with BCrypt/Scrypt encoder | PasswordEncoderUtilsTest |

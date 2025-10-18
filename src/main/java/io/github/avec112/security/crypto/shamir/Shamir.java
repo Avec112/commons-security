@@ -82,7 +82,7 @@ public class Shamir {
     public static Secret getSecret(Share...shares) {
         Validate.notNull(shares, "Shares cannot be null");
         if(shares.length < 2) {
-            throw new IllegalArgumentException("Shares must have at least two shares");
+            throw new IllegalArgumentException("Argument Share must have at least two shares");
         }
 
         // create map
@@ -105,7 +105,10 @@ public class Shamir {
             }
         }
         // schema join
-        Scheme scheme = new Scheme(new SecureRandom(), shares.length, shares.length);
+        int n = providedParts.keySet().stream().max(Integer::compareTo).orElse(shares.length);
+        int k = shares.length;
+        Scheme scheme = new Scheme(new SecureRandom(), n, k);
+
         final byte[] secretAsBytes = scheme.join(providedParts);
 
         // return recovered
