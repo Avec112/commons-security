@@ -16,10 +16,10 @@ public class PasswordEncoderUtils {
     private final static Map<String, PasswordEncoder> encoders = new HashMap<>();
 
     static {
-        encoders.put(PasswordEncoderType.ARGON2.name(), Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8());
-        encoders.put(PasswordEncoderType.BCRYPT.name(), new BCryptPasswordEncoder());
-        encoders.put(PasswordEncoderType.SCRYPT.name(), SCryptPasswordEncoder.defaultsForSpringSecurity_v5_8());
-        encoders.put(PasswordEncoderType.PBKDF2.name(), Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8());
+        encoders.put(PasswordEncoderType.ARGON2.id(), Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8());
+        encoders.put(PasswordEncoderType.BCRYPT.id(), new BCryptPasswordEncoder());
+        encoders.put(PasswordEncoderType.SCRYPT.id(), SCryptPasswordEncoder.defaultsForSpringSecurity_v5_8());
+        encoders.put(PasswordEncoderType.PBKDF2.id(), Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8());
     }
 
     private PasswordEncoderUtils(){}
@@ -38,7 +38,7 @@ public class PasswordEncoderUtils {
         Validate.notBlank(password);
         Objects.requireNonNull(encoderType);
 
-        PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(encoderType.name(), encoders);
+        PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(encoderType.id(), encoders);
         return passwordEncoder.encode(password);
     }
 
@@ -60,7 +60,7 @@ public class PasswordEncoderUtils {
         Validate.notBlank(encodedPassword);
         Objects.requireNonNull(encoderType);
 
-        PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(encoderType.name(), encoders);
+        PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(encoderType.id(), encoders);
         return passwordEncoder.matches(password, encodedPassword);
     }
 
