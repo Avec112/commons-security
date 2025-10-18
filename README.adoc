@@ -82,7 +82,7 @@ share secrets with others. You may encrypt a file with someone's _public key_, s
 their matching _private key_.
 
 TIP: Used to share small files or text with other users. For large content (more than 117 bytes) use AES symmetric
-encryption. The AES secret key can later be shared by using _Public Key Encryption_ like RSA encryption or __Deffie-Hellman__footnote:[https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange].
+encryption. The AES secret key can later be shared by using _Public Key Encryption_ like RSA encryption or __Diffie-Hellman__footnote:[https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange].
 
 === RSA KeyPair
 
@@ -131,7 +131,7 @@ __The Advanced Encryption Standard__ (AES)footnote:[https://en.wikipedia.org/wik
 There’s a single shared key that’s used for encryption and decryption.
 
 TIP: Useful for encryption larger files compared to
-asymmetric encryption. A symmetric key can be shared (distributed) by using _RSA public key encryption_, _Deffie-Hellman_ or even
+asymmetric encryption. A symmetric key can be shared (distributed) by using _RSA public key encryption_, _Diffie-Hellman_ or even
 _Sharmir's Secret Sharing_ if needed.
 
 Modes supported: `GCM`, `CTR` +
@@ -143,7 +143,7 @@ Strength supported: `128`, `192`, `256`
 .AES encryption and decryption using `CryptoUtils` with `GCM`@`256`-bit
 ----
 Password password = new Password("SecretPassword123!");
-CiperText ciperText = CryptoUtils.aesEncrypt("Secret text", password);
+CipherText cipherText = CryptoUtils.aesEncrypt("Secret text", password);
 PlainText plainText = CryptoUtils.aesDecrypt(cipherText, password);
 ----
 
@@ -152,7 +152,7 @@ PlainText plainText = CryptoUtils.aesDecrypt(cipherText, password);
 ----
 Password password = new Password("SecretPassword123!");
 AesCipher aesCipher = new AesCipher(EncryptionMode.CTR, EncryptionStrength.BIT_192);
-CiperText ciperText = aesCipher.encrypt("Secret text", password);
+h cipherText = aesCipher.encrypt("Secret text", password);
 PlainText plainText = aesCipher.decrypt(cipherText, password);
 ----
 
@@ -161,7 +161,7 @@ PlainText plainText = aesCipher.decrypt(cipherText, password);
 __Shamir's Secret Sharing__footnote:[https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing] is used to share a secret in a
 distributed way, most often to secure other encryption keys. These shares are used to reconstruct the original secret.
 
-To unlock the secret via Shamir's secret sharing, a minimum number of shares are needed. This is called the
+To unlock the secret via Shamir's Secret Sharing, a minimum number of shares are needed. This is called the
 threshold, and is used to denote the minimum number of shares needed to unlock the secret.
 
 This implementation is based on the work of __Coda Hale__footnote:[https://github.com/codahale] and his project __Shamir__footnote:[https://github.com/codahale/shamir].
@@ -171,23 +171,36 @@ This implementation is based on the work of __Coda Hale__footnote:[https://githu
 ----
 int totalShares = 5;
 int minShares = 2; // threshold
+Secret secret = new Secret("Secret text");
 
-Shares shares = CryptoUtils.getShamirShares("Secret text", totalShares, minShares);
-Secret secret = CryptoUtils.getShamirSecret(shares); // where shares >= minShares
+// Split the secret into 5 shares
+Shares shares = CryptoUtils.getShamirShares(secret, totalShares, minShares);
+Share bob = shares.get(0);
+Share alice = shares.get(1);
+
+// Reconstruct the secret using any combination of at least `minShares` shares
+Secret reconstructed = CryptoUtils.getShamirSecret(bob, alice);
 ----
+NOTE: The API validates invalid configurations such as `threshold < 2` or `threshold > totalShares`.
 
 [source,java]
 .Alternative
 ----
 int totalShares = 5;
 int minShares = 2; // threshold
+Secret secret = new Secret("Secret text");
 
-Shares shares = Shamir.getShares("Secret text", totalShares, minShares);
-Secret secret = Shamir.getSecret(shares); // where shares >= minShares
+// Split the secret into 5 shares
+Shares shares = Shamir.getShares(secret, totalShares, minShares);
+Share bob = shares.get(0);
+Share alice = shares.get(1);
+
+// Reconstruct the secret using any combination of at least `minShares` shares
+Secret reconstructed = Shamir.getSecret(bob, alice);
 ----
 
 === Shamir example
-A bank have a vault full of money. The bank's policy requires that nobody should be able to open the vault alone.
+A bank has a vault full of money. The bank's policy requires that nobody should be able to open the vault alone.
 Five employees are selected to have access to the vault and there must be at least two (2) employees at any time when opening the vault.
 
 * *Split phase:* Five (5) keys are being distributed. `Bob`, `Alice`, `Eve`, `Tom` and `Lisa` all get one _share_ each using _Shamir's Secret Sharing_ to split the secret into five shares.
@@ -292,6 +305,6 @@ A __digital signature__footnote:[https://en.wikipedia.org/wiki/Digital_signature
 * Replacing MultipleMissingArgumentsError with own class without dependency to opentest4j and only throwing/supporting RuntimeException
 * Support more algorithms for hashing digestsfootnote:hash[] including password hashing
 * Implement support for ECC as option over RSAfootnote:[https://www.globalsign.com/en/blog/elliptic-curve-cryptography]. ECC is faster and stronger than RSA.
-* Look into Deffie-Hellman and/or other better key exchange alternatives
+* Look into Diffie-Hellman and/or other better key exchange alternatives
 * Consider adding support for generating and validation passwords with help of __Passay__footnote:[http://www.passay.org] library
 * Consider making this project a library on __Maven Central__footnote:[https://central.sonatype.org/publish/]
