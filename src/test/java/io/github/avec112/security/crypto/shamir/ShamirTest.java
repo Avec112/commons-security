@@ -4,10 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -128,6 +125,50 @@ class ShamirTest {
     void testFourAndFiveOfFiveAlsoReconstruct() {
         assertEquals(expectedSecret, Shamir.getSecret(shares.get(0), shares.get(1), shares.get(2), shares.get(3)));
         assertEquals(expectedSecret, Shamir.getSecret(shares.get(0), shares.get(1), shares.get(2), shares.get(3), shares.get(4)));
+    }
+
+    @Test
+    void testAllGeneratedSharesAreUnique() {
+        // given
+        int totalShares = 10;
+        int threshold = 3;
+        Secret secret = new Secret("My unique secret");
+
+        // when
+        Shares shares = Shamir.getShares(secret, totalShares, threshold);
+
+        // then
+        // Ensure we have the expected count
+        assertEquals(totalShares, shares.size(), "Number of shares should equal totalShares");
+
+        // Extract all encoded share values into a Set
+        Set<String> uniqueValues = new HashSet<>();
+        for (Share share : shares) {
+            boolean added = uniqueValues.add(share.getValue());
+            assertTrue(added, "Duplicate share detected: " + share.getValue());
+        }
+
+        // Alternatively (cleaner assertion)
+        assertEquals(totalShares, uniqueValues.size(), "All generated shares should be unique");
+    }
+
+    @Test
+    void testShareEncodingIsNotIdempotent() {
+        // given
+        Secret secret = new Secret("Idempotence test secret");
+        Shares shares = Shamir.getShares(secret, 5, 3);
+        Share validShare = shares.get(0);
+
+        // when - encode the share value a second time
+        String doubleEncoded = Base64.getEncoder()
+                .encodeToString(validShare.getValue().getBytes(StandardCharsets.UTF_8));
+        Share invalidShare = new Share(doubleEncoded);
+
+        // then
+        // reconstruction using the double-encoded share must not succeed
+        assertThrows(IllegalArgumentException.class, () ->
+                        Shamir.getSecret(shares.get(1), shares.get(2), invalidShare),
+                "Double-encoded share should not be considered valid");
     }
 
 

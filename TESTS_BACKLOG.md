@@ -25,7 +25,7 @@ This document tracks enhancements and refinements for the test suite across all 
 | ✅ / ☐ | Task | Modules |
 |:--:|------|----------|
 | ✅ | Verify all combinations of threshold shares reconstruct correctly (3-of-5) | ShamirTest |
-| ☐ | Verify all generated shares are unique | ShamirTest |
+| ✅ | Verify all generated shares are unique | ShamirTest |
 | ✅ | Validate prefix format `{ARGON2}`, `{BCRYPT}`, `{SCRYPT}`, `{PBKDF2}` | PasswordEncoderUtilsTest |
 | ✅ | Verify Argon2 hash does **not** match when checked with BCrypt/Scrypt encoder | PasswordEncoderUtilsTest |
 | ☐ | Compare `CryptoUtils` AES/RSA results with direct `AesEncryptor`/`RsaCipher` results | CryptoUtilsTest |
@@ -40,7 +40,7 @@ This document tracks enhancements and refinements for the test suite across all 
 | ❌ | Use `"BC"` provider explicitly in `MessageDigest` / `Signature.getInstance()` | DigestUtilsTest, SignatureUtilsTest |
 | ❌ | Add Argon2 encoding performance sanity check (`@Timeout(2)`) | PasswordEncoderUtilsTest |
 | ❌ | Tag large / slow tests (e.g. 100 KB Shamir secret) with `@Tag("slow")` | ShamirTest |
-| ☐ | Add share encoding idempotence test (double-encoded ≠ valid) | ShamirTest |
+| ✅ | Add share encoding idempotence test (double-encoded ≠ valid) | ShamirTest |
 | ☐ | Add RSASSA-PSS placeholder tests for upcoming modernization | SignatureUtilsTest |
 
 ---
