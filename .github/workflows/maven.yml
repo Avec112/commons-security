@@ -35,4 +35,3 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-jacoco: target/site/jacoco/jacoco.xml
-          base-path: ${{ github.workspace }}
