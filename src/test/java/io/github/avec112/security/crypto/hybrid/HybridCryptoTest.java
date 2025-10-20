@@ -24,7 +24,7 @@ class HybridCryptoTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        keyPair = KeyUtils.generateKeyPair1024();
+        keyPair = KeyUtils.generateRsaKeyPair();
     }
 
     @Test

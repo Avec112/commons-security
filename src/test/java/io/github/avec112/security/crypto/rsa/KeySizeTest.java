@@ -8,7 +8,6 @@ class KeySizeTest {
 
     @Test
     void getKeySize() {
-        assertEquals(1024, KeySize.BIT_1024.getKeySize());
         assertEquals(2048, KeySize.BIT_2048.getKeySize());
         assertEquals(3072, KeySize.BIT_3072.getKeySize());
         assertEquals(4096, KeySize.BIT_4096.getKeySize());

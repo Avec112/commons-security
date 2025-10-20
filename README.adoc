@@ -88,10 +88,10 @@ encryption. The AES secret key can later be shared by using _Public Key Encrypti
 
 === RSA KeyPair
 
-RSA requires a _private key_ and a matching _public key_. Supported key sizes (encryption strength) are `1024`, `2048`, `3072`
+RSA requires a _private key_ and a matching _public key_. Supported key sizes (encryption strength) are `2048`, `3072` (default)
 and `4096`.
 
-IMPORTANT: Key size `3072` or higher is recommended for better security.
+NOTE: A key size of `3072` bit or higher is recommended for strong security. Key size `1024` is not supported.
 
 TIP: Any secret encrypted with a _public key_ can only be decrypted with the associated _private key_.
 

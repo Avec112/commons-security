@@ -14,6 +14,11 @@ import java.security.interfaces.RSAPublicKey;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+/**
+ * Unit tests for the methods in the {@code KeyUtils} class.
+ * This test class validates the generation and integrity of RSA key pairs using different key sizes.
+ * Additionally, it ensures that generated key pairs meet expected criteria.
+ */
 @Execution(ExecutionMode.CONCURRENT)
 class KeyUtilsTest extends BouncyCastleProviderInitializer {
 
@@ -23,6 +28,20 @@ class KeyUtilsTest extends BouncyCastleProviderInitializer {
         final KeyPair keyPair = KeyUtils.generateRsaKeyPair(keySize);
         assertKeyPairNotNull(keyPair);
         assertKeyPairBitLengthEquals(keyPair, keySize.getKeySize());
+    }
+
+    @Test
+    void generateDefaultRsaKeyPair() throws Exception {
+
+        // Arrange
+        KeySize defaultKeySize = KeySize.BIT_3072;
+
+        // Act
+        final KeyPair keyPair = KeyUtils.generateRsaKeyPair();
+
+        // Assert
+        assertKeyPairNotNull(keyPair);
+        assertKeyPairBitLengthEquals(keyPair, defaultKeySize.getKeySize());
     }
 
     @Test
@@ -44,13 +63,6 @@ class KeyUtilsTest extends BouncyCastleProviderInitializer {
         final KeyPair keyPair = KeyUtils.generateKeyPair2048();
         assertKeyPairNotNull(keyPair);
         assertKeyPairBitLengthEquals(keyPair, KeySize.BIT_2048.getKeySize());
-    }
-
-    @Test
-    void generateKeyPair1024() throws Exception {
-        final KeyPair keyPair = KeyUtils.generateKeyPair1024();
-        assertKeyPairNotNull(keyPair);
-        assertKeyPairBitLengthEquals(keyPair, KeySize.BIT_1024.getKeySize());
     }
 
     private static void assertKeyPairNotNull(KeyPair keyPair) {
