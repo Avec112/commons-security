@@ -24,7 +24,7 @@ class DigestUtilsTest extends BouncyCastleProviderInitializer {
     })
     void digest(String data) throws Exception {
         // Arrange
-        final byte[] expected = MessageDigest.getInstance("SHA-256").digest(data.getBytes(StandardCharsets.UTF_8));
+        final byte[] expected = MessageDigest.getInstance("SHA-512/256").digest(data.getBytes(StandardCharsets.UTF_8));
 
         // Act
         final byte[] actual = DigestUtils.digest(data);
@@ -35,9 +35,9 @@ class DigestUtilsTest extends BouncyCastleProviderInitializer {
 
     @ParameterizedTest
     @CsvSource({
-            "Hello!, M00Bb3Vc1txYxTqG4YOIL47BT1L7BTRYh8il7dQsh7c=",
-            "æøåö, UPidDtYmr13NOL12KJr2RLpkBZoLbHEjqiEVkFJ86bw=",
-            "1234!#&, RmLkQ2aE6W0lH9ByrQFb1n0fzyBYuTPyZReDqwr2oaE="
+            "Hello!, wntqA71ep8/rMKDKhsgUT68U/8Kbfm3v6Um8seOypUo=",
+            "æøåö, Y8MszG0XyMjkj+0SNqKyZ/R9sSOYjyFbRsOkVT2WonY=",
+            "1234!#&, 7tFYVk6O4ihJ4xSoT7b1owFEy+9ObozhGQKrIWI1EKo="
     })
     void base64Digest(String data, String expected) throws Exception {
         final String actual = DigestUtils.base64Digest(data);
@@ -46,9 +46,9 @@ class DigestUtilsTest extends BouncyCastleProviderInitializer {
 
     @ParameterizedTest
     @CsvSource({
-            "Hello!, 334d016f755cd6dc58c53a86e183882f8ec14f52fb05345887c8a5edd42c87b7",
-            "æøåö, 50f89d0ed626af5dcd38bd76289af644ba64059a0b6c7123aa211590527ce9bc",
-            "1234!#&, 4662e4436684e96d251fd072ad015bd67d1fcf2058b933f2651783ab0af6a1a1"
+            "Hello!, c27b6a03bd5ea7cfeb30a0ca86c8144faf14ffc29b7e6defe949bcb1e3b2a54a",
+            "æøåö, 63c32ccc6d17c8c8e48fed1236a2b267f47db123988f215b46c3a4553d96a276",
+            "1234!#&, eed158564e8ee22849e314a84fb6f5a30144cbef4e6e8ce11902ab21623510aa"
     })
     void hexDigest(String data, String expected) throws Exception {
         final String actual = DigestUtils.hexDigest(data);
@@ -72,7 +72,7 @@ class DigestUtilsTest extends BouncyCastleProviderInitializer {
     void knownFixedDigestVector_sha256_OpenAI() throws Exception {
         // Arrange
         final String data = "OpenAI";
-        final String expectedHex = "8b7d1a3187ab355dc31bc683aaa71ab5ed217940c12196a9cd5f4ca984babfa4";
+        final String expectedHex = "88d4629ddbe9e0f14fe203e5a1cfa06a00793c20ea32a734d406452d29b6f838";
 
         // Act
         final String actualHex = DigestUtils.hexDigest(data);

@@ -209,7 +209,10 @@ Five employees are selected to have access to the vault and there must be at lea
 * *Join phase:* It's time to open the safe. The requirement is two (2) shares to open the vault. `Bob` and `Alice` bring their shares. By using _Shamir's Secret Sharing_ the shares from both will be joined and the secret recreated.
 
 == Digest (hashing)
-_Digest_ or _message digest_ is the result of __hashing__footnote:[https://en.wikipedia.org/wiki/Hash_function] data or content. The hashing is a one-way compression function to convert inputs of different lengths into a fixed-length output (hash value). `SHA-2`@`SHA-256` is the default used by this library. Up to `SHA-2`@`SHA-512` is possible with `JDK 8`. Stronger and newer hashing like `SHA3` is not supported out of the box with `JDK 8`. That would require `JDK 9` or higher. However  __BouncyCastle__footnote:bc[https://www.bouncycastle.org/java.html] has been added as main provider and `SHA-3` is therefore available.
+_Digest_ or _message digest_ is the result of __hashing__footnote:[https://en.wikipedia.org/wiki/Hash_function] data or content. The hashing is a one-way compression function to convert inputs of different lengths into a fixed-length output (hash value). The default used by this library is `SHA-2`@`SHA-512/256`. It provides 256-bit output with the internal 64-bit strength of SHA-512, combining high security with good performance on modern CPUs. Up to `SHA-2`@`SHA-512` is possible with `JDK 8`. Stronger and newer hashing like `SHA3` is not supported out of the box with `JDK 8`. That would require `JDK 9` or higher. However  __BouncyCastle__footnote:bc[https://www.bouncycastle.org/java.html] has been added as main provider and `SHA-3` is therefore available.
+
+NOTE: SHA-512/256 offers the same collision resistance as SHA-512,
+but produces a shorter digest (256 bits) and is faster on 64-bit systems. Other algorithms such as SHA3-256 and SHA3-512 are also supported when using the BouncyCastle provider.
 
 IMPORTANT: Do not use Message Digest for password storage. For that you should use KDFfootnote:kdf[Key Derivation Functions. https://cryptobook.nakov.com/mac-and-key-derivation/kdf-deriving-key-from-password] algorithms like `ARGON2`, `BCRYPT`, `SCRYPT` or `PBKDF2`. Se _Password Encoder_ below.
 

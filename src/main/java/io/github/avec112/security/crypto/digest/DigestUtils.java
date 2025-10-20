@@ -16,14 +16,14 @@ public class DigestUtils extends BouncyCastleProviderInitializer {
     private DigestUtils() {}
 
     /**
-     * Create SHA-256 digest
+     * Create SHA-512/256 digest
      * @param data content to digest
-     * @return SHA-256 digest as byte array
+     * @return SHA-512/256 digest as byte array
      * @throws Exception if an error happens
      */
     public static byte[] digest(String data) throws Exception {
         Validate.notBlank(data);
-        MessageDigest digest = MessageDigest.getInstance(DigestAlgorithm.SHA_256.getAlgorithm());
+        MessageDigest digest = MessageDigest.getInstance(DigestAlgorithm.SHA_512_256.getAlgorithm());
 
         return digest.digest(data.getBytes(StandardCharsets.UTF_8));
     }
