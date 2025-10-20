@@ -73,8 +73,8 @@ class HybridCryptoTest {
         HybridEncryptionResult hybridEncryptionResult = EncryptBuilder.encryptionBuilder()
                 .key(keyPair.getPublic())
                 .plainText(plainText)
-                .optional(encryptionMode)
-                .optional(encryptionStrength)
+                .withMode(encryptionMode)
+                .withStrength(encryptionStrength)
                 .build();
 
         // Decrypt
@@ -82,8 +82,8 @@ class HybridCryptoTest {
                 .key(keyPair.getPrivate())
                 .encryptedSymmetricalKey(hybridEncryptionResult.getEncryptedSymmetricalKey())
                 .cipherText(hybridEncryptionResult.getCipherText())
-                .optional(encryptionMode)
-                .optional(encryptionStrength)
+                .withMode(encryptionMode)
+                .withStrength(encryptionStrength)
                 .build();
 
         assertAll(

@@ -32,7 +32,7 @@ Goal: complete modernization, testing, and documentation for internal and educat
 
 - ✅ **Default AES strength to 256-bit**
 
-- [ ] **Rename builder `optional()` methods**
+- ✅ **Rename builder `optional()` methods**
   - `.optional(EncryptionMode)` → `.withMode(EncryptionMode)`
   - `.optional(EncryptionStrength)` → `.withStrength(EncryptionStrength)`
 

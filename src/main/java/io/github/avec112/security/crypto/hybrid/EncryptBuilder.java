@@ -119,7 +119,7 @@ public class EncryptBuilder {
      * @param encryptionMode The encryption mode to set. Valid values are EncryptionMode.GCM or EncryptionMode.CTR.
      * @return The EncryptBuilder object with the encryption mode set.
      */
-    public EncryptBuilder optional(EncryptionMode encryptionMode) {
+    public EncryptBuilder withMode(EncryptionMode encryptionMode) {
         Validate.nonNull(encryptionMode, "encryptionMode");
         this.encryptionMode = encryptionMode;
         return this;
@@ -132,7 +132,7 @@ public class EncryptBuilder {
      * @return The EncryptBuilder object with the encryption strength set.
      * @throws NullPointerException if encryptionStrength is null
      */
-    public EncryptBuilder optional(EncryptionStrength encryptionStrength) {
+    public EncryptBuilder withStrength(EncryptionStrength encryptionStrength) {
         Validate.nonNull(encryptionStrength, "encryptionStrength");
         this.encryptionStrength = encryptionStrength;
         return this;

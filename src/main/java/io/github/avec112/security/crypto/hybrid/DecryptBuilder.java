@@ -76,13 +76,13 @@ public class DecryptBuilder {
                 .decrypt();
     }
 
-    public DecryptBuilder optional(EncryptionMode encryptionMode) {
+    public DecryptBuilder withMode(EncryptionMode encryptionMode) {
         Validate.nonNull(encryptionMode, "encryptionMode");
         this.encryptionMode = encryptionMode;
         return this;
     }
 
-    public DecryptBuilder optional(EncryptionStrength encryptionStrength) {
+    public DecryptBuilder withStrength(EncryptionStrength encryptionStrength) {
         Validate.nonNull(encryptionStrength, "encryptionStrength");
         this.encryptionStrength = encryptionStrength;
         return this;
