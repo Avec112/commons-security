@@ -4,6 +4,7 @@ import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.PlainText;
 import io.github.avec112.security.crypto.error.*;
+import io.github.avec112.security.crypto.random.RandomUtils;
 import io.github.avec112.security.crypto.validate.Validate;
 import io.github.avec112.security.encoding.EncodingUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -136,7 +137,7 @@ public class RsaCipher extends BouncyCastleProviderInitializer {
 
         Validate.nonNull(key, NullPointerException::new);
         Cipher cipher = Cipher.getInstance(RSA_TRANSFORMATION);
-        cipher.init(encryptMode, key, new SecureRandom());
+        cipher.init(encryptMode, key, RandomUtils.secureRandom());
         return cipher;
     }
 }

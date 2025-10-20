@@ -26,17 +26,17 @@ Goal: complete modernization, testing, and documentation for internal and educat
 
 ## ⚙️ Tier 2 – Security robustness & modernization
 
-- [ ] **Use binary entropy for AES keys**
+- ✅ **Use binary entropy for AES keys**
   - Replace `RandomUtils.randomString(20)` with secure random bytes.
   - Encode to Base64 and size by `EncryptionStrength`.
 
-- [ ] **Default AES strength to 256-bit**
+- ✅ **Default AES strength to 256-bit**
 
 - [ ] **Rename builder `optional()` methods**
   - `.optional(EncryptionMode)` → `.withMode(EncryptionMode)`
   - `.optional(EncryptionStrength)` → `.withStrength(EncryptionStrength)`
 
-- [ ] **Reuse single SecureRandom instance**
+- ✅ **Reuse single SecureRandom instance**
   - `private static final SecureRandom RNG = SecureRandom.getInstanceStrong();`
 
 - ✅ **Prioritize BouncyCastle provider**

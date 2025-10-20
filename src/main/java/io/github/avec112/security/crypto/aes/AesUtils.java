@@ -2,6 +2,8 @@ package io.github.avec112.security.crypto.aes;
 
 import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
 import io.github.avec112.security.crypto.domain.Password;
+import io.github.avec112.security.crypto.random.RandomUtils;
+import io.github.avec112.security.encoding.EncodingUtils;
 
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
@@ -9,8 +11,6 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-import java.util.ArrayList;
-import java.util.List;
 
 
 
@@ -32,7 +32,7 @@ public class AesUtils extends BouncyCastleProviderInitializer {
      */
     public static byte[] getRandomNonce(int numBytes) {
         byte [] nonce = new byte[numBytes];
-        new SecureRandom().nextBytes(nonce);
+        RandomUtils.secureRandom().nextBytes(nonce);
         return nonce;
     }
 
@@ -65,45 +65,6 @@ public class AesUtils extends BouncyCastleProviderInitializer {
         return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
     }
 
-
-    /**
-     * Converts a byte array to a hexadecimal string representation.
-     *
-     * @param bytes The byte array to be converted.
-     * @return The hexadecimal string representation of the byte array.
-     */
-    public static String hex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for(byte b : bytes) {
-            sb.append(String.format("%02x", b));
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Converts a byte array to a hexadecimal string representation with a specified block size.
-     * Each block of the specified size will be separated by a space.
-     *
-     * @param bytes The byte array to be converted.
-     * @param blockSize The size of each block in terms of bytes.
-     * @return The hexadecimal string representation of the byte array with block size separation.
-     */
-    @SuppressWarnings("unused")
-    public static String hexWithBlockSize(byte [] bytes, int blockSize) {
-        String hex = hex(bytes);
-
-        // one hex = 2 chars
-        blockSize = blockSize * 2;
-
-        List<String> result = new ArrayList<>();
-        int index = 0;
-        while(index < hex.length()) {
-            result.add(hex.substring(index, Math.min(index + blockSize, hex.length())));
-            index += blockSize;
-        }
-        return result.toString();
-    }
-
     /**
      * Creates a Cipher object for encryption or decryption using the specified parameters.
      *
@@ -121,6 +82,18 @@ public class AesUtils extends BouncyCastleProviderInitializer {
         Cipher cipher = Cipher.getInstance(encryptionMode.getAlgorithm());
         cipher.init(mode, key, encryptionMode.getAlgorithmParameterSpec(iv));
         return cipher;
+    }
+
+    /**
+     * Generates a Base64-encoded random key sized according to the given AES encryption strength.
+     *
+     * @param strength the desired AES key strength (128, 192, or 256 bits)
+     * @return Base64-encoded random key
+     */
+    public static String generateBase64Key(EncryptionStrength strength) {
+        int keyBytes = strength.getLength() / 8;
+        byte[] key = RandomUtils.randomBytes(keyBytes);
+        return EncodingUtils.base64Encode(key);
     }
 
 }

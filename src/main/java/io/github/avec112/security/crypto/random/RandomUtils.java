@@ -3,12 +3,27 @@ package io.github.avec112.security.crypto.random;
 
 import io.github.avec112.security.encoding.EncodingUtils;
 
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 /**
  * The RandomUtils class provides utility methods for generating random values.
  */
 public class RandomUtils {
+
+    private static final SecureRandom SECURE_RANDOM;
+
+    static {
+        SecureRandom tmp;
+        try {
+            // Prefer the strongest available PRNG (may block briefly on some systems)
+            tmp = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            // Fallback: standard non-blocking SecureRandom
+            tmp = new SecureRandom();
+        }
+        SECURE_RANDOM = tmp;
+    }
 
     private RandomUtils() {
     }
@@ -20,7 +35,7 @@ public class RandomUtils {
      */
     public static byte[] randomBytes(int size) {
         byte[] values = new byte[size];
-        new SecureRandom().nextBytes(values);
+        SECURE_RANDOM.nextBytes(values);
         return values;
     }
 
@@ -31,6 +46,15 @@ public class RandomUtils {
      */
     public static String randomString(int size) {
         return EncodingUtils.hexEncode(randomBytes(size));
+    }
+
+    /**
+     * Provides access to the singleton instance of SecureRandom used within the utility class.
+     *
+     * @return the shared SecureRandom instance for generating secure random values
+     */
+    public static SecureRandom secureRandom() {
+        return SECURE_RANDOM;
     }
 
 }

@@ -1,6 +1,7 @@
 package io.github.avec112.security.crypto.shamir;
 
 import com.codahale.shamir.Scheme;
+import io.github.avec112.security.crypto.random.RandomUtils;
 import io.github.avec112.security.encoding.EncodingUtils;
 import org.apache.commons.lang3.Validate;
 
@@ -107,7 +108,7 @@ public class Shamir {
         // schema join
         int n = providedParts.keySet().stream().max(Integer::compareTo).orElse(shares.length);
         int k = shares.length;
-        Scheme scheme = new Scheme(new SecureRandom(), n, k);
+        Scheme scheme = new Scheme(RandomUtils.secureRandom(), n, k);
 
         final byte[] secretAsBytes = scheme.join(providedParts);
 
@@ -116,7 +117,7 @@ public class Shamir {
     }
 
     private static Map<Integer, byte[]> getShareMap(String s, int n, int k) {
-        final Scheme scheme = new Scheme(new SecureRandom(), n, k);
+        final Scheme scheme = new Scheme(RandomUtils.secureRandom(), n, k);
         final byte[] secret = s.getBytes(StandardCharsets.UTF_8);
         return scheme.split(secret);
     }
