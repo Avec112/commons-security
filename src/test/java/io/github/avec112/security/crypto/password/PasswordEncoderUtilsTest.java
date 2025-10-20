@@ -5,8 +5,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Execution(ExecutionMode.CONCURRENT)
 class PasswordEncoderUtilsTest {
@@ -140,6 +139,28 @@ class PasswordEncoderUtilsTest {
                 PasswordEncoderUtils.matches("Password", bcryptHash, PasswordEncoderType.valueOf(wrongEncoder)),
                 "DelegatingPasswordEncoder should still validate based on {bcrypt} prefix, regardless of default encoder"
         );
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "'{argon2}$argon2id$v=19$m=4096,t=3,p=1$fwWOqRq6rOaSHGzCEA1p7A$lpxeUs+74bvj+kZdRO4Mna/jerRp0NueMZMZGRc+k1c', argon2",
+            "{bcrypt}$2a$10$1GP39z1I.C.JHX9Qn7AepezSCYYQ53eINFFlcfnKpkHDwNemmGLyK, bcrypt",
+            "{scrypt}$e0801$3WQIalromBXCD0qL+q1j1R0pWmyHMkO0NteGGDc+TEBaIG25JMUNtmLtH/aNcMO+xbD21pv1hrM1zX29MwJ2oQ==$vmfA1aDb6vFKVH7JfqYOjM9iVMa2STgqJqFgHbcyNoA=, scrypt",
+            "{pbkdf2}3982ab2f19a3f8de63a110246301348fffc94c8fe96955771cdfd14ad41e3461946af959f92699bf31efc7cc4065592f, pbkdf2"
+    })
+    void getPasswordEncoderType(String encodedPassword, String expected) {
+        assertEquals(expected, PasswordEncoderUtils.getPasswordEncoderType(encodedPassword).id());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "'{argon2}$argon2id$v=19$m=4096,t=3,p=1$fwWOqRq6rOaSHGzCEA1p7A$lpxeUs+74bvj+kZdRO4Mna/jerRp0NueMZMZGRc+k1c', argon2",
+            "{bcrypt}$2a$10$1GP39z1I.C.JHX9Qn7AepezSCYYQ53eINFFlcfnKpkHDwNemmGLyK, bcrypt",
+            "{scrypt}$e0801$3WQIalromBXCD0qL+q1j1R0pWmyHMkO0NteGGDc+TEBaIG25JMUNtmLtH/aNcMO+xbD21pv1hrM1zX29MwJ2oQ==$vmfA1aDb6vFKVH7JfqYOjM9iVMa2STgqJqFgHbcyNoA=, scrypt",
+            "{pbkdf2}3982ab2f19a3f8de63a110246301348fffc94c8fe96955771cdfd14ad41e3461946af959f92699bf31efc7cc4065592f, pbkdf2"
+    })
+    void getPasswordEncoderTypeAsString(String encodedPassword, String expected) {
+        assertEquals(expected, PasswordEncoderUtils.getPasswordEncoderTypeAsString(encodedPassword));
     }
 
 }
