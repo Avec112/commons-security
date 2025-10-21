@@ -4,6 +4,7 @@
 :toc: macro
 :toclevels: 2
 :experimental:
+:project-version: 1.0-SNAPSHOT
 //ifdef::env-idea[:status:]
 //:status:
 //:toc: preamble
@@ -23,6 +24,8 @@ endif::[]
 ifdef::env-idea[]
 :title-page:
 :author: Avec112
+:revnumber: {project-version}
+:revdate: {docdate}
 //:toc-title: toc title
 :toc:
 :!status:
@@ -31,6 +34,7 @@ endif::[]
 = Commons Security: Encryption done easy
 
 ifdef::status[]
+image:https://img.shields.io/badge/version-{project-version}-blue[Version]
 image:https://img.shields.io/github/actions/workflow/status/Avec112/commons-security/maven.yml?logo=github[Build status]
 image:https://img.shields.io/github/actions/workflow/status/Avec112/commons-security/codeql.yml?label=CodeQL&logo=github[CodeQL]
 image:https://coveralls.io/repos/github/Avec112/commons-security/badge.svg?branch=master[Coverage, link=https://coveralls.io/github/Avec112/commons-security?branch=master]
@@ -388,6 +392,27 @@ boolean verified = SignatureUtils.verify(signature, "My data", keyPair.getPublic
 
 TIP: RSASSA-PSS provides probabilistic padding, making it more secure than the traditional PKCS#1 v1.5 (`SHA256withRSA`).
 
+== Documentation
+
+=== PDF Version
+
+A PDF version of this documentation is available:
+
+* **Latest version:** https://avec112.github.io/commons-security/README.pdf[Download PDF from GitHub Pages]
+* **Release versions:** Available as assets on the https://github.com/Avec112/commons-security/releases[Releases page]
+
+=== Generate PDF locally
+
+To generate a PDF version locally, you can use your IDE's AsciiDoc plugin or install `asciidoctor-pdf`:
+
+[source,bash]
+----
+# Install asciidoctor-pdf
+gem install asciidoctor-pdf
+
+# Generate PDF
+asciidoctor-pdf README.adoc -o README.pdf
+----
 
 == Recommended reading
 * Practical Cryptography for Developersfootnote:[https://cryptobook.nakov.com/] by Svetlin Nakov
