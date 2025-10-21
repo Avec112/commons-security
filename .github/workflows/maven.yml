@@ -49,9 +49,6 @@ jobs:
       - name: Generate PDF
         run: |
           asciidoctor-pdf \
-            -a pdf-themesdir=. \
-            -a pdf-theme=default \
-            -a pdf-fontsdir=GEM_FONTS_DIR \
             -a allow-uri-read \
             README.adoc \
             -o README.pdf
