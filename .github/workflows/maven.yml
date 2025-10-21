@@ -34,7 +34,8 @@ jobs:
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-jacoco: target/site/jacoco/jacoco.xml
+          file: target/site/jacoco/jacoco.xml
+          format: jacoco
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1

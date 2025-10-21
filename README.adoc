@@ -21,11 +21,14 @@ ifdef::env-github,env-browser[]
 :warning-caption: :warning:
 endif::[]
 //ifdef::env-idea[:toc: right]
-ifdef::env-idea[]
-:title-page:
+
+// Document metadata (used by PDF generation)
 :author: Avec112
 :revnumber: {project-version}
 :revdate: {docdate}
+
+ifdef::env-idea[]
+:title-page:
 //:toc-title: toc title
 :toc:
 :!status:
