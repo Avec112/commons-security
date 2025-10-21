@@ -44,7 +44,7 @@ toc::[]
 <<<
 
 == Overview
-*Commons Security* is a Java library with several encryption features for `Java 8` or higher build on top of `JCA/JCE` with `BouncyCastle` as provider. The library hides the implementation behind a simple and easy to use API. Typically a simplified API requires that some decisions has been made already, like which algorithm to use, encryption strength, etc. However do not worry, look behind the simplified API and you will find more configuration options.
+*Commons Security* is a Java library with several encryption features for `Java 11` and higher build on top of `JCA/JCE` with `BouncyCastle` as provider. The library hides the implementation behind a simple and easy to use API. Typically a simplified API requires that some decisions has been made already, like which algorithm to use, encryption strength, etc. However do not worry, look behind the simplified API and you will find more configuration options.
 
 .Features
 

@@ -11,7 +11,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.release>8</maven.compiler.release>
+        <maven.compiler.release>11</maven.compiler.release>
         <bouncycastle.version>1.82</bouncycastle.version>
         <commons-codec.version>1.19.0</commons-codec.version>
         <commons-lang.version>3.19.0</commons-lang.version>
@@ -102,7 +102,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.1</version>
                 <configuration>
-                    <!-- Use release 8 to ensure Java 8 API compatibility -->
+                    <!-- Use release 11 to ensure Java 11 API compatibility -->
                     <release>${maven.compiler.release}</release>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
