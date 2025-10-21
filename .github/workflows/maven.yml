@@ -61,14 +61,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Prepare PDF for deployment
+        if: github.ref == 'refs/heads/master'
+        run: |
+          mkdir -p deploy
+          cp README.pdf deploy/
+
       - name: Deploy PDF to GitHub Pages
         if: github.ref == 'refs/heads/master'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
-          destination_dir: .
-          keep_files: true
+          publish_dir: deploy
           enable_jekyll: false
-          include: |
-            README.pdf
