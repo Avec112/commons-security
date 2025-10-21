@@ -225,6 +225,40 @@ PlainText decrypted = DecryptBuilder.decryptionBuilder()
 
 NOTE: The `HybridEncryptionResult` contains the AES-encrypted data, the RSA-encrypted AES key, and metadata about the encryption mode and strength used.
 
+=== JSON Serialization
+
+`HybridEncryptionResult` supports JSON serialization for easy storage and transmission:
+
+[source,java]
+.Serialize to JSON and deserialize back
+----
+// Encrypt
+HybridEncryptionResult result = CryptoUtils.hybridEncrypt(plainText, keyPair.getPublic());
+
+// Serialize to JSON (for storage or transmission)
+String json = result.toJson();
+
+// Later... deserialize from JSON
+HybridEncryptionResult restored = HybridEncryptionResult.fromJson(json);
+
+// Decrypt using restored result
+PlainText decrypted = CryptoUtils.hybridDecrypt(restored, keyPair.getPrivate());
+----
+
+The JSON format includes a version field for future compatibility:
+[source,json]
+----
+{
+  "version": "1.0",
+  "cipherText": {
+    "value": "encrypted-data-here"
+  },
+  "encryptedSymmetricalKey": "rsa-encrypted-key-here",
+  "aesEncryptionMode": "GCM",
+  "aesEncryptionStrength": "BIT_256"
+}
+----
+
 == Shamir's Secret Sharing
 
 __Shamir's Secret Sharing__footnote:[https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing] is used to share a secret in a

@@ -126,4 +126,91 @@ class HybridCryptoTest {
         );
     }
 
+    // ========== JSON Serialization Tests ==========
+
+    @Test
+    void toJson_shouldSerializeToValidJson() throws Exception {
+        final PlainText plainText = new PlainText("Test data for JSON");
+
+        HybridEncryptionResult result = EncryptBuilder.encryptionBuilder()
+                .key(keyPair.getPublic())
+                .plainText(plainText)
+                .build();
+
+        String json = result.toJson();
+
+        assertThat(json).isNotNull()
+                .contains("\"version\"")
+                .contains("\"cipherText\"")
+                .contains("\"encryptedSymmetricalKey\"")
+                .contains("\"aesEncryptionMode\"")
+                .contains("\"aesEncryptionStrength\"");
+    }
+
+    @Test
+    void fromJson_shouldDeserializeCorrectly() throws Exception {
+        final PlainText plainText = new PlainText("Test data for JSON roundtrip");
+
+        // Encrypt
+        HybridEncryptionResult original = EncryptBuilder.encryptionBuilder()
+                .key(keyPair.getPublic())
+                .plainText(plainText)
+                .withMode(EncryptionMode.GCM)
+                .withStrength(EncryptionStrength.BIT_256)
+                .build();
+
+        // Serialize to JSON
+        String json = original.toJson();
+
+        // Deserialize from JSON
+        HybridEncryptionResult deserialized = HybridEncryptionResult.fromJson(json);
+
+        assertAll(
+                () -> assertThat(deserialized.getVersion()).isEqualTo("1.0"),
+                () -> assertThat(deserialized.getCipherText()).isEqualTo(original.getCipherText()),
+                () -> assertThat(deserialized.getEncryptedSymmetricalKey()).isEqualTo(original.getEncryptedSymmetricalKey()),
+                () -> assertThat(deserialized.getAesEncryptionMode()).isEqualTo(EncryptionMode.GCM),
+                () -> assertThat(deserialized.getAesEncryptionStrength()).isEqualTo(EncryptionStrength.BIT_256)
+        );
+    }
+
+    @Test
+    void jsonRoundtrip_shouldPreserveDecryptionCapability() throws Exception {
+        final PlainText expected = new PlainText("Test data for full roundtrip");
+
+        // Encrypt
+        HybridEncryptionResult encrypted = EncryptBuilder.encryptionBuilder()
+                .key(keyPair.getPublic())
+                .plainText(expected)
+                .build();
+
+        // Serialize to JSON and back
+        String json = encrypted.toJson();
+        HybridEncryptionResult deserialized = HybridEncryptionResult.fromJson(json);
+
+        // Decrypt using deserialized result
+        PlainText decrypted = DecryptBuilder.decryptionBuilder()
+                .key(keyPair.getPrivate())
+                .cipherText(deserialized.getCipherText())
+                .encryptedSymmetricalKey(deserialized.getEncryptedSymmetricalKey())
+                .withMode(deserialized.getAesEncryptionMode())
+                .withStrength(deserialized.getAesEncryptionStrength())
+                .build();
+
+        assertThat(decrypted).isEqualTo(expected);
+    }
+
+    @Test
+    void toJson_shouldIncludeVersionField() throws Exception {
+        final PlainText plainText = new PlainText("Version test");
+
+        HybridEncryptionResult result = EncryptBuilder.encryptionBuilder()
+                .key(keyPair.getPublic())
+                .plainText(plainText)
+                .build();
+
+        assertThat(result.getVersion()).isEqualTo("1.0");
+        assertThat(result.toJson()).contains("\"version\": \"1.0\"");
+    }
+
 }
