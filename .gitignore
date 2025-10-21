@@ -33,3 +33,4 @@ build/
 ### Other ###
 README.pdf
 *.pdf
+/docs/
