@@ -50,13 +50,23 @@ toc::[]
 
 * *Asymmetric encryption* and decryption with _public key_ and _private key_. `RSA` is supported.
 * *Symmetric encryption* and decryption with one (same) key. `AES/CTR` and `AES/GCM` is supported.
+* *Hybrid encryption* combines RSA and AES for secure and efficient encryption of large data. RSA encrypts the AES key, while AES encrypts the actual data.
 * *Shamir's Secret Sharing* is a way to split a secret into shares. The secret can be recreated by putting the minimum required amount of shares back together.
 * *Password Encoder* uses proven algorithms for hashing passwords in a safe and secure way.
 * *Digest* or message digest is the result of hashing and is a way to integrity check our data. A typical use case could be to compare content (hashed) with a stored hash to verify if the data has been altered.
-* Digital *Signature* and *verification* using RSA keypair and modern `RSASSA-PSS` padding. The user signs data with their _private key_ and others verify the signature with the originator’s _public key_.
+* Digital *Signature* and *verification* using RSA keypair and modern `RSASSA-PSS` padding. The user signs data with their _private key_ and others verify the signature with the originator's _public key_.
 
 
 You may use the simple delegate class `CryptoUtils` or you can access classes like `RsaCipher`, `AesCipher`, `Shamir`, etc. directly. The latter might give you more options. Implementation alternatives are shown in examples below.
+
+The `CryptoUtils` facade provides convenient methods for:
+
+* **AES encryption/decryption** - `aesEncrypt()` / `aesDecrypt()`
+* **RSA encryption/decryption** - `rsaEncrypt()` / `rsaDecrypt()`
+* **Hybrid encryption/decryption** - `hybridEncrypt()` / `hybridDecrypt()`
+* **Shamir's Secret Sharing** - `getShamirShares()` / `getShamirSecret()`
+* **Digest (hashing)** - `digest()` / `base64Digest()` / `hexDigest()`
+* **Digital signatures** - `sign()` / `verify()`
 
 === Some common classes
 This is some common classes used when working with _Symmetric_ and _Asymmetric encryption_ but also _Password Encoding_.
@@ -158,6 +168,56 @@ h cipherText = aesCipher.encrypt("Secret text", password);
 PlainText plainText = aesCipher.decrypt(cipherText, password);
 ----
 
+== Hybrid Encryption
+
+Hybrid encryption combines the strengths of both asymmetric (RSA) and symmetric (AES) encryption. RSA is used to securely encrypt a randomly generated AES key, while AES encrypts the actual data payload. This approach provides the security of RSA with the performance and capacity of AES.
+
+[quote]
+RSA can only encrypt small amounts of data (typically < 200 bytes depending on key size and padding). Hybrid encryption solves this by using RSA to encrypt a symmetric key, which then encrypts arbitrarily large data.
+
+TIP: Hybrid encryption is the recommended approach for encrypting large files or data. It's the same technique used in protocols like TLS/SSL and PGP.
+
+=== Hybrid Encryption and Decryption
+
+[source,java]
+.Hybrid encryption and decryption using `CryptoUtils`
+----
+KeyPair keyPair = KeyUtils.generateKeyPair3072();
+PlainText plainText = new PlainText("Large amount of sensitive data...");
+
+// Encrypt
+HybridEncryptionResult result = CryptoUtils.hybridEncrypt(plainText, keyPair.getPublic());
+
+// Decrypt
+PlainText decrypted = CryptoUtils.hybridDecrypt(result, keyPair.getPrivate());
+----
+
+[source,java]
+.Alternative using builders with custom AES mode and strength
+----
+KeyPair keyPair = KeyUtils.generateKeyPair3072();
+PlainText plainText = new PlainText("Large amount of sensitive data...");
+
+// Encrypt with custom settings
+HybridEncryptionResult result = EncryptBuilder.encryptionBuilder()
+    .plainText(plainText)
+    .key(keyPair.getPublic())
+    .withMode(EncryptionMode.GCM)
+    .withStrength(EncryptionStrength.BIT_256)
+    .build();
+
+// Decrypt
+PlainText decrypted = DecryptBuilder.decryptionBuilder()
+    .key(keyPair.getPrivate())
+    .cipherText(result.getCipherText())
+    .encryptedSymmetricalKey(result.getEncryptedSymmetricalKey())
+    .withMode(result.getAesEncryptionMode())
+    .withStrength(result.getAesEncryptionStrength())
+    .build();
+----
+
+NOTE: The `HybridEncryptionResult` contains the AES-encrypted data, the RSA-encrypted AES key, and metadata about the encryption mode and strength used.
+
 == Shamir's Secret Sharing
 
 __Shamir's Secret Sharing__footnote:[https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing] is used to share a secret in a
@@ -232,26 +292,31 @@ include::src/main/java/com/github/avec112/security/crypto/digest/DigestAlgorithm
 === Example
 
 [source,java]
-.Raw bytes
+.Using `CryptoUtils` (recommended for simple use cases)
 ----
+// Raw bytes (SHA-512/256)
+final byte[] digest = CryptoUtils.digest("My data");
+
+// Base64 encoded
+final String base64Digest = CryptoUtils.base64Digest("My data");
+
+// Hex encoded
+final String hexDigest = CryptoUtils.hexDigest("My data");
+----
+
+[source,java]
+.Alternative using `DigestUtils` directly
+----
+// Raw bytes
 final byte[] digest = DigestUtils.digest(data);
-----
 
-[source,java]
-.Base64 encoded
-----
+// Base64 encoded
 final String digest = DigestUtils.base64Digest(data);
-----
 
-[source,java]
-.Hex encoded
-----
+// Hex encoded
 final String digest = DigestUtils.hexDigest(data);
-----
 
-[source,java]
-.Other hashing algorithms (example `SHA3-256`)
-----
+// Other hashing algorithms (example SHA3-256)
 final byte[] digest = DigestUtils.digest(data, DigestAlgorithm.SHA3_256);
 ----
 
@@ -302,12 +367,25 @@ A __digital signature__footnote:[https://en.wikipedia.org/wiki/Digital_signature
 Commons Security uses `RSASSA-PSS` (SHA-256 with MGF1)footnote:[https://www.encryptionconsulting.com/overview-of-rsassa-pss] — the modern and recommended signature scheme replacing legacy `SHA256withRSA`.
 
 [source,java]
-.Signing and verifying data
+.Using `CryptoUtils` (recommended for simple use cases)
+----
+KeyPair keyPair = KeyUtils.generateKeyPair2048();
+
+// Sign data
+byte[] signature = CryptoUtils.sign("My data", keyPair.getPrivate());
+
+// Verify signature
+boolean verified = CryptoUtils.verify(signature, "My data", keyPair.getPublic());
+----
+
+[source,java]
+.Alternative using `SignatureUtils` directly
 ----
 KeyPair keyPair = KeyUtils.generateKeyPair2048();
 byte[] signature = SignatureUtils.sign("My data", keyPair.getPrivate());
 boolean verified = SignatureUtils.verify(signature, "My data", keyPair.getPublic());
 ----
+
 TIP: RSASSA-PSS provides probabilistic padding, making it more secure than the traditional PKCS#1 v1.5 (`SHA256withRSA`).
 
 

@@ -5,15 +5,18 @@ import com.github.avec112.security.crypto.aes.AesDecryptor;
 import com.github.avec112.security.crypto.aes.AesEncryptor;
 import com.github.avec112.security.crypto.aes.EncryptionMode;
 import com.github.avec112.security.crypto.aes.EncryptionStrength;
+import com.github.avec112.security.crypto.digest.DigestUtils;
 import com.github.avec112.security.crypto.domain.CipherText;
 import com.github.avec112.security.crypto.domain.Password;
 import com.github.avec112.security.crypto.domain.PlainText;
+import com.github.avec112.security.crypto.hybrid.HybridEncryptionResult;
 import com.github.avec112.security.crypto.rsa.KeySize;
 import com.github.avec112.security.crypto.rsa.KeyUtils;
 import com.github.avec112.security.crypto.rsa.RsaCipher;
 import com.github.avec112.security.crypto.shamir.Secret;
 import com.github.avec112.security.crypto.shamir.Share;
 import com.github.avec112.security.crypto.shamir.Shares;
+import com.github.avec112.security.crypto.sign.SignatureUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,6 +26,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import javax.crypto.BadPaddingException;
 import java.security.KeyPair;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -212,6 +216,150 @@ class CryptoUtilsFacadeTest {
         // Optional: verify cause chain for debug clarity
         Assertions.assertNotNull(ex.getMessage());
         System.out.println("Expected failure message: " + ex.getMessage());
+    }
+
+    // ========== Digest Tests ==========
+
+    @Test
+    void digest_shouldReturnByteArray() throws Exception {
+        final String data = "Test data for digest";
+        final byte[] digest = CryptoUtils.digest(data);
+
+        assertThat(digest).isNotNull().isNotEmpty();
+    }
+
+    @Test
+    void digest_shouldMatchDirectDigestUtilsCall() throws Exception {
+        final String data = "Consistency test data";
+
+        final byte[] digestFromUtils = CryptoUtils.digest(data);
+        final byte[] digestFromDirectCall = DigestUtils.digest(data);
+
+        assertThat(digestFromUtils).isEqualTo(digestFromDirectCall);
+    }
+
+    @Test
+    void base64Digest_shouldReturnBase64EncodedString() throws Exception {
+        final String data = "Test data for base64 digest";
+        final String digest = CryptoUtils.base64Digest(data);
+
+        assertThat(digest).isNotNull().isNotEmpty();
+        // Base64 strings should match pattern
+        assertThat(digest).matches("^[A-Za-z0-9+/]+=*$");
+    }
+
+    @Test
+    void hexDigest_shouldReturnHexEncodedString() throws Exception {
+        final String data = "Test data for hex digest";
+        final String digest = CryptoUtils.hexDigest(data);
+
+        assertThat(digest).isNotNull().isNotEmpty();
+        // Hex strings should only contain 0-9, a-f characters
+        assertThat(digest).matches("^[0-9a-f]+$");
+    }
+
+    // ========== Signature Tests ==========
+
+    @Test
+    void sign_shouldCreateValidSignature() throws Exception {
+        final String data = "Data to sign";
+        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+
+        final byte[] signature = CryptoUtils.sign(data, keyPair.getPrivate());
+
+        assertThat(signature).isNotNull().isNotEmpty();
+    }
+
+    @Test
+    void verify_shouldReturnTrueForValidSignature() throws Exception {
+        final String data = "Data to sign and verify";
+        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+
+        final byte[] signature = CryptoUtils.sign(data, keyPair.getPrivate());
+        final boolean isValid = CryptoUtils.verify(signature, data, keyPair.getPublic());
+
+        assertThat(isValid).isTrue();
+    }
+
+    @Test
+    void verify_shouldReturnFalseForTamperedData() throws Exception {
+        final String originalData = "Original data";
+        final String tamperedData = "Tampered data";
+        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+
+        final byte[] signature = CryptoUtils.sign(originalData, keyPair.getPrivate());
+        final boolean isValid = CryptoUtils.verify(signature, tamperedData, keyPair.getPublic());
+
+        assertThat(isValid).isFalse();
+    }
+
+    @Test
+    void verify_shouldReturnFalseForWrongPublicKey() throws Exception {
+        final String data = "Data to sign";
+        final KeyPair keyPair1 = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+        final KeyPair keyPair2 = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+
+        final byte[] signature = CryptoUtils.sign(data, keyPair1.getPrivate());
+        final boolean isValid = CryptoUtils.verify(signature, data, keyPair2.getPublic());
+
+        assertThat(isValid).isFalse();
+    }
+
+    @Test
+    void signAndVerify_shouldMatchDirectSignatureUtilsCall() throws Exception {
+        final String data = "Consistency check data";
+        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+
+        final byte[] signatureFromUtils = CryptoUtils.sign(data, keyPair.getPrivate());
+        final byte[] signatureFromDirect = SignatureUtils.sign(data, keyPair.getPrivate());
+
+        // Both should verify successfully
+        assertThat(CryptoUtils.verify(signatureFromUtils, data, keyPair.getPublic())).isTrue();
+        assertThat(SignatureUtils.verify(signatureFromDirect, data, keyPair.getPublic())).isTrue();
+
+        // Cross-verification should work
+        assertThat(CryptoUtils.verify(signatureFromDirect, data, keyPair.getPublic())).isTrue();
+        assertThat(SignatureUtils.verify(signatureFromUtils, data, keyPair.getPublic())).isTrue();
+    }
+
+    // ========== Hybrid Encryption Tests ==========
+
+    @Test
+    void hybridEncrypt_shouldReturnValidResult() throws Exception {
+        final PlainText plainText = new PlainText("Sensitive hybrid data");
+        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+
+        final HybridEncryptionResult result = CryptoUtils.hybridEncrypt(plainText, keyPair.getPublic());
+
+        assertThat(result).isNotNull();
+        assertThat(result.getCipherText()).isNotNull();
+        assertThat(result.getEncryptedSymmetricalKey()).isNotNull().isNotEmpty();
+        assertThat(result.getAesEncryptionMode()).isNotNull();
+        assertThat(result.getAesEncryptionStrength()).isNotNull();
+    }
+
+    @Test
+    void hybridDecrypt_shouldRecoverOriginalPlaintext() throws Exception {
+        final PlainText expected = new PlainText("Hybrid encryption test data");
+        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+
+        final HybridEncryptionResult encrypted = CryptoUtils.hybridEncrypt(expected, keyPair.getPublic());
+        final PlainText decrypted = CryptoUtils.hybridDecrypt(encrypted, keyPair.getPrivate());
+
+        assertEquals(expected, decrypted);
+    }
+
+    @Test
+    void hybridEncryptionRoundTrip_withLargeData() throws Exception {
+        // RSA can only encrypt small data, but hybrid encryption should handle larger data
+        final String largeData = "A".repeat(10000); // 10KB of data
+        final PlainText expected = new PlainText(largeData);
+        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+
+        final HybridEncryptionResult encrypted = CryptoUtils.hybridEncrypt(expected, keyPair.getPublic());
+        final PlainText decrypted = CryptoUtils.hybridDecrypt(encrypted, keyPair.getPrivate());
+
+        assertEquals(expected, decrypted);
     }
 
 }
