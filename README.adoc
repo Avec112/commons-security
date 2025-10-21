@@ -217,12 +217,12 @@ but produces a shorter digest (256 bits) and is faster on 64-bit systems. Other 
 IMPORTANT: Do not use Message Digest for password storage. For that you should use KDFfootnote:kdf[Key Derivation Functions. https://cryptobook.nakov.com/mac-and-key-derivation/kdf-deriving-key-from-password] algorithms like `ARGON2`, `BCRYPT`, `SCRYPT` or `PBKDF2`. Se _Password Encoder_ below.
 
 .Non supported hashing algorithms
-The following hashing algorithms are [.underline]#*not*# recommended or included: `MD4`, `MD5`, `SHA-0` and `SHA-1`
+The following hashing algorithms are [.underline]#*not*# recommended or supported: `MD4`, `MD5`, `SHA-0` and `SHA-1`
 
 .Supported hashing algorithms
 [source,java]
 ----
-include::src/main/java/io/github/avec112/security/crypto/digest/DigestAlgorithm.java[tag=hashing-algorithms]
+include::src/main/java/com/github/avec112/security/crypto/digest/DigestAlgorithm.java[tag=algorithms]
 ----
 
 .Worth reading
@@ -250,9 +250,9 @@ final String digest = DigestUtils.hexDigest(data);
 ----
 
 [source,java]
-.Other hashing algorithms (example `SHA3-384`)
+.Other hashing algorithms (example `SHA3-256`)
 ----
-final byte[] digest = DigestUtils.digest(data, DigestAlgorithm.SHA3_384);
+final byte[] digest = DigestUtils.digest(data, DigestAlgorithm.SHA3_256);
 ----
 
 == Password Encoder
@@ -268,7 +268,7 @@ A plaintext password should always be encoded in case of a breach. After a passw
 [source,java]
 .Supported password encoders
 ----
-include::src/main/java/io/github/avec112/security/crypto/password/PasswordEncoderType.java[lines=3..]
+include::src/main/java/com/github/avec112/security/crypto/password/PasswordEncoderType.java[tag=algorithms]
 ----
 
 [source,java]
