@@ -40,7 +40,7 @@ class HybridCryptoTest {
         // Decrypt
         PlainText plainTextResult = DecryptBuilder.decryptionBuilder()
                 .key(keyPair.getPrivate())
-                .encryptedSymmetricalKey(hybridEncryptionResult.getEncryptedSymmetricalKey())
+                .encryptedKey(hybridEncryptionResult.getEncryptedKey())
                 .cipherText(hybridEncryptionResult.getCipherText())
                 .build();
 
@@ -49,7 +49,7 @@ class HybridCryptoTest {
                 () -> assertThat(hybridEncryptionResult.getCipherText().getValue()).isNotEqualTo(plainText.getValue()),
                 () -> assertThat(hybridEncryptionResult.getAesEncryptionStrength()).isEqualTo(EncryptionStrength.BIT_128),
                 () -> assertThat(hybridEncryptionResult.getAesEncryptionMode()).isEqualTo(EncryptionMode.GCM),
-                () -> assertThat(hybridEncryptionResult.getEncryptedSymmetricalKey()).isNotBlank(),
+                () -> assertThat(hybridEncryptionResult.getEncryptedKey()).isNotBlank(),
                 () -> assertThat(plainTextResult).isEqualTo(plainText)
         );
 
@@ -80,7 +80,7 @@ class HybridCryptoTest {
         // Decrypt
         PlainText plainTextResult = DecryptBuilder.decryptionBuilder()
                 .key(keyPair.getPrivate())
-                .encryptedSymmetricalKey(hybridEncryptionResult.getEncryptedSymmetricalKey())
+                .encryptedKey(hybridEncryptionResult.getEncryptedKey())
                 .cipherText(hybridEncryptionResult.getCipherText())
                 .withMode(encryptionMode)
                 .withStrength(encryptionStrength)
@@ -90,7 +90,7 @@ class HybridCryptoTest {
                 () -> assertThat(hybridEncryptionResult.getCipherText().getValue()).isNotEqualTo(plainText.getValue()),
                 () -> assertThat(hybridEncryptionResult.getAesEncryptionStrength()).isEqualTo(encryptionStrength),
                 () -> assertThat(hybridEncryptionResult.getAesEncryptionMode()).isEqualTo(encryptionMode),
-                () -> assertThat(hybridEncryptionResult.getEncryptedSymmetricalKey()).isNotBlank(),
+                () -> assertThat(hybridEncryptionResult.getEncryptedKey()).isNotBlank(),
                 () -> assertThat(plainTextResult).isEqualTo(plainText)
         );
 
@@ -114,15 +114,15 @@ class HybridCryptoTest {
         assertAll(
                 () -> assertThrows(MultipleMissingArgumentsError.class, builder::build),
                 () -> assertThrows(MissingPrivateKeyException.class, () -> builder.key(null).build()),
-                () -> assertThrows(MissingPrivateKeyException.class, () -> builder.cipherText(new CipherText("cipherText")).encryptedSymmetricalKey("symKey").build()),
+                () -> assertThrows(MissingPrivateKeyException.class, () -> builder.cipherText(new CipherText("cipherText")).encryptedKey("symKey").build()),
                 () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate()).build()),
                 () -> assertThrows(MissingCipherTextException.class, () -> builder.key(keyPair.getPrivate()).cipherText(null).build()),
                 () -> assertThrows(BlankCipherTextException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("")).build()),
-                () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate()).encryptedSymmetricalKey("symKey").build()),
+                () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate()).encryptedKey("symKey").build()),
                 () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("cipherText")).build()),
-                () -> assertThrows(MissingEncryptedSymmetricalKeyException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("cipherText")).encryptedSymmetricalKey(null).build()),
-                () -> assertThrows(MissingEncryptedSymmetricalKeyException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("cipherText")).encryptedSymmetricalKey("").build()),
-                () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("cipherText")).encryptedSymmetricalKey("symKey").build())
+                () -> assertThrows(MissingEncryptedSymmetricalKeyException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("cipherText")).encryptedKey(null).build()),
+                () -> assertThrows(MissingEncryptedSymmetricalKeyException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("cipherText")).encryptedKey("").build()),
+                () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("cipherText")).encryptedKey("symKey").build())
         );
     }
 
@@ -142,7 +142,7 @@ class HybridCryptoTest {
         assertThat(json).isNotNull()
                 .contains("\"version\"")
                 .contains("\"cipherText\"")
-                .contains("\"encryptedSymmetricalKey\"")
+                .contains("\"encryptedKey\"")
                 .contains("\"aesEncryptionMode\"")
                 .contains("\"aesEncryptionStrength\"");
     }
@@ -168,7 +168,7 @@ class HybridCryptoTest {
         assertAll(
                 () -> assertThat(deserialized.getVersion()).isEqualTo("1.0"),
                 () -> assertThat(deserialized.getCipherText()).isEqualTo(original.getCipherText()),
-                () -> assertThat(deserialized.getEncryptedSymmetricalKey()).isEqualTo(original.getEncryptedSymmetricalKey()),
+                () -> assertThat(deserialized.getEncryptedKey()).isEqualTo(original.getEncryptedKey()),
                 () -> assertThat(deserialized.getAesEncryptionMode()).isEqualTo(EncryptionMode.GCM),
                 () -> assertThat(deserialized.getAesEncryptionStrength()).isEqualTo(EncryptionStrength.BIT_256)
         );
@@ -192,7 +192,7 @@ class HybridCryptoTest {
         PlainText decrypted = DecryptBuilder.decryptionBuilder()
                 .key(keyPair.getPrivate())
                 .cipherText(deserialized.getCipherText())
-                .encryptedSymmetricalKey(deserialized.getEncryptedSymmetricalKey())
+                .encryptedKey(deserialized.getEncryptedKey())
                 .withMode(deserialized.getAesEncryptionMode())
                 .withStrength(deserialized.getAesEncryptionStrength())
                 .build();
@@ -211,6 +211,30 @@ class HybridCryptoTest {
 
         assertThat(result.getVersion()).isEqualTo("1.0");
         assertThat(result.toJson()).contains("\"version\": \"1.0\"");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "GCM, 128, GCM@128-bit",
+            "GCM, 192, GCM@192-bit",
+            "GCM, 256, GCM@256-bit",
+            "CTR, 128, CTR@128-bit",
+            "CTR, 192, CTR@192-bit",
+            "CTR, 256, CTR@256-bit"
+    })
+    void describe_shouldReturnHumanReadableFormat(String mode, int strength, String expected) throws Exception {
+        final PlainText plainText = new PlainText("Test data");
+        final EncryptionMode encryptionMode = EncryptionMode.valueOf(mode);
+        final EncryptionStrength encryptionStrength = EncryptionStrength.getAESKeyLength(strength);
+
+        HybridEncryptionResult result = EncryptBuilder.encryptionBuilder()
+                .key(keyPair.getPublic())
+                .plainText(plainText)
+                .withMode(encryptionMode)
+                .withStrength(encryptionStrength)
+                .build();
+
+        assertThat(result.describe()).isEqualTo(expected);
     }
 
 }

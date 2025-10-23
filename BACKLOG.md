@@ -46,21 +46,21 @@ Goal: complete modernization, testing, and documentation for internal and educat
 
 ## 🧱 Tier 3 – API & developer-experience improvements
 
-- [ ] **Add JSON serialization for `HybridEncryptionResult`**
+- ✅ **Add JSON serialization for `HybridEncryptionResult`**
   - Include `toJson()` / `fromJson()` helpers (Gson or Jackson).
   - Add optional `version` field for future compatibility.
 
-- [ ] **Rename `encryptedSymmetricalKey` → `encryptedKey`**
+- ✅ **Rename `encryptedSymmetricalKey` → `encryptedKey`**
 
-- [ ] **Add `describe()` helper**
+- ✅ **Add `describe()` helper**
   - Return human-readable AES summary, e.g. `"GCM@256-bit"`.
 
-- [ ] **Add digest/signature helpers in `CryptoUtils`**
+- ✅ **Add digest/signature helpers in `CryptoUtils`**
   - `digest(String data)`
   - `sign(String data, PrivateKey)`
   - `verify(byte[] sig, String data, PublicKey)`
 
-- [ ] **Add hybrid encrypt/decrypt helpers in `CryptoUtils`**
+- ✅ **Add hybrid encrypt/decrypt helpers in `CryptoUtils`**
   - `hybridEncrypt(PlainText, PublicKey)`
   - `hybridDecrypt(HybridEncryptionResult, PrivateKey)`
 

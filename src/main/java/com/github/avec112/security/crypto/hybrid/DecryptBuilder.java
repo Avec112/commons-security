@@ -24,7 +24,7 @@ public class DecryptBuilder {
     private EncryptionStrength encryptionStrength = EncryptionStrength.BIT_128;
     private EncryptionMode encryptionMode = EncryptionMode.GCM;
 
-    private String encryptedSymmetricalKey;
+    private String encryptedKey;
     private CipherText cipherText;
 
     private PrivateKey privateKey;
@@ -47,9 +47,9 @@ public class DecryptBuilder {
         return this;
     }
 
-    public DecryptBuilder encryptedSymmetricalKey(String encryptedSymmetricalKey) {
-        Validate.nonBlank(encryptedSymmetricalKey, MissingEncryptedSymmetricalKeyException::new);
-        this.encryptedSymmetricalKey = encryptedSymmetricalKey;
+    public DecryptBuilder encryptedKey(String encryptedKey) {
+        Validate.nonBlank(encryptedKey, MissingEncryptedSymmetricalKeyException::new);
+        this.encryptedKey = encryptedKey;
         return this;
     }
 
@@ -63,13 +63,13 @@ public class DecryptBuilder {
     public PlainText build() throws Exception {
         Validate.all(
                 () -> Validate.nonNull(privateKey, MissingPrivateKeyException::new),
-                () -> Validate.nonBlank(encryptedSymmetricalKey, MissingEncryptedSymmetricalKeyException::new),
+                () -> Validate.nonBlank(encryptedKey, MissingEncryptedSymmetricalKeyException::new),
                 () -> Validate.nonNull(cipherText, MissingCipherTextException::new),
                 () -> Validate.nonBlank(cipherText.getValue(), BlankCipherTextException::new)
         );
 
         final RsaCipher rsaCipher = new RsaCipher();
-        final PlainText symKey = rsaCipher.decrypt(new CipherText(encryptedSymmetricalKey), privateKey);
+        final PlainText symKey = rsaCipher.decrypt(new CipherText(encryptedKey), privateKey);
         return AesDecryptor.withPasswordAndCipherText(new Password(symKey.getValue()), cipherText)
                 .withMode(encryptionMode)
                 .withStrength(encryptionStrength)

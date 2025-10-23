@@ -201,7 +201,7 @@ public class CryptoUtils {
         return DecryptBuilder.decryptionBuilder()
                 .key(privateKey)
                 .cipherText(result.getCipherText())
-                .encryptedSymmetricalKey(result.getEncryptedSymmetricalKey())
+                .encryptedKey(result.getEncryptedKey())
                 .withMode(result.getAesEncryptionMode())
                 .withStrength(result.getAesEncryptionStrength())
                 .build();

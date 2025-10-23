@@ -21,16 +21,16 @@ public class HybridEncryptionResult {
 
     private final String version;
     private final CipherText cipherText;
-    private final String encryptedSymmetricalKey;
+    private final String encryptedKey;
     private final EncryptionMode aesEncryptionMode;
     private final EncryptionStrength aesEncryptionStrength;
 
     /**
      * Creates a new HybridEncryptionResult with the current version.
      */
-    public HybridEncryptionResult(CipherText cipherText, String encryptedSymmetricalKey,
+    public HybridEncryptionResult(CipherText cipherText, String encryptedKey,
                                   EncryptionMode aesEncryptionMode, EncryptionStrength aesEncryptionStrength) {
-        this(VERSION, cipherText, encryptedSymmetricalKey, aesEncryptionMode, aesEncryptionStrength);
+        this(VERSION, cipherText, encryptedKey, aesEncryptionMode, aesEncryptionStrength);
     }
 
     /**
@@ -51,5 +51,14 @@ public class HybridEncryptionResult {
      */
     public static HybridEncryptionResult fromJson(String json) {
         return GSON.fromJson(json, HybridEncryptionResult.class);
+    }
+
+    /**
+     * Returns a human-readable description of the AES encryption configuration.
+     *
+     * @return a string in the format "MODE@STRENGTH-bit" (e.g., "GCM@256-bit")
+     */
+    public String describe() {
+        return String.format("%s@%d-bit", aesEncryptionMode, aesEncryptionStrength.getLength());
     }
 }

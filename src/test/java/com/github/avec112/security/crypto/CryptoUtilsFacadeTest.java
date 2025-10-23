@@ -333,7 +333,7 @@ class CryptoUtilsFacadeTest {
 
         assertThat(result).isNotNull();
         assertThat(result.getCipherText()).isNotNull();
-        assertThat(result.getEncryptedSymmetricalKey()).isNotNull().isNotEmpty();
+        assertThat(result.getEncryptedKey()).isNotNull().isNotEmpty();
         assertThat(result.getAesEncryptionMode()).isNotNull();
         assertThat(result.getAesEncryptionStrength()).isNotNull();
     }

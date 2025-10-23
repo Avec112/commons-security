@@ -217,7 +217,7 @@ HybridEncryptionResult result = EncryptBuilder.encryptionBuilder()
 PlainText decrypted = DecryptBuilder.decryptionBuilder()
     .key(keyPair.getPrivate())
     .cipherText(result.getCipherText())
-    .encryptedSymmetricalKey(result.getEncryptedSymmetricalKey())
+    .encryptedKey(result.getEncryptedKey())
     .withMode(result.getAesEncryptionMode())
     .withStrength(result.getAesEncryptionStrength())
     .build();
@@ -253,10 +253,26 @@ The JSON format includes a version field for future compatibility:
   "cipherText": {
     "value": "encrypted-data-here"
   },
-  "encryptedSymmetricalKey": "rsa-encrypted-key-here",
+  "encryptedKey": "rsa-encrypted-key-here",
   "aesEncryptionMode": "GCM",
   "aesEncryptionStrength": "BIT_256"
 }
+----
+
+=== Human-Readable Description
+
+The `describe()` method provides a convenient way to get a human-readable summary of the encryption configuration:
+
+[source,java]
+.Get encryption configuration description
+----
+HybridEncryptionResult result = CryptoUtils.hybridEncrypt(plainText, keyPair.getPublic());
+
+// Get human-readable description
+String description = result.describe(); // Returns "GCM@256-bit"
+
+// Useful for logging
+log.info("Data encrypted using: {}", result.describe());
 ----
 
 == Shamir's Secret Sharing
