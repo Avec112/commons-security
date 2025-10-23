@@ -59,21 +59,22 @@ toc::[]
 * *Symmetric encryption* and decryption with one (same) key. `AES/CTR` and `AES/GCM` is supported.
 * *Hybrid encryption* combines RSA and AES for secure and efficient encryption of large data. RSA encrypts the AES key, while AES encrypts the actual data.
 * *Shamir's Secret Sharing* is a way to split a secret into shares. The secret can be recreated by putting the minimum required amount of shares back together.
-* *Password Encoder* uses proven algorithms for hashing passwords in a safe and secure way.
 * *Digest* or message digest is the result of hashing and is a way to integrity check our data. A typical use case could be to compare content (hashed) with a stored hash to verify if the data has been altered.
 * Digital *Signature* and *verification* using RSA keypair and modern `RSASSA-PSS` padding. The user signs data with their _private key_ and others verify the signature with the originator's _public key_.
+* *Password Encoder* uses proven algorithms for hashing passwords in a safe and secure way.
 
 
 You may use the simple delegate class `CryptoUtils` or you can access classes like `RsaCipher`, `AesCipher`, `Shamir`, etc. directly. The latter might give you more options. Implementation alternatives are shown in examples below.
 
 The `CryptoUtils` facade provides convenient methods for:
 
-* **AES encryption/decryption** - `aesEncrypt()` / `aesDecrypt()`
 * **RSA encryption/decryption** - `rsaEncrypt()` / `rsaDecrypt()`
+* **AES encryption/decryption** - `aesEncrypt()` / `aesDecrypt()`
 * **Hybrid encryption/decryption** - `hybridEncrypt()` / `hybridDecrypt()`
 * **Shamir's Secret Sharing** - `getShamirShares()` / `getShamirSecret()`
 * **Digest (hashing)** - `digest()` / `base64Digest()` / `hexDigest()`
 * **Digital signatures** - `sign()` / `verify()`
+* **Password encoding** - `encodePassword()` / `matchesPassword()`
 
 === Some common classes
 This is some common classes used when working with _Symmetric_ and _Asymmetric encryption_ but also _Password Encoding_.
@@ -377,47 +378,6 @@ final String digest = DigestUtils.hexDigest(data);
 final byte[] digest = DigestUtils.digest(data, DigestAlgorithm.SHA3_256);
 ----
 
-== Password Encoder
-Key Derivation Functions (KDF)footnote:kdf[] from a password must be able to stand attacks like *brute-forcing*, *dictionary attacks*, *rainbow attacks* and more. Attempts to reverse hashed password values is common.
-
-`ARGON2`, `BCRYPT`, `SCRYPT` and `PBKDF2` are common algorithms used for password hashing since they are much more robust when attacked.
-
-TIP: `ARGON2` is recommended as the most secure hash algorithm for passwords and is the default implementation for this API.
-
-=== Encoding
-A plaintext password should always be encoded in case of a breach. After a password is encoded it may be stored for future matching.
-
-[source,java]
-.Supported password encoders
-----
-include::src/main/java/com/github/avec112/security/crypto/password/PasswordEncoderType.java[tag=algorithms]
-----
-
-[source,java]
-.Password encode (default `ARGON2`)
-----
-final String encodedPassword = PasswordEncoderUtils.encode(password);
-----
-[source,java]
-.Alternative encoding with use of `enum PasswordEncoderType`
-----
-final String encodedPassword = PasswordEncoderUtils.encode(password, PasswordEncoderType.BCRYPT);
-----
-=== Matching
-When a user is authenticated they must input their password. This plaintext password will be matched against the stored encoded password.
-
-[source,java]
-.Password matching (default `ARGON2`)
-----
-final boolean isMatching = PasswordEncoderUtils.matches(rawPassword, encodedPassword);
-----
-
-[source,java]
-.Alternative matching with use of `enum PasswordEncoderType`
-----
-final boolean isMatching = PasswordEncoderUtils.matches(rawPassword, encodedPassword, PasswordEncoderType.BCRYPT);
-----
-
 == Signature and verification
 A __digital signature__footnote:[https://en.wikipedia.org/wiki/Digital_signature] is a mathematical scheme for verifying the authenticity of digital messages or documents. A valid digital signature, where the prerequisites are satisfied, gives a recipient very strong reason to believe that the message was created by a known sender (authentication), and that the message was not altered in transit.
 
@@ -444,6 +404,56 @@ boolean verified = SignatureUtils.verify(signature, "My data", keyPair.getPublic
 ----
 
 TIP: RSASSA-PSS provides probabilistic padding, making it more secure than the traditional PKCS#1 v1.5 (`SHA256withRSA`).
+
+== Password Encoder
+Key Derivation Functions (KDF)footnote:kdf[] from a password must be able to stand attacks like *brute-forcing*, *dictionary attacks*, *rainbow attacks* and more. Attempts to reverse hashed password values is common.
+
+`ARGON2`, `BCRYPT`, `SCRYPT` and `PBKDF2` are common algorithms used for password hashing since they are much more robust when attacked.
+
+TIP: `ARGON2` is recommended as the most secure hash algorithm for passwords and is the default implementation for this API.
+
+=== Encoding
+A plaintext password should always be encoded in case of a breach. After a password is encoded it may be stored for future matching.
+
+[source,java]
+.Supported password encoders
+----
+include::src/main/java/com/github/avec112/security/crypto/password/PasswordEncoderType.java[tag=algorithms]
+----
+
+[source,java]
+.Password encode using `CryptoUtils` (default `ARGON2`)
+----
+final String encodedPassword = CryptoUtils.encodePassword(password);
+----
+
+[source,java]
+.Alternative using `PasswordEncoderUtils` directly
+----
+// Default ARGON2
+final String encodedPassword = PasswordEncoderUtils.encode(password);
+
+// Or specify encoder type
+final String encodedPassword = PasswordEncoderUtils.encode(password, PasswordEncoderType.BCRYPT);
+----
+=== Matching
+When a user is authenticated they must input their password. This plaintext password will be matched against the stored encoded password.
+
+[source,java]
+.Password matching using `CryptoUtils` (default `ARGON2`)
+----
+final boolean isMatching = CryptoUtils.matchesPassword(rawPassword, encodedPassword);
+----
+
+[source,java]
+.Alternative using `PasswordEncoderUtils` directly
+----
+// Default ARGON2
+final boolean isMatching = PasswordEncoderUtils.matches(rawPassword, encodedPassword);
+
+// Or specify encoder type
+final boolean isMatching = PasswordEncoderUtils.matches(rawPassword, encodedPassword, PasswordEncoderType.BCRYPT);
+----
 
 == Documentation
 

@@ -11,6 +11,7 @@ import com.github.avec112.security.crypto.error.BadCipherTextException;
 import com.github.avec112.security.crypto.hybrid.DecryptBuilder;
 import com.github.avec112.security.crypto.hybrid.EncryptBuilder;
 import com.github.avec112.security.crypto.hybrid.HybridEncryptionResult;
+import com.github.avec112.security.crypto.password.PasswordEncoderUtils;
 import com.github.avec112.security.crypto.rsa.RsaCipher;
 import com.github.avec112.security.crypto.shamir.Secret;
 import com.github.avec112.security.crypto.shamir.Shamir;
@@ -205,5 +206,29 @@ public class CryptoUtils {
                 .withMode(result.getAesEncryptionMode())
                 .withStrength(result.getAesEncryptionStrength())
                 .build();
+    }
+
+    // ========== Password Encoding Methods ==========
+
+    /**
+     * Encodes a raw password using the default password encoder (ARGON2).
+     * The encoded password can be safely stored and later used for matching.
+     *
+     * @param rawPassword the raw password to encode
+     * @return the encoded password string
+     */
+    public static String encodePassword(String rawPassword) {
+        return PasswordEncoderUtils.encode(rawPassword);
+    }
+
+    /**
+     * Matches a raw password against an encoded password using the default password encoder (ARGON2).
+     *
+     * @param rawPassword     the raw password to check
+     * @param encodedPassword the encoded password to match against
+     * @return true if the passwords match, false otherwise
+     */
+    public static boolean matchesPassword(String rawPassword, String encodedPassword) {
+        return PasswordEncoderUtils.matches(rawPassword, encodedPassword);
     }
 }

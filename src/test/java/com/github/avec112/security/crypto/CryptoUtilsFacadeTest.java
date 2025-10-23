@@ -362,4 +362,37 @@ class CryptoUtilsFacadeTest {
         assertEquals(expected, decrypted);
     }
 
+    // ========== Password Encoding Tests ==========
+
+    @Test
+    void encodePassword_shouldReturnEncodedString() {
+        final String rawPassword = "MySecurePassword123!";
+
+        final String encoded = CryptoUtils.encodePassword(rawPassword);
+
+        assertThat(encoded).isNotNull().isNotEmpty();
+        assertThat(encoded).isNotEqualTo(rawPassword);
+    }
+
+    @Test
+    void matchesPassword_shouldReturnTrueForCorrectPassword() {
+        final String rawPassword = "MySecurePassword123!";
+        final String encoded = CryptoUtils.encodePassword(rawPassword);
+
+        final boolean matches = CryptoUtils.matchesPassword(rawPassword, encoded);
+
+        assertThat(matches).isTrue();
+    }
+
+    @Test
+    void matchesPassword_shouldReturnFalseForIncorrectPassword() {
+        final String correctPassword = "CorrectPassword123!";
+        final String wrongPassword = "WrongPassword456!";
+        final String encoded = CryptoUtils.encodePassword(correctPassword);
+
+        final boolean matches = CryptoUtils.matchesPassword(wrongPassword, encoded);
+
+        assertThat(matches).isFalse();
+    }
+
 }
