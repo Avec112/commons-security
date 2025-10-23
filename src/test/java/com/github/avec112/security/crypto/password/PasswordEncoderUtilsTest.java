@@ -163,4 +163,73 @@ class PasswordEncoderUtilsTest {
         assertEquals(expected, PasswordEncoderUtils.getPasswordEncoderTypeAsString(encodedPassword));
     }
 
+    // ========== Password Upgrade Tests ==========
+
+    @ParameterizedTest
+    @CsvSource({
+            "{bcrypt}$2a$10$1GP39z1I.C.JHX9Qn7AepezSCYYQ53eINFFlcfnKpkHDwNemmGLyK, true",
+            "{scrypt}$e0801$3WQIalromBXCD0qL+q1j1R0pWmyHMkO0NteGGDc+TEBaIG25JMUNtmLtH/aNcMO+xbD21pv1hrM1zX29MwJ2oQ==$vmfA1aDb6vFKVH7JfqYOjM9iVMa2STgqJqFgHbcyNoA=, true",
+            "{pbkdf2}3982ab2f19a3f8de63a110246301348fffc94c8fe96955771cdfd14ad41e3461946af959f92699bf31efc7cc4065592f, true",
+            "'{argon2}$argon2id$v=19$m=4096,t=3,p=1$fwWOqRq6rOaSHGzCEA1p7A$lpxeUs+74bvj+kZdRO4Mna/jerRp0NueMZMZGRc+k1c', false"
+    })
+    void needsUpgrade_shouldDetectNonArgon2Passwords(String encodedPassword, boolean expectedNeedsUpgrade) {
+        assertEquals(expectedNeedsUpgrade, PasswordEncoderUtils.needsUpgrade(encodedPassword));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "{bcrypt}$2a$10$1GP39z1I.C.JHX9Qn7AepezSCYYQ53eINFFlcfnKpkHDwNemmGLyK, ARGON2, true",
+            "{bcrypt}$2a$10$1GP39z1I.C.JHX9Qn7AepezSCYYQ53eINFFlcfnKpkHDwNemmGLyK, BCRYPT, false",
+            "{scrypt}$e0801$3WQIalromBXCD0qL+q1j1R0pWmyHMkO0NteGGDc+TEBaIG25JMUNtmLtH/aNcMO+xbD21pv1hrM1zX29MwJ2oQ==$vmfA1aDb6vFKVH7JfqYOjM9iVMa2STgqJqFgHbcyNoA=, SCRYPT, false",
+            "'{argon2}$argon2id$v=19$m=4096,t=3,p=1$fwWOqRq6rOaSHGzCEA1p7A$lpxeUs+74bvj+kZdRO4Mna/jerRp0NueMZMZGRc+k1c', BCRYPT, true"
+    })
+    void needsUpgrade_withSpecificTargetType(String encodedPassword, String targetType, boolean expectedNeedsUpgrade) {
+        assertEquals(expectedNeedsUpgrade, PasswordEncoderUtils.needsUpgrade(encodedPassword, PasswordEncoderType.valueOf(targetType)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "Password, {bcrypt}$2a$10$1GP39z1I.C.JHX9Qn7AepezSCYYQ53eINFFlcfnKpkHDwNemmGLyK, ARGON2",
+            "Password, {scrypt}$e0801$3WQIalromBXCD0qL+q1j1R0pWmyHMkO0NteGGDc+TEBaIG25JMUNtmLtH/aNcMO+xbD21pv1hrM1zX29MwJ2oQ==$vmfA1aDb6vFKVH7JfqYOjM9iVMa2STgqJqFgHbcyNoA=, ARGON2",
+            "Password, {pbkdf2}3982ab2f19a3f8de63a110246301348fffc94c8fe96955771cdfd14ad41e3461946af959f92699bf31efc7cc4065592f, ARGON2"
+    })
+    void upgradePassword_shouldReEncodeWithTargetType(String rawPassword, String oldEncodedPassword, String targetType) {
+        String upgradedPassword = PasswordEncoderUtils.upgradePassword(rawPassword, oldEncodedPassword, PasswordEncoderType.valueOf(targetType));
+
+        // Verify the upgraded password has the correct prefix
+        assertTrue(upgradedPassword.startsWith("{" + targetType.toLowerCase() + "}"));
+
+        // Verify the upgraded password matches the raw password
+        assertTrue(PasswordEncoderUtils.matches(rawPassword, upgradedPassword));
+
+        // Verify it's different from the old encoded password
+        assertNotEquals(oldEncodedPassword, upgradedPassword);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "Password, {bcrypt}$2a$10$1GP39z1I.C.JHX9Qn7AepezSCYYQ53eINFFlcfnKpkHDwNemmGLyK",
+            "Password, {scrypt}$e0801$3WQIalromBXCD0qL+q1j1R0pWmyHMkO0NteGGDc+TEBaIG25JMUNtmLtH/aNcMO+xbD21pv1hrM1zX29MwJ2oQ==$vmfA1aDb6vFKVH7JfqYOjM9iVMa2STgqJqFgHbcyNoA="
+    })
+    void upgradePassword_defaultToArgon2(String rawPassword, String oldEncodedPassword) {
+        String upgradedPassword = PasswordEncoderUtils.upgradePassword(rawPassword, oldEncodedPassword);
+
+        // Verify the upgraded password has the argon2 prefix
+        assertTrue(upgradedPassword.startsWith("{argon2}"));
+
+        // Verify the upgraded password matches the raw password
+        assertTrue(PasswordEncoderUtils.matches(rawPassword, upgradedPassword));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "WrongPassword, {bcrypt}$2a$10$1GP39z1I.C.JHX9Qn7AepezSCYYQ53eINFFlcfnKpkHDwNemmGLyK",
+            "WrongPassword, {scrypt}$e0801$3WQIalromBXCD0qL+q1j1R0pWmyHMkO0NteGGDc+TEBaIG25JMUNtmLtH/aNcMO+xbD21pv1hrM1zX29MwJ2oQ==$vmfA1aDb6vFKVH7JfqYOjM9iVMa2STgqJqFgHbcyNoA="
+    })
+    void upgradePassword_shouldThrowIfPasswordDoesNotMatch(String wrongPassword, String encodedPassword) {
+        assertThrows(IllegalArgumentException.class, () ->
+                PasswordEncoderUtils.upgradePassword(wrongPassword, encodedPassword)
+        );
+    }
+
 }

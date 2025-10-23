@@ -74,7 +74,7 @@ The `CryptoUtils` facade provides convenient methods for:
 * **Shamir's Secret Sharing** - `getShamirShares()` / `getShamirSecret()`
 * **Digest (hashing)** - `digest()` / `base64Digest()` / `hexDigest()`
 * **Digital signatures** - `sign()` / `verify()`
-* **Password encoding** - `encodePassword()` / `matchesPassword()`
+* **Password encoding** - `encodePassword()` / `matchesPassword()` / `needsPasswordUpgrade()` / `upgradePassword()`
 
 === Some common classes
 This is some common classes used when working with _Symmetric_ and _Asymmetric encryption_ but also _Password Encoding_.
@@ -410,7 +410,7 @@ Key Derivation Functions (KDF)footnote:kdf[] from a password must be able to sta
 
 `ARGON2`, `BCRYPT`, `SCRYPT` and `PBKDF2` are common algorithms used for password hashing since they are much more robust when attacked.
 
-TIP: `ARGON2` is recommended as the most secure hash algorithm for passwords and is the default implementation for this API.
+TIP: `ARGON2id` (the hybrid variant combining Argon2i and Argon2d) is recommended as the most secure hash algorithm for passwords and is the default implementation for this API. It provides protection against both side-channel attacks and GPU/ASIC attacks.
 
 === Encoding
 A plaintext password should always be encoded in case of a breach. After a password is encoded it may be stored for future matching.
@@ -454,6 +454,47 @@ final boolean isMatching = PasswordEncoderUtils.matches(rawPassword, encodedPass
 // Or specify encoder type
 final boolean isMatching = PasswordEncoderUtils.matches(rawPassword, encodedPassword, PasswordEncoderType.BCRYPT);
 ----
+
+=== Upgrading Passwords
+
+When migrating from an older hash algorithm (like BCRYPT or SCRYPT) to a stronger one (like ARGON2), you can use the password upgrade feature. This allows gradual migration during user login without requiring password resets.
+
+[source,java]
+.Password upgrade using `CryptoUtils` (upgrades to ARGON2)
+----
+// During user login
+String rawPassword = userInputPassword;
+String storedEncodedPassword = getUserPasswordFromDatabase(); // e.g., "{bcrypt}$2a$10$..."
+
+// First, verify the password
+if (CryptoUtils.matchesPassword(rawPassword, storedEncodedPassword)) {
+    // Login successful!
+
+    // Check if password needs upgrade to ARGON2
+    if (CryptoUtils.needsPasswordUpgrade(storedEncodedPassword)) {
+        // Upgrade to ARGON2
+        String upgradedPassword = CryptoUtils.upgradePassword(rawPassword, storedEncodedPassword);
+
+        // Save upgraded password back to database
+        updateUserPasswordInDatabase(upgradedPassword);
+    }
+}
+----
+
+[source,java]
+.Alternative using `PasswordEncoderUtils` directly
+----
+// Check if password needs upgrade
+if (PasswordEncoderUtils.needsUpgrade(storedEncodedPassword)) {
+    // Upgrade to default (ARGON2)
+    String upgradedPassword = PasswordEncoderUtils.upgradePassword(rawPassword, storedEncodedPassword);
+
+    // Or upgrade to specific type
+    String upgradedPassword = PasswordEncoderUtils.upgradePassword(rawPassword, storedEncodedPassword, PasswordEncoderType.ARGON2);
+}
+----
+
+TIP: Password upgrades happen transparently during user login, ensuring a smooth migration path without disrupting users.
 
 == Documentation
 

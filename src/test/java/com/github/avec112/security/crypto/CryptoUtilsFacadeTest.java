@@ -395,4 +395,35 @@ class CryptoUtilsFacadeTest {
         assertThat(matches).isFalse();
     }
 
+    @Test
+    void needsPasswordUpgrade_shouldReturnTrueForNonArgon2() {
+        final String bcryptPassword = "{bcrypt}$2a$10$1GP39z1I.C.JHX9Qn7AepezSCYYQ53eINFFlcfnKpkHDwNemmGLyK";
+
+        final boolean needsUpgrade = CryptoUtils.needsPasswordUpgrade(bcryptPassword);
+
+        assertThat(needsUpgrade).isTrue();
+    }
+
+    @Test
+    void needsPasswordUpgrade_shouldReturnFalseForArgon2() {
+        final String rawPassword = "MyPassword123";
+        final String argon2Password = CryptoUtils.encodePassword(rawPassword);
+
+        final boolean needsUpgrade = CryptoUtils.needsPasswordUpgrade(argon2Password);
+
+        assertThat(needsUpgrade).isFalse();
+    }
+
+    @Test
+    void upgradePassword_shouldUpgradeFromBcryptToArgon2() {
+        final String rawPassword = "Password";
+        final String bcryptPassword = "{bcrypt}$2a$10$1GP39z1I.C.JHX9Qn7AepezSCYYQ53eINFFlcfnKpkHDwNemmGLyK";
+
+        final String upgradedPassword = CryptoUtils.upgradePassword(rawPassword, bcryptPassword);
+
+        assertThat(upgradedPassword).startsWith("{argon2}");
+        assertThat(CryptoUtils.matchesPassword(rawPassword, upgradedPassword)).isTrue();
+        assertThat(CryptoUtils.needsPasswordUpgrade(upgradedPassword)).isFalse();
+    }
+
 }

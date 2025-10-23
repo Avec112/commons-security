@@ -231,4 +231,28 @@ public class CryptoUtils {
     public static boolean matchesPassword(String rawPassword, String encodedPassword) {
         return PasswordEncoderUtils.matches(rawPassword, encodedPassword);
     }
+
+    /**
+     * Checks if an encoded password needs to be upgraded to the default algorithm (ARGON2).
+     *
+     * @param encodedPassword the currently encoded password
+     * @return true if the password should be re-encoded with ARGON2
+     */
+    public static boolean needsPasswordUpgrade(String encodedPassword) {
+        return PasswordEncoderUtils.needsUpgrade(encodedPassword);
+    }
+
+    /**
+     * Upgrades an encoded password to the default encoder type (ARGON2).
+     * This method verifies the raw password against the old encoded password,
+     * and if valid, re-encodes it with ARGON2.
+     *
+     * @param rawPassword the plaintext password to verify and re-encode
+     * @param oldEncodedPassword the currently encoded password
+     * @return the newly encoded password with ARGON2
+     * @throws IllegalArgumentException if the raw password does not match the old encoded password
+     */
+    public static String upgradePassword(String rawPassword, String oldEncodedPassword) {
+        return PasswordEncoderUtils.upgradePassword(rawPassword, oldEncodedPassword);
+    }
 }

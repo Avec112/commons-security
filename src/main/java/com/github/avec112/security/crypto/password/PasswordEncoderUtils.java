@@ -35,8 +35,8 @@ public class PasswordEncoderUtils {
     static {
         Map<String, PasswordEncoder> map = new HashMap<>();
         map.put(PasswordEncoderType.ARGON2.id(), Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8());
-        map.put(PasswordEncoderType.BCRYPT.id(), new BCryptPasswordEncoder());
         map.put(PasswordEncoderType.SCRYPT.id(), SCryptPasswordEncoder.defaultsForSpringSecurity_v5_8());
+        map.put(PasswordEncoderType.BCRYPT.id(), new BCryptPasswordEncoder());
         map.put(PasswordEncoderType.PBKDF2.id(), Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8());
         ENCODERS = Collections.unmodifiableMap(map);
     }
@@ -149,5 +149,77 @@ public class PasswordEncoderUtils {
         return getPasswordEncoderType(encodedPassword).id();
     }
 
+    /**
+     * Checks if an encoded password needs to be upgraded to a stronger algorithm.
+     * Returns true if the current encoding type is different from the target type.
+     *
+     * @param encodedPassword the currently encoded password
+     * @param targetType the desired password encoder type (typically ARGON2)
+     * @return true if the password should be re-encoded with the target type
+     */
+    public static boolean needsUpgrade(String encodedPassword, PasswordEncoderType targetType) {
+        Validate.notBlank(encodedPassword);
+        Objects.requireNonNull(targetType);
+
+        try {
+            PasswordEncoderType currentType = getPasswordEncoderType(encodedPassword);
+            return currentType != targetType;
+        } catch (IllegalArgumentException e) {
+            // If we can't determine the type, assume it needs upgrade
+            return true;
+        }
+    }
+
+    /**
+     * Checks if an encoded password needs to be upgraded to the default algorithm (ARGON2).
+     *
+     * @param encodedPassword the currently encoded password
+     * @return true if the password should be re-encoded with ARGON2
+     */
+    public static boolean needsUpgrade(String encodedPassword) {
+        return needsUpgrade(encodedPassword, DEFAULT_ENCODER);
+    }
+
+    /**
+     * Upgrades an encoded password from one encoder type to another.
+     * This method verifies the raw password against the old encoded password,
+     * and if valid, re-encodes it with the target encoder type.
+     *
+     * @param rawPassword the plaintext password to verify and re-encode
+     * @param oldEncodedPassword the currently encoded password
+     * @param targetType the desired password encoder type for the upgrade
+     * @return the newly encoded password with the target encoder type
+     * @throws IllegalArgumentException if the raw password does not match the old encoded password
+     */
+    public static String upgradePassword(String rawPassword, String oldEncodedPassword, PasswordEncoderType targetType) {
+        Validate.notBlank(rawPassword);
+        Validate.notBlank(oldEncodedPassword);
+        Objects.requireNonNull(targetType);
+
+        // Get the current encoder type
+        PasswordEncoderType currentType = getPasswordEncoderType(oldEncodedPassword);
+
+        // Verify the raw password matches the old encoded password
+        if (!matches(rawPassword, oldEncodedPassword, currentType)) {
+            throw new IllegalArgumentException("Raw password does not match the encoded password");
+        }
+
+        // Re-encode with the target encoder type
+        return encode(rawPassword, targetType);
+    }
+
+    /**
+     * Upgrades an encoded password to the default encoder type (ARGON2).
+     * This method verifies the raw password against the old encoded password,
+     * and if valid, re-encodes it with ARGON2.
+     *
+     * @param rawPassword the plaintext password to verify and re-encode
+     * @param oldEncodedPassword the currently encoded password
+     * @return the newly encoded password with ARGON2
+     * @throws IllegalArgumentException if the raw password does not match the old encoded password
+     */
+    public static String upgradePassword(String rawPassword, String oldEncodedPassword) {
+        return upgradePassword(rawPassword, oldEncodedPassword, DEFAULT_ENCODER);
+    }
 
 }
