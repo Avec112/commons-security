@@ -440,7 +440,7 @@ final String encodedPassword = PasswordEncoderUtils.encode(password, PasswordEnc
 When a user is authenticated they must input their password. This plaintext password will be matched against the stored encoded password.
 
 [source,java]
-.Password matching using `CryptoUtils` (default `ARGON2`)
+.Password matching using `CryptoUtils` (auto-detects encoder type)
 ----
 final boolean isMatching = CryptoUtils.matchesPassword(rawPassword, encodedPassword);
 ----
@@ -448,12 +448,14 @@ final boolean isMatching = CryptoUtils.matchesPassword(rawPassword, encodedPassw
 [source,java]
 .Alternative using `PasswordEncoderUtils` directly
 ----
-// Default ARGON2
+// Auto-detects encoder type from {id} prefix
 final boolean isMatching = PasswordEncoderUtils.matches(rawPassword, encodedPassword);
 
-// Or specify encoder type
+// Or specify encoder type explicitly for legacy systems
 final boolean isMatching = PasswordEncoderUtils.matches(rawPassword, encodedPassword, PasswordEncoderType.BCRYPT);
 ----
+
+TIP: `matchesPassword()` automatically detects the encoder type from the `{id}` prefix (e.g., `{argon2}`, `{bcrypt}`), making it work seamlessly with passwords encoded using different algorithms.
 
 === Upgrading Passwords
 

@@ -222,11 +222,13 @@ public class CryptoUtils {
     }
 
     /**
-     * Matches a raw password against an encoded password using the default password encoder (ARGON2).
+     * Matches a raw password against an encoded password.
+     * Automatically detects the encoder type from the {id} prefix in the encoded password.
      *
      * @param rawPassword     the raw password to check
      * @param encodedPassword the encoded password to match against
      * @return true if the passwords match, false otherwise
+     * @throws IllegalArgumentException if the encoded password doesn't have a valid prefix
      */
     public static boolean matchesPassword(String rawPassword, String encodedPassword) {
         return PasswordEncoderUtils.matches(rawPassword, encodedPassword);

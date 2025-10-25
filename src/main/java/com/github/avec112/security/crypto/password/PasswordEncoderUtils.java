@@ -30,6 +30,7 @@ public class PasswordEncoderUtils {
 
     private static final Pattern PREFIX_PATTERN = Pattern.compile("^\\{([a-zA-Z0-9_-]+)}");
     private static final Map<String, PasswordEncoder> ENCODERS;
+    private static final Map<PasswordEncoderType, PasswordEncoder> DELEGATING_ENCODERS;
     private static final PasswordEncoderType DEFAULT_ENCODER = PasswordEncoderType.ARGON2;
 
     static {
@@ -39,6 +40,13 @@ public class PasswordEncoderUtils {
         map.put(PasswordEncoderType.BCRYPT.id(), new BCryptPasswordEncoder());
         map.put(PasswordEncoderType.PBKDF2.id(), Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8());
         ENCODERS = Collections.unmodifiableMap(map);
+
+        // Pre-build cached delegating encoders for each type
+        Map<PasswordEncoderType, PasswordEncoder> delegatingMap = new HashMap<>();
+        for (PasswordEncoderType type : PasswordEncoderType.values()) {
+            delegatingMap.put(type, new DelegatingPasswordEncoder(type.id(), ENCODERS));
+        }
+        DELEGATING_ENCODERS = Collections.unmodifiableMap(delegatingMap);
     }
 
     /**
@@ -50,13 +58,13 @@ public class PasswordEncoderUtils {
     private PasswordEncoderUtils(){}
 
     /**
-     * Creates a delegating password encoder based on the specified password encoder type.
+     * Returns a cached delegating password encoder for the specified type.
      *
      * @param type the password encoder type to delegate to; must not be null
      * @return a {@link PasswordEncoder} instance configured to delegate to the specified type
      */
     private static PasswordEncoder delegating(PasswordEncoderType type) {
-        return new DelegatingPasswordEncoder(type.id(), ENCODERS);
+        return DELEGATING_ENCODERS.get(type);
     }
 
     /**
@@ -85,22 +93,28 @@ public class PasswordEncoderUtils {
     }
 
     /**
-     * Match password with ARGON2 encoded password
-     * @param password plaintext password to encode
-     * @param encodedPassword expected to be encoded with ARGON2
+     * Automatically detects the encoder type from the encoded password's prefix
+     * and verifies if the plaintext password matches.
+     * This method parses the {id} prefix from the encoded password to determine
+     * which encoder to use for matching.
+     *
+     * @param password plaintext password to verify; must not be blank
+     * @param encodedPassword encoded password with {id} prefix; must not be blank
      * @return true if password match
+     * @throws IllegalArgumentException if the encoded password doesn't have a valid prefix
      */
     public static boolean matches(String password, String encodedPassword) {
         Validate.notBlank(password);
         Validate.notBlank(encodedPassword);
 
-
-        return matches(password, encodedPassword, DEFAULT_ENCODER);
+        PasswordEncoderType detectedType = getPasswordEncoderType(encodedPassword);
+        return matches(password, encodedPassword, detectedType);
     }
 
 
     /**
      * Verifies whether a plaintext password matches an encoded password using a specified password encoder type.
+     * This method is useful for explicit encoder type control or for legacy systems.
      *
      * @param password the plaintext password to verify; must not be blank
      * @param encodedPassword the encoded password to compare against; must not be blank

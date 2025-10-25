@@ -67,6 +67,28 @@ class PasswordEncoderUtilsTest {
 
     @ParameterizedTest
     @CsvSource({
+            "Password, '{argon2}$argon2id$v=19$m=4096,t=3,p=1$fwWOqRq6rOaSHGzCEA1p7A$lpxeUs+74bvj+kZdRO4Mna/jerRp0NueMZMZGRc+k1c'",
+            "Password, {bcrypt}$2a$10$1GP39z1I.C.JHX9Qn7AepezSCYYQ53eINFFlcfnKpkHDwNemmGLyK",
+            "Password, {scrypt}$e0801$3WQIalromBXCD0qL+q1j1R0pWmyHMkO0NteGGDc+TEBaIG25JMUNtmLtH/aNcMO+xbD21pv1hrM1zX29MwJ2oQ==$vmfA1aDb6vFKVH7JfqYOjM9iVMa2STgqJqFgHbcyNoA=",
+            "Password, {pbkdf2}3982ab2f19a3f8de63a110246301348fffc94c8fe96955771cdfd14ad41e3461946af959f92699bf31efc7cc4065592f"
+    })
+    void matches_shouldAutoDetectEncoderType(String password, String encodedPassword) {
+        assertTrue(PasswordEncoderUtils.matches(password, encodedPassword));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "WrongPassword, '{argon2}$argon2id$v=19$m=4096,t=3,p=1$fwWOqRq6rOaSHGzCEA1p7A$lpxeUs+74bvj+kZdRO4Mna/jerRp0NueMZMZGRc+k1c'",
+            "WrongPassword, {bcrypt}$2a$10$1GP39z1I.C.JHX9Qn7AepezSCYYQ53eINFFlcfnKpkHDwNemmGLyK",
+            "WrongPassword, {scrypt}$e0801$3WQIalromBXCD0qL+q1j1R0pWmyHMkO0NteGGDc+TEBaIG25JMUNtmLtH/aNcMO+xbD21pv1hrM1zX29MwJ2oQ==$vmfA1aDb6vFKVH7JfqYOjM9iVMa2STgqJqFgHbcyNoA=",
+            "WrongPassword, {pbkdf2}3982ab2f19a3f8de63a110246301348fffc94c8fe96955771cdfd14ad41e3461946af959f92699bf31efc7cc4065592f"
+    })
+    void matches_shouldReturnFalseForWrongPassword(String wrongPassword, String encodedPassword) {
+        assertFalse(PasswordEncoderUtils.matches(wrongPassword, encodedPassword));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
             "WrongPassword, '{argon2}$argon2id$v=19$m=4096,t=3,p=1$iEPXeYeiXmsGyKAjnVWhYg$glRQEguo9ymG+EU2JSOz1DE40I5A94/EEDKwDQiDXnY'",
             "Password!, '{argon2}$argon2id$v=19$m=4096,t=3,p=1$pfFmF3om+Z1BirJyLL2YVA$7Q5iYZA7GJRco1YCHBmeEIDQ2OJwoU/smDAuBKnrhYE'",
             "Password123, '{argon2}$argon2id$v=19$m=4096,t=3,p=1$A4XnnF/0JEpSxG7MPKLZtg$S8q8gatvXDX7Ef/76V8VleFwMO3c7Tdo/mLOVtiecrQ'",

@@ -396,6 +396,36 @@ class CryptoUtilsFacadeTest {
     }
 
     @Test
+    void matchesPassword_shouldAutoDetectArgon2() {
+        final String rawPassword = "MySecurePassword123!";
+        final String argon2Encoded = CryptoUtils.encodePassword(rawPassword);
+
+        final boolean matches = CryptoUtils.matchesPassword(rawPassword, argon2Encoded);
+
+        assertThat(matches).isTrue();
+    }
+
+    @Test
+    void matchesPassword_shouldAutoDetectBcrypt() {
+        final String rawPassword = "Password";
+        final String bcryptEncoded = "{bcrypt}$2a$10$1GP39z1I.C.JHX9Qn7AepezSCYYQ53eINFFlcfnKpkHDwNemmGLyK";
+
+        final boolean matches = CryptoUtils.matchesPassword(rawPassword, bcryptEncoded);
+
+        assertThat(matches).isTrue();
+    }
+
+    @Test
+    void matchesPassword_shouldAutoDetectScrypt() {
+        final String rawPassword = "Password";
+        final String scryptEncoded = "{scrypt}$e0801$3WQIalromBXCD0qL+q1j1R0pWmyHMkO0NteGGDc+TEBaIG25JMUNtmLtH/aNcMO+xbD21pv1hrM1zX29MwJ2oQ==$vmfA1aDb6vFKVH7JfqYOjM9iVMa2STgqJqFgHbcyNoA=";
+
+        final boolean matches = CryptoUtils.matchesPassword(rawPassword, scryptEncoded);
+
+        assertThat(matches).isTrue();
+    }
+
+    @Test
     void needsPasswordUpgrade_shouldReturnTrueForNonArgon2() {
         final String bcryptPassword = "{bcrypt}$2a$10$1GP39z1I.C.JHX9Qn7AepezSCYYQ53eINFFlcfnKpkHDwNemmGLyK";
 

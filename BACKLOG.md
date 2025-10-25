@@ -68,16 +68,17 @@ Goal: complete modernization, testing, and documentation for internal and educat
 
 ## 🧩 Tier 4 – Password encoding improvements
 
-- [ ] **Cache `DelegatingPasswordEncoder` instances**
+- ✅ **Cache `DelegatingPasswordEncoder` instances**
   - Build once per `PasswordEncoderType`.
 
-- [ ] **Make encoder map unmodifiable**
+- ✅ **Make encoder map unmodifiable**
   - Wrap with `Collections.unmodifiableMap()`.
 
-- [ ] **Add `matchesAuto()` helper**
-  - Auto-detect encoder type from `{id}` prefix.
+- ✅ **Refactor `matches()` to auto-detect encoder type**
+  - Auto-detect encoder type from `{id}` prefix by default.
+  - Keep explicit type parameter for legacy/special cases.
 
-- [ ] **Add `needsUpgrade()` helper**
+- ✅ **Add `needsUpgrade()` helper**
   - Allow checking if encoded password should be re-hashed with stronger algorithm.
 
 ---
