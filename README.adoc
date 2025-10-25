@@ -50,6 +50,20 @@ toc::[]
 
 <<<
 
+[IMPORTANT]
+.Educational and Internal Use Only
+====
+This library is intended for *educational and internal use only*.
+
+It is *not intended for production deployment* or active maintenance as a public library. The codebase serves as a reference implementation and learning resource for cryptographic concepts and best practices in Java.
+
+For production systems, please use well-established and actively maintained security libraries such as:
+
+* https://github.com/spring-projects/spring-security[Spring Security]
+* https://www.bouncycastle.org/java.html[BouncyCastle]
+* https://github.com/google/tink[Google Tink]
+====
+
 == Overview
 *Commons Security* is a Java library with several encryption features for `Java 11` and higher build on top of `JCA/JCE` with `BouncyCastle` as provider. The library hides the implementation behind a simple and easy to use API. Typically a simplified API requires that some decisions has been made already, like which algorithm to use, encryption strength, etc. However do not worry, look behind the simplified API and you will find more configuration options.
 
@@ -154,8 +168,8 @@ TIP: Useful for encryption larger files compared to
 asymmetric encryption. A symmetric key can be shared (distributed) by using _RSA public key encryption_, _Diffie-Hellman_ or even
 _Sharmir's Secret Sharing_ if needed.
 
-Modes supported: `GCM`, `CTR` +
-Strength supported: `128`, `192`, `256`
+Modes supported: `GCM` (default), `CTR` +
+Strength supported: `128`, `192`, `256` (default)
 
 === AES Encryption and Decryption
 

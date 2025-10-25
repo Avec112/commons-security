@@ -1,6 +1,5 @@
 package com.github.avec112.security.crypto;
 
-import com.github.avec112.security.crypto.error.BadCipherConfigurationException;
 import com.github.avec112.security.crypto.aes.AesDecryptor;
 import com.github.avec112.security.crypto.aes.AesEncryptor;
 import com.github.avec112.security.crypto.aes.EncryptionMode;
@@ -9,6 +8,7 @@ import com.github.avec112.security.crypto.digest.DigestUtils;
 import com.github.avec112.security.crypto.domain.CipherText;
 import com.github.avec112.security.crypto.domain.Password;
 import com.github.avec112.security.crypto.domain.PlainText;
+import com.github.avec112.security.crypto.error.BadCipherConfigurationException;
 import com.github.avec112.security.crypto.hybrid.HybridEncryptionResult;
 import com.github.avec112.security.crypto.rsa.KeySize;
 import com.github.avec112.security.crypto.rsa.KeyUtils;
@@ -22,8 +22,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import javax.crypto.BadPaddingException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
 import java.security.KeyPair;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -456,4 +461,28 @@ class CryptoUtilsFacadeTest {
         assertThat(CryptoUtils.needsPasswordUpgrade(upgradedPassword)).isFalse();
     }
 
+    @Test
+    void getVersion_shouldMatchPomXmlVersion() throws Exception {
+        // Read version from pom.xml
+        String pomVersion = readVersionFromPom();
+
+        // Assert that CryptoUtils.getVersion() matches pom.xml version
+        assertThat(CryptoUtils.getVersion())
+                .as("CryptoUtils.VERSION should match the version in pom.xml")
+                .isEqualTo(pomVersion);
+    }
+
+    private String readVersionFromPom() throws Exception {
+        File pomFile = new File("pom.xml");
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(pomFile);
+
+        NodeList versionNodes = doc.getElementsByTagName("version");
+        if (versionNodes.getLength() > 0) {
+            return versionNodes.item(0).getTextContent();
+        }
+
+        throw new IllegalStateException("Could not find version in pom.xml");
+    }
 }

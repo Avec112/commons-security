@@ -85,12 +85,12 @@ Goal: complete modernization, testing, and documentation for internal and educat
 
 ## ✍️ Tier 5 – Documentation & cleanup
 
-- [ ] **Update `README.adoc`**
+- ✅ **Update `README.adoc`**
   - Reflect new AES/RSA defaults and PSS signatures.
   - Add section on hybrid encryption.
-  - Include a *“Not for production use”* disclaimer.
+  - Include a *"Not for production use"* disclaimer.
 
-- [ ] **Add library version metadata**
+- ✅ **Add library version metadata**
   - e.g. `public static final String VERSION = "1.0.0";`
 
 - ✅ **Rename minor typos**
