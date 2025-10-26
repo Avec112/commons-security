@@ -1,6 +1,7 @@
 package com.github.avec112.security.crypto.rsa;
 
 import com.github.avec112.security.crypto.BouncyCastleProviderInitializer;
+import com.github.avec112.security.crypto.KeySize;
 import com.github.avec112.security.crypto.domain.CipherText;
 import com.github.avec112.security.crypto.domain.PlainText;
 import org.junit.jupiter.api.Test;

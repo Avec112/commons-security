@@ -69,12 +69,12 @@ For production systems, please use well-established and actively maintained secu
 
 .Features
 
-* *Asymmetric encryption* and decryption with _public key_ and _private key_. `RSA` is supported.
+* *Asymmetric encryption* and decryption with _public key_ and _private key_. `RSA` and `ECIES` (ECC-based) are supported.
 * *Symmetric encryption* and decryption with one (same) key. `AES/CTR` and `AES/GCM` is supported.
 * *Hybrid encryption* combines RSA and AES for secure and efficient encryption of large data. RSA encrypts the AES key, while AES encrypts the actual data.
 * *Shamir's Secret Sharing* is a way to split a secret into shares. The secret can be recreated by putting the minimum required amount of shares back together.
 * *Digest* or message digest is the result of hashing and is a way to integrity check our data. A typical use case could be to compare content (hashed) with a stored hash to verify if the data has been altered.
-* Digital *Signature* and *verification* using RSA keypair and modern `RSASSA-PSS` padding. The user signs data with their _private key_ and others verify the signature with the originator's _public key_.
+* Digital *Signature* and *verification* using RSA keypair with modern `RSASSA-PSS` padding, or ECC with `Ed25519` (modern, fast) or `ECDSA` (standards-compliant). The user signs data with their _private key_ and others verify the signature with the originator's _public key_.
 * *Password Encoder* uses proven algorithms for hashing passwords in a safe and secure way.
 
 
@@ -83,11 +83,12 @@ You may use the simple delegate class `CryptoUtils` or you can access classes li
 The `CryptoUtils` facade provides convenient methods for:
 
 * **RSA encryption/decryption** - `rsaEncrypt()` / `rsaDecrypt()`
+* **ECIES encryption/decryption** - `eciesEncrypt()` / `eciesDecrypt()` (ECC-based, smaller keys than RSA)
 * **AES encryption/decryption** - `aesEncrypt()` / `aesDecrypt()`
 * **Hybrid encryption/decryption** - `hybridEncrypt()` / `hybridDecrypt()`
 * **Shamir's Secret Sharing** - `getShamirShares()` / `getShamirSecret()`
 * **Digest (hashing)** - `digest()` / `base64Digest()` / `hexDigest()`
-* **Digital signatures** - `sign()` / `verify()`
+* **Digital signatures** - `sign()` / `verify()` (RSA), `signEd25519()` / `verifyEd25519()` (ECC), `signEcdsa()` / `verifyEcdsa()` (ECC)
 * **Password encoding** - `encodePassword()` / `matchesPassword()` / `needsPasswordUpgrade()` / `upgradePassword()`
 
 === Some common classes
@@ -104,7 +105,11 @@ This is some common classes used when working with _Symmetric_ and _Asymmetric e
 * `PrivateKey` holds the _private key_ derived from `java.security.KeyPair` and can be used for decryption or for creating a signature. +
 `PrivateKey privateKey = keyPair.getPrivateKey();`
 
-== RSA asymmetric encryption
+== Asymmetric Encryption
+
+Asymmetric encryption uses a _public key_ for encryption and a _private key_ for decryption. This library supports both RSA and ECC-based encryption.
+
+=== RSA Encryption
 
 __RSA__footnote:[https://en.wikipedia.org/wiki/RSA_(cryptosystem)] (Rivest–Shamir–Adleman) is a _public-key_ cryptosystem that is widely used for secure data transmission. In a _public-key_ cryptosystem, the encryption key is public and distinct from the decryption key, which is kept secret (private).
 
@@ -118,7 +123,7 @@ their matching _private key_.
 TIP: Used to share small files or text with other users. For large content (more than 117 bytes) use AES symmetric
 encryption. The AES secret key can later be shared by using _Public Key Encryption_ like RSA encryption or __Diffie-Hellman__footnote:[https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange].
 
-=== RSA KeyPair
+==== RSA KeyPair
 
 RSA requires a _private key_ and a matching _public key_. Supported key sizes (encryption strength) are `2048`, `3072` (default)
 and `4096`.
@@ -139,7 +144,7 @@ RsaCipher rsaCipher = new RsaCipher();
 KeyPair keyPair = rsaCipher.generateKeyPair(KeySize.BIT_4096);
 ----
 
-=== RSA Encryption and Decryption
+==== RSA Encryption and Decryption
 
 [source,java]
 .RSA encryption and decryption using `CryptoUtils`
@@ -158,11 +163,80 @@ CipherText cipherText = rsaCipher.encrypt("My secret", keyPair.getPublicKey());
 PlainText plainText = rsaCipher.decrypt(cipherText, keyPair.getPrivateKey());
 ----
 
-== AES symmetric encryption
+=== ECC (Elliptic Curve Cryptography)
+
+ECC provides equivalent security to RSA with much smaller key sizes, resulting in faster operations and reduced memory footprint.
+
+==== Key Size Comparison
+
+* 256-bit ECC ≈ 3072-bit RSA
+* 384-bit ECC ≈ 7680-bit RSA
+* 521-bit ECC ≈ 15360-bit RSA
+
+==== Supported ECC Curves
+
+* **Ed25519** - Modern signature curve (256-bit security)
+* **secp256r1 (P-256)** - NIST curve for ECDSA and ECIES (256-bit security)
+* **secp384r1 (P-384)** - NIST curve for higher security (384-bit security)
+* **secp521r1 (P-521)** - NIST curve for maximum security (521-bit security)
+
+==== ECC Key Generation
+
+[source,java]
+.Generate Ed25519 keypair for signatures
+----
+KeyPair ed25519Keys = KeyUtils.generateEd25519KeyPair();
+----
+
+[source,java]
+.Generate secp256r1 keypair for ECDSA or ECIES
+----
+KeyPair ecKeys = KeyUtils.generateSecp256r1KeyPair();
+----
+
+[source,java]
+.Generate with specific curve
+----
+KeyPair ecKeys = KeyUtils.generateEcKeyPair(EccCurve.SECP384R1);
+----
+
+==== ECIES Encryption
+
+ECIES (Elliptic Curve Integrated Encryption Scheme) is a hybrid encryption scheme that combines ECC key agreement with symmetric encryption. It's the ECC equivalent of RSA-OAEP.
+
+[source,java]
+.ECIES encryption using `CryptoUtils`
+----
+KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+
+// Encrypt
+byte[] ciphertext = CryptoUtils.eciesEncrypt("Secret message", keyPair.getPublic());
+
+// Decrypt
+String plaintext = CryptoUtils.eciesDecrypt(ciphertext, keyPair.getPrivate());
+----
+
+[source,java]
+.Alternative using `EciesCipher` directly
+----
+KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+
+byte[] ciphertext = EciesCipher.encrypt("Secret message", keyPair.getPublic());
+String plaintext = EciesCipher.decrypt(ciphertext, keyPair.getPrivate());
+----
+
+TIP: ECIES provides built-in integrity protection (MAC) and uses smaller keys than RSA for the same security level.
+
+== Symmetric Encryption
+
+Symmetric encryption uses the same key for both encryption and decryption. This library supports AES encryption.
+
+=== AES Encryption
+
 __The Advanced Encryption Standard__ (AES)footnote:[https://en.wikipedia.org/wiki/Advanced_Encryption_Standard], also known by its original name Rijndael is a specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology (NIST) in 2001.
 
 [quote]
-There’s a single shared key that’s used for encryption and decryption.
+There's a single shared key that's used for encryption and decryption.
 
 TIP: Useful for encryption larger files compared to
 asymmetric encryption. A symmetric key can be shared (distributed) by using _RSA public key encryption_, _Diffie-Hellman_ or even
@@ -171,7 +245,7 @@ _Sharmir's Secret Sharing_ if needed.
 Modes supported: `GCM` (default), `CTR` +
 Strength supported: `128`, `192`, `256` (default)
 
-=== AES Encryption and Decryption
+==== AES Encryption and Decryption
 
 [source,java]
 .AES encryption and decryption using `CryptoUtils` with `GCM`@`256`-bit
@@ -395,7 +469,15 @@ final byte[] digest = DigestUtils.digest(data, DigestAlgorithm.SHA3_256);
 == Signature and verification
 A __digital signature__footnote:[https://en.wikipedia.org/wiki/Digital_signature] is a mathematical scheme for verifying the authenticity of digital messages or documents. A valid digital signature, where the prerequisites are satisfied, gives a recipient very strong reason to believe that the message was created by a known sender (authentication), and that the message was not altered in transit.
 
-Commons Security uses `RSASSA-PSS` (SHA-256 with MGF1)footnote:[https://www.encryptionconsulting.com/overview-of-rsassa-pss] — the modern and recommended signature scheme replacing legacy `SHA256withRSA`.
+This library supports multiple signature algorithms:
+
+* **RSASSA-PSS** - Modern RSA signature scheme with probabilistic padding
+* **Ed25519** - Modern ECC signature (fastest, deterministic)
+* **ECDSA** - Standards-compliant ECC signature (probabilistic)
+
+=== RSA Signatures (RSASSA-PSS)
+
+Commons Security uses `RSASSA-PSS` (SHA-256 with MGF1)footnote:[https://www.encryptionconsulting.com/overview-of-rsassa-pss] — the modern and recommended RSA signature scheme replacing legacy `SHA256withRSA`.
 
 [source,java]
 .Using `CryptoUtils` (recommended for simple use cases)
@@ -418,6 +500,68 @@ boolean verified = SignatureUtils.verify(signature, "My data", keyPair.getPublic
 ----
 
 TIP: RSASSA-PSS provides probabilistic padding, making it more secure than the traditional PKCS#1 v1.5 (`SHA256withRSA`).
+
+=== Ed25519 Signatures (ECC-based)
+
+Ed25519 is a modern signature algorithm providing:
+
+* **High performance** - Much faster than RSA and ECDSA
+* **Strong security** - 128-bit security (equivalent to RSA-3072)
+* **Deterministic** - Same input always produces same signature
+* **Small signatures** - Only 64 bytes per signature
+* **Small keys** - 32-byte public keys, 32-byte private keys
+
+[source,java]
+.Ed25519 signatures using `CryptoUtils`
+----
+KeyPair keyPair = KeyUtils.generateEd25519KeyPair();
+
+// Sign data
+byte[] signature = CryptoUtils.signEd25519("My data", keyPair.getPrivate());
+
+// Verify signature
+boolean verified = CryptoUtils.verifyEd25519(signature, "My data", keyPair.getPublic());
+----
+
+[source,java]
+.Alternative using `SignatureUtils` directly
+----
+KeyPair keyPair = KeyUtils.generateEd25519KeyPair();
+byte[] signature = SignatureUtils.signEd25519("My data", keyPair.getPrivate());
+boolean verified = SignatureUtils.verifyEd25519(signature, "My data", keyPair.getPublic());
+----
+
+TIP: Ed25519 is used in modern protocols like SSH, Signal, and TLS 1.3.
+
+=== ECDSA Signatures (ECC-based)
+
+ECDSA provides standards-compliant ECC signatures with much smaller key sizes than RSA:
+
+* 256-bit ECDSA ≈ 3072-bit RSA
+* 384-bit ECDSA ≈ 7680-bit RSA
+* 521-bit ECDSA ≈ 15360-bit RSA
+
+[source,java]
+.ECDSA signatures using `CryptoUtils`
+----
+KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+
+// Sign data (hash algorithm auto-selected based on curve)
+byte[] signature = CryptoUtils.signEcdsa("My data", keyPair.getPrivate());
+
+// Verify signature
+boolean verified = CryptoUtils.verifyEcdsa(signature, "My data", keyPair.getPublic());
+----
+
+[source,java]
+.Alternative using `SignatureUtils` directly
+----
+KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+byte[] signature = SignatureUtils.signEcdsa("My data", keyPair.getPrivate());
+boolean verified = SignatureUtils.verifyEcdsa(signature, "My data", keyPair.getPublic());
+----
+
+TIP: ECDSA signatures are probabilistic (include random nonce), meaning signing the same data twice produces different signatures.
 
 == Password Encoder
 Key Derivation Functions (KDF)footnote:kdf[] from a password must be able to stand attacks like *brute-forcing*, *dictionary attacks*, *rainbow attacks* and more. Attempts to reverse hashed password values is common.

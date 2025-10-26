@@ -6,6 +6,7 @@ import com.github.avec112.security.crypto.digest.DigestUtils;
 import com.github.avec112.security.crypto.domain.CipherText;
 import com.github.avec112.security.crypto.domain.Password;
 import com.github.avec112.security.crypto.domain.PlainText;
+import com.github.avec112.security.crypto.ecc.EciesCipher;
 import com.github.avec112.security.crypto.error.BadCipherConfigurationException;
 import com.github.avec112.security.crypto.error.BadCipherTextException;
 import com.github.avec112.security.crypto.hybrid.DecryptBuilder;
@@ -25,7 +26,8 @@ import java.security.PublicKey;
 /**
  * Utility class providing cryptographic functions such as encryption, decryption, hashing, signature
  * generation/verification, and secret sharing mechanisms. This class covers a wide range of cryptographic
- * operations, including AES encryption, RSA encryption, Shamir's Secret Sharing, message digests, and hybrid encryption.
+ * operations, including AES encryption, RSA encryption, ECC signatures (Ed25519, ECDSA), ECIES encryption,
+ * Shamir's Secret Sharing, message digests, and hybrid encryption.
  */
 public class CryptoUtils {
 
@@ -67,6 +69,9 @@ public class CryptoUtils {
     }
 
     // ========== Asymmetric Encryption Methods ==========
+
+    // RSA Encryption
+
     /**
      * Encrypts the provided plaintext using RSA encryption with the given public key.
      *
@@ -91,6 +96,33 @@ public class CryptoUtils {
     public static PlainText rsaDecrypt(CipherText ciperText, PrivateKey privateKey) throws Exception {
         RsaCipher cipher = new RsaCipher();
         return cipher.decrypt(ciperText, privateKey);
+    }
+
+    // ECIES Encryption (ECC-based)
+
+    /**
+     * Encrypts plaintext using ECIES (Elliptic Curve Integrated Encryption Scheme).
+     * ECIES is a hybrid encryption scheme that combines ECC key agreement with symmetric encryption.
+     *
+     * @param plainText the plaintext to encrypt
+     * @param publicKey the recipient's EC public key (secp256r1, secp384r1, or secp521r1)
+     * @return the encrypted ciphertext bytes
+     * @throws Exception if an error occurs during encryption
+     */
+    public static byte[] eciesEncrypt(String plainText, PublicKey publicKey) throws Exception {
+        return EciesCipher.encrypt(plainText, publicKey);
+    }
+
+    /**
+     * Decrypts ECIES ciphertext using the recipient's private key.
+     *
+     * @param ciphertext the encrypted data
+     * @param privateKey the recipient's EC private key
+     * @return the decrypted plaintext string
+     * @throws Exception if an error occurs during decryption
+     */
+    public static String eciesDecrypt(byte[] ciphertext, PrivateKey privateKey) throws Exception {
+        return EciesCipher.decrypt(ciphertext, privateKey);
     }
 
     // ========== Shamir's Secret Sharing Methods ==========
@@ -154,11 +186,13 @@ public class CryptoUtils {
 
     // ========== Signature Methods ==========
 
+    // RSA Signatures
+
     /**
      * Signs the given data using RSASSA-PSS with the provided private key.
      *
      * @param data       the data to sign
-     * @param privateKey the private key to use for signing
+     * @param privateKey the RSA private key to use for signing
      * @return the signature as a byte array
      * @throws Exception if an error occurs during signing
      */
@@ -171,12 +205,68 @@ public class CryptoUtils {
      *
      * @param signature the signature to verify
      * @param data      the original data
-     * @param publicKey the public key to use for verification
+     * @param publicKey the RSA public key to use for verification
      * @return true if the signature is valid, false otherwise
      * @throws Exception if an error occurs during verification
      */
     public static boolean verify(byte[] signature, String data, PublicKey publicKey) throws Exception {
         return SignatureUtils.verify(signature, data, publicKey);
+    }
+
+    // Ed25519 Signatures (ECC-based, modern and fast)
+
+    /**
+     * Signs the given data using Ed25519.
+     * Ed25519 provides fast, deterministic signatures with 128-bit security (equivalent to RSA-3072).
+     *
+     * @param data       the data to sign
+     * @param privateKey the Ed25519 private key to use for signing
+     * @return the signature as a byte array (64 bytes)
+     * @throws Exception if an error occurs during signing
+     */
+    public static byte[] signEd25519(String data, PrivateKey privateKey) throws Exception {
+        return SignatureUtils.signEd25519(data, privateKey);
+    }
+
+    /**
+     * Verifies an Ed25519 signature for the given data.
+     *
+     * @param signature the signature to verify
+     * @param data      the original data
+     * @param publicKey the Ed25519 public key to use for verification
+     * @return true if the signature is valid, false otherwise
+     * @throws Exception if an error occurs during verification
+     */
+    public static boolean verifyEd25519(byte[] signature, String data, PublicKey publicKey) throws Exception {
+        return SignatureUtils.verifyEd25519(signature, data, publicKey);
+    }
+
+    // ECDSA Signatures (ECC-based, standards-compliant)
+
+    /**
+     * Signs the given data using ECDSA (Elliptic Curve Digital Signature Algorithm).
+     * The hash algorithm is automatically selected based on the key's curve.
+     *
+     * @param data       the data to sign
+     * @param privateKey the ECDSA private key (secp256r1, secp384r1, or secp521r1)
+     * @return the signature as a byte array
+     * @throws Exception if an error occurs during signing
+     */
+    public static byte[] signEcdsa(String data, PrivateKey privateKey) throws Exception {
+        return SignatureUtils.signEcdsa(data, privateKey);
+    }
+
+    /**
+     * Verifies an ECDSA signature for the given data.
+     *
+     * @param signature the signature to verify
+     * @param data      the original data
+     * @param publicKey the ECDSA public key
+     * @return true if the signature is valid, false otherwise
+     * @throws Exception if an error occurs during verification
+     */
+    public static boolean verifyEcdsa(byte[] signature, String data, PublicKey publicKey) throws Exception {
+        return SignatureUtils.verifyEcdsa(signature, data, publicKey);
     }
 
     // ========== Hybrid Encryption Methods ==========

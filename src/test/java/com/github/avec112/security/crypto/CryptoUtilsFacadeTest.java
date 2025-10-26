@@ -8,10 +8,10 @@ import com.github.avec112.security.crypto.digest.DigestUtils;
 import com.github.avec112.security.crypto.domain.CipherText;
 import com.github.avec112.security.crypto.domain.Password;
 import com.github.avec112.security.crypto.domain.PlainText;
+import com.github.avec112.security.crypto.ecc.EccCurve;
+import com.github.avec112.security.crypto.ecc.EciesCipher;
 import com.github.avec112.security.crypto.error.BadCipherConfigurationException;
 import com.github.avec112.security.crypto.hybrid.HybridEncryptionResult;
-import com.github.avec112.security.crypto.rsa.KeySize;
-import com.github.avec112.security.crypto.rsa.KeyUtils;
 import com.github.avec112.security.crypto.rsa.RsaCipher;
 import com.github.avec112.security.crypto.shamir.Secret;
 import com.github.avec112.security.crypto.shamir.Share;
@@ -327,6 +327,60 @@ class CryptoUtilsFacadeTest {
         assertThat(SignatureUtils.verify(signatureFromUtils, data, keyPair.getPublic())).isTrue();
     }
 
+    // ========== Ed25519 Signature Tests ==========
+
+    @Test
+    void signAndVerifyEd25519() throws Exception {
+        final String data = "Ed25519 facade test";
+        final KeyPair keyPair = KeyUtils.generateEd25519KeyPair();
+
+        final byte[] signature = CryptoUtils.signEd25519(data, keyPair.getPrivate());
+        final boolean isValid = CryptoUtils.verifyEd25519(signature, data, keyPair.getPublic());
+
+        assertThat(isValid).isTrue();
+    }
+
+    @Test
+    void compareEd25519WithSignatureUtils() throws Exception {
+        final String data = "Ed25519 interoperability test";
+        final KeyPair keyPair = KeyUtils.generateEd25519KeyPair();
+
+        // Sign with both CryptoUtils and SignatureUtils
+        final byte[] signatureFromUtils = CryptoUtils.signEd25519(data, keyPair.getPrivate());
+        final byte[] signatureFromDirect = SignatureUtils.signEd25519(data, keyPair.getPrivate());
+
+        // Cross-verification should work
+        assertThat(CryptoUtils.verifyEd25519(signatureFromDirect, data, keyPair.getPublic())).isTrue();
+        assertThat(SignatureUtils.verifyEd25519(signatureFromUtils, data, keyPair.getPublic())).isTrue();
+    }
+
+    // ========== ECDSA Signature Tests ==========
+
+    @Test
+    void signAndVerifyEcdsa() throws Exception {
+        final String data = "ECDSA facade test";
+        final KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+
+        final byte[] signature = CryptoUtils.signEcdsa(data, keyPair.getPrivate());
+        final boolean isValid = CryptoUtils.verifyEcdsa(signature, data, keyPair.getPublic());
+
+        assertThat(isValid).isTrue();
+    }
+
+    @Test
+    void compareEcdsaWithSignatureUtils() throws Exception {
+        final String data = "ECDSA interoperability test";
+        final KeyPair keyPair = KeyUtils.generateSecp384r1KeyPair();
+
+        // Sign with both CryptoUtils and SignatureUtils
+        final byte[] signatureFromUtils = CryptoUtils.signEcdsa(data, keyPair.getPrivate());
+        final byte[] signatureFromDirect = SignatureUtils.signEcdsa(data, keyPair.getPrivate());
+
+        // Cross-verification should work
+        assertThat(CryptoUtils.verifyEcdsa(signatureFromDirect, data, keyPair.getPublic())).isTrue();
+        assertThat(SignatureUtils.verifyEcdsa(signatureFromUtils, data, keyPair.getPublic())).isTrue();
+    }
+
     // ========== Hybrid Encryption Tests ==========
 
     @Test
@@ -470,6 +524,41 @@ class CryptoUtilsFacadeTest {
         assertThat(CryptoUtils.getVersion())
                 .as("CryptoUtils.VERSION should match the version in pom.xml")
                 .isEqualTo(pomVersion);
+    }
+
+    // ========== ECIES Encryption Tests ==========
+
+    @Test
+    void eciesEncryptAndDecrypt() throws Exception {
+        final String plainTextExpected = "ECIES facade test message";
+        final KeyPair keyPair = KeyUtils.generateEcKeyPair(EccCurve.SECP256R1);
+
+        final byte[] ciphertext = CryptoUtils.eciesEncrypt(plainTextExpected, keyPair.getPublic());
+        final String decrypted = CryptoUtils.eciesDecrypt(ciphertext, keyPair.getPrivate());
+
+        assertEquals(plainTextExpected, decrypted);
+    }
+
+    @Test
+    void compareEciesCipherWithCryptoUtils() throws Exception {
+        final String expected = "ECIES interoperability test";
+        final KeyPair keyPair = KeyUtils.generateEcKeyPair(EccCurve.SECP256R1);
+
+        // Encrypt directly with EciesCipher
+        final byte[] directCipher = EciesCipher.encrypt(expected, keyPair.getPublic());
+
+        // Encrypt via CryptoUtils
+        final byte[] utilCipher = CryptoUtils.eciesEncrypt(expected, keyPair.getPublic());
+
+        // Cross-decrypt both
+        final String decryptedFromDirect = CryptoUtils.eciesDecrypt(directCipher, keyPair.getPrivate());
+        final String decryptedFromUtils = EciesCipher.decrypt(utilCipher, keyPair.getPrivate());
+
+        assertEquals(expected, decryptedFromDirect,
+                "CryptoUtils.eciesDecrypt should correctly decrypt ciphertext from EciesCipher.encrypt");
+
+        assertEquals(expected, decryptedFromUtils,
+                "EciesCipher.decrypt should correctly decrypt ciphertext from CryptoUtils.eciesEncrypt");
     }
 
     private String readVersionFromPom() throws Exception {

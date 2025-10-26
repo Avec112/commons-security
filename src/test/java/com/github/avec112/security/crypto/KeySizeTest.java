@@ -1,4 +1,4 @@
-package com.github.avec112.security.crypto.rsa;
+package com.github.avec112.security.crypto;
 
 import org.junit.jupiter.api.Test;
 

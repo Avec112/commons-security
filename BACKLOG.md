@@ -113,9 +113,15 @@ Goal: complete modernization, testing, and documentation for internal and educat
 
 ## 🧭 Optional Future Ideas
 
-- [ ] Add ECC support (ECIES, Ed25519, ECDSA)
+- ✅ **Add ECC support (ECIES, Ed25519, ECDSA)**
+  - Implemented ECC key generation for Ed25519, secp256r1, secp384r1, secp521r1
+  - Added Ed25519 signature support (modern, fast, deterministic)
+  - Added ECDSA signature support (standards-compliant)
+  - Added ECIES encryption/decryption (ECC-based hybrid encryption)
+  - Updated CryptoUtils facade with ECC helpers
+  - Comprehensive unit tests for all ECC functionality
 - [ ] Add BLAKE2b/BLAKE3 digests
-- [ ] Add deterministic JSON serialization
+- ✅ Add deterministic JSON serialization
 - [ ] Add streaming AES-GCM for large files
 - [ ] Create Vaadin demo UI for encryption/decryption workflow
 

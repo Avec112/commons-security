@@ -5,7 +5,7 @@ import com.github.avec112.security.crypto.aes.EncryptionStrength;
 import com.github.avec112.security.crypto.domain.CipherText;
 import com.github.avec112.security.crypto.domain.PlainText;
 import com.github.avec112.security.crypto.error.*;
-import com.github.avec112.security.crypto.rsa.KeyUtils;
+import com.github.avec112.security.crypto.KeyUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
