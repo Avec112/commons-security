@@ -51,6 +51,9 @@ jobs:
         run: |
           asciidoctor-pdf \
             -a allow-uri-read \
+            -a source-highlighter=rouge \
+            -a rouge-theme=github \
+            -a rouge-linenums-mode=table \
             README.adoc \
             -o README.pdf
 
