@@ -27,14 +27,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: target/site/jacoco/
+          path: commons-security-core/target/site/jacoco/
 
       - name: Upload coverage to Coveralls
         if: github.ref == 'refs/heads/master'
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/site/jacoco/jacoco.xml
+          file: commons-security-core/target/site/jacoco/jacoco.xml
           format: jacoco
 
       - name: Set up Ruby
