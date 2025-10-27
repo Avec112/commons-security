@@ -33,4 +33,5 @@ build/
 ### Other ###
 README.pdf
 *.pdf
-/docs/
+/commons-security-core/docs/
+/commons-security-core/docs/

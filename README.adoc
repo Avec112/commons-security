@@ -428,7 +428,7 @@ The following hashing algorithms are [.underline]#*not*# recommended or supporte
 .Supported hashing algorithms
 [source,java]
 ----
-include::src/main/java/com/github/avec112/security/crypto/digest/DigestAlgorithm.java[tag=algorithms]
+include::commons-security-core/src/main/java/com/github/avec112/security/crypto/digest/DigestAlgorithm.java[tag=algorithms]
 ----
 
 .Worth reading
@@ -576,7 +576,7 @@ A plaintext password should always be encoded in case of a breach. After a passw
 [source,java]
 .Supported password encoders
 ----
-include::src/main/java/com/github/avec112/security/crypto/password/PasswordEncoderType.java[tag=algorithms]
+include::commons-security-core/src/main/java/com/github/avec112/security/crypto/password/PasswordEncoderType.java[tag=algorithms]
 ----
 
 [source,java]
