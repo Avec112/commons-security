@@ -66,15 +66,15 @@ public class KeyUtils extends BouncyCastleProviderInitializer {
         return generateRsaKeyPair(DEFAULT_RSA_KEY_SIZE);
     }
 
-    public static KeyPair generateKeyPair4096() throws Exception {
+    public static KeyPair generateRsaKeyPair4096() throws Exception {
         return generateRsaKeyPair(KeySize.BIT_4096);
     }
 
-    public static KeyPair generateKeyPair3072() throws Exception {
+    public static KeyPair generateRsaKeyPair3072() throws Exception {
         return generateRsaKeyPair(KeySize.BIT_3072);
     }
 
-    public static KeyPair generateKeyPair2048() throws Exception {
+    public static KeyPair generateRsaKeyPair2048() throws Exception {
         return generateRsaKeyPair(KeySize.BIT_2048);
     }
 

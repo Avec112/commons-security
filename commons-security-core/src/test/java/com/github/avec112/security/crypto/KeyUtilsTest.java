@@ -43,22 +43,22 @@ class KeyUtilsTest extends BouncyCastleProviderInitializer {
     }
 
     @Test
-    void generateKeyPair4096() throws Exception {
-        final KeyPair keyPair = KeyUtils.generateKeyPair4096();
+    void generateRsaKeyPair4096() throws Exception {
+        final KeyPair keyPair = KeyUtils.generateRsaKeyPair4096();
         assertKeyPairNotNull(keyPair);
         assertKeyPairBitLengthEquals(keyPair, KeySize.BIT_4096.getKeySize());
     }
 
     @Test
-    void generateKeyPair3072() throws Exception {
-        final KeyPair keyPair = KeyUtils.generateKeyPair3072();
+    void generateRsaKeyPair3072() throws Exception {
+        final KeyPair keyPair = KeyUtils.generateRsaKeyPair3072();
         assertKeyPairNotNull(keyPair);
         assertKeyPairBitLengthEquals(keyPair, KeySize.BIT_3072.getKeySize());
     }
 
     @Test
-    void generateKeyPair2048() throws Exception {
-        final KeyPair keyPair = KeyUtils.generateKeyPair2048();
+    void generateRsaKeyPair2048() throws Exception {
+        final KeyPair keyPair = KeyUtils.generateRsaKeyPair2048();
         assertKeyPairNotNull(keyPair);
         assertKeyPairBitLengthEquals(keyPair, KeySize.BIT_2048.getKeySize());
     }

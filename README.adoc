@@ -135,7 +135,7 @@ TIP: Any secret encrypted with a _public key_ can only be decrypted with the ass
 [source,java]
 .Using `KeyUtils` to generate a `4096` bit `KeyPair`
 ----
-KeyPair keyPair = KeyUtils.generateKeyPair4096();
+KeyPair keyPair = KeyUtils.generateRsaKeyPair4096();
 ----
 [source,java]
 .Alternative
@@ -149,7 +149,7 @@ KeyPair keyPair = rsaCipher.generateKeyPair(KeySize.BIT_4096);
 [source,java]
 .RSA encryption and decryption using `CryptoUtils`
 ----
-KeyPair keyPair = CryptoUtils.generateKeyPair4096();
+KeyPair keyPair = CryptoUtils.generateRsaKeyPair4096();
 CipherText cipherText = CryptoUtils.rsaEncrypt("My secret", keyPair.getPublicKey());
 PlainText plainText = CryptoUtils.rsaDecrypt(cipherText, keyPair.getPrivateKey());
 ----
@@ -278,7 +278,7 @@ TIP: Hybrid encryption is the recommended approach for encrypting large files or
 [source,java]
 .Hybrid encryption and decryption using `CryptoUtils`
 ----
-KeyPair keyPair = KeyUtils.generateKeyPair3072();
+KeyPair keyPair = KeyUtils.generateRsaKeyPair3072();
 PlainText plainText = new PlainText("Large amount of sensitive data...");
 
 // Encrypt
@@ -291,7 +291,7 @@ PlainText decrypted = CryptoUtils.hybridDecrypt(result, keyPair.getPrivate());
 [source,java]
 .Alternative using builders with custom AES mode and strength
 ----
-KeyPair keyPair = KeyUtils.generateKeyPair3072();
+KeyPair keyPair = KeyUtils.generateRsaKeyPair3072();
 PlainText plainText = new PlainText("Large amount of sensitive data...");
 
 // Encrypt with custom settings
@@ -482,7 +482,7 @@ Commons Security uses `RSASSA-PSS` (SHA-256 with MGF1)footnote:[https://www.encr
 [source,java]
 .Using `CryptoUtils` (recommended for simple use cases)
 ----
-KeyPair keyPair = KeyUtils.generateKeyPair2048();
+KeyPair keyPair = KeyUtils.generateRsaKeyPair2048();
 
 // Sign data
 byte[] signature = CryptoUtils.sign("My data", keyPair.getPrivate());
@@ -494,7 +494,7 @@ boolean verified = CryptoUtils.verify(signature, "My data", keyPair.getPublic())
 [source,java]
 .Alternative using `SignatureUtils` directly
 ----
-KeyPair keyPair = KeyUtils.generateKeyPair2048();
+KeyPair keyPair = KeyUtils.generateRsaKeyPair2048();
 byte[] signature = SignatureUtils.sign("My data", keyPair.getPrivate());
 boolean verified = SignatureUtils.verify(signature, "My data", keyPair.getPublic());
 ----
