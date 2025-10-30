@@ -1,0 +1,69 @@
+project:
+  name: commons-security
+  description: Developer-friendly cryptography utilities for Java
+  longDescription: |
+    Commons Security is a developer-focused Java cryptography library built on top
+    of JCA/JCE and BouncyCastle. It provides a clean, type-safe, and fluent API
+    for encryption, hashing, signatures, password encoding, and secret sharing.
+  website: https://github.com/Avec112/commons-security
+  authors:
+    - Avec112
+  license: Apache-2.0
+  inceptionYear: 2024
+  java:
+    groupId: com.github.avec112
+    version: 11
+    multiProject: true
+  links:
+    homepage: https://github.com/Avec112/commons-security
+    repository: https://github.com/Avec112/commons-security
+    issues: https://github.com/Avec112/commons-security/issues
+
+release:
+  github:
+    owner: Avec112
+    name: commons-security
+    tagName: v{{projectVersion}}
+    releaseName: "commons-security {{projectVersion}}"
+    overwrite: true
+    changelog:
+      enabled: true
+      preset: conventional-commits
+      contributors:
+        enabled: true
+        format: "- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}"
+  git:
+    commitVersion:
+      enabled: true
+      nextVersion: true
+      releaseCommitMessage: "Release {{projectVersion}}"
+      nextCommitMessage: "Next development iteration {{nextVersion}}"
+
+signing:
+  active: ALWAYS
+  armored: true
+  publicKey: {{env.JRELEASER_GPG_PUBLIC_KEY}}
+  secretKey: {{env.JRELEASER_GPG_SECRET_KEY}}
+  passphrase: {{env.JRELEASER_GPG_PASSPHRASE}}
+
+deploy:
+  maven:
+    sonatype:
+      active: ALWAYS
+      sign: true
+      url: https://s01.oss.sonatype.org/service/local/
+      snapshotUrl: https://s01.oss.sonatype.org/content/repositories/snapshots/
+      stagingRepository: target/staging-deploy
+      applyMavenCentralRules: true
+      username: {{env.JRELEASER_MAVEN_CENTRAL_USERNAME}}
+      password: {{env.JRELEASER_MAVEN_CENTRAL_PASSWORD}}
+      artifacts:
+        - path: commons-security-core/target/commons-security-core-{{projectVersion}}.jar
+          classifier: ''
+          extension: jar
+        - path: commons-security-core/target/commons-security-core-{{projectVersion}}-sources.jar
+          classifier: sources
+          extension: jar
+        - path: commons-security-core/target/commons-security-core-{{projectVersion}}-javadoc.jar
+          classifier: javadoc
+          extension: jar
