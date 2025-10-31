@@ -60,12 +60,12 @@ It is *not intended for production deployment* or active maintenance as a public
 For production systems, please use well-established and actively maintained security libraries such as:
 
 * https://github.com/spring-projects/spring-security[Spring Security]
-* https://www.bouncycastle.org/java.html[BouncyCastle]
+* https://www.bouncycastle.org[BouncyCastle]
 * https://github.com/google/tink[Google Tink]
 ====
 
 == Overview
-*Commons Security* is a Java library with several encryption features for `Java 11` and higher build on top of `JCA/JCE` with `BouncyCastle` as provider. The library hides the implementation behind a simple and easy to use API. Typically a simplified API requires that some decisions has been made already, like which algorithm to use, encryption strength, etc. However do not worry, look behind the simplified API and you will find more configuration options.
+*Commons Security* is a Java library with several encryption features for `Java 11` and higher build on top of __Java Cryptography Architecture__ (JCA)footnote:[https://en.wikipedia.org/wiki/Java_Cryptography_Architecture] and __Java Cryotography Extension__ (JCE)footnote:[https://en.wikipedia.org/wiki/Java_Cryptography_Extension] with __Bouncy Castle__footnote:[https://www.bouncycastle.org/] as provider. The library hides the implementation behind a simple and easy to use API. Typically a simplified API requires that some decisions has been made already, like which algorithm to use, encryption strength, etc. However do not worry, look behind the simplified API and you will find more configuration options.
 
 .Features
 
@@ -679,14 +679,11 @@ asciidoctor-pdf README.adoc -o README.pdf
 ----
 
 == Recommended reading
-* Practical Cryptography for Developersfootnote:[https://cryptobook.nakov.com/] by Svetlin Nakov
-* Password1 - Why we moved to 256-bit AES keysfootnote:[https://blog.1password.com/why-we-moved-to-256-bit-aes-keys/] by Jeffrey Goldberg in 2013
+* __Practical Cryptography for Developers__footnote:[https://cryptobook.nakov.com/] by Svetlin Nakov
+* __1Password - Why we moved to 256-bit AES keys__footnote:[https://blog.1password.com/why-we-moved-to-256-bit-aes-keys/] by Jeffrey Goldberg in 2013
 
 == TODO
-* Make API fluently as much as possible
 * Replacing MultipleMissingArgumentsError with own class without dependency to opentest4j and only throwing/supporting RuntimeException
 * Support more algorithms for hashing digestsfootnote:hash[] including password hashing
-* Implement support for ECC as option over RSAfootnote:[https://www.globalsign.com/en/blog/elliptic-curve-cryptography]. ECC is faster and stronger than RSA.
 * Look into Diffie-Hellman and/or other better key exchange alternatives
 * Consider adding support for generating and validation passwords with help of __Passay__footnote:[http://www.passay.org] library
-* Consider making this project a library on __Maven Central__footnote:[https://central.sonatype.org/publish/]
