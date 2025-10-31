@@ -40,9 +40,9 @@ This document captures project-specific notes to speed up development, testing, 
 
 ### Running tests
 - All tests: `mvn -B test` or `mvn -B verify`
-- Single class: `mvn -Dtest=com.github.avec112.security.crypto.CryptoUtilsFacadeTest test`
+- Single class: `mvn -Dtest=crypto.io.github.avec112.security.CryptoUtilsFacadeTest test`
 - Pattern/Multiple: `mvn -Dtest="Aes*Test,**/rsa/*Test" test`
-- Single method: `mvn -Dtest=com.github.avec112.security.crypto.CryptoUtilsFacadeTest#aesEncryptAndDecrypt test`
+- Single method: `mvn -Dtest=crypto.io.github.avec112.security.CryptoUtilsFacadeTest#aesEncryptAndDecrypt test`
 - Fail-fast: `mvn -Dsurefire.failIfNoSpecifiedTests=false -Dtest=... test`
 
 ### Coverage
@@ -59,12 +59,12 @@ This document captures project-specific notes to speed up development, testing, 
 - Example content:
 
 ```java
-package com.github.avec112.security.examples;
+package io.github.avec112.security.examples;
 
-import com.github.avec112.security.crypto.CryptoUtils;
-import com.github.avec112.security.crypto.domain.CipherText;
-import com.github.avec112.security.crypto.domain.Password;
-import com.github.avec112.security.crypto.domain.PlainText;
+import crypto.io.github.avec112.security.CryptoUtils;
+import domain.crypto.io.github.avec112.security.CipherText;
+import domain.crypto.io.github.avec112.security.Password;
+import domain.crypto.io.github.avec112.security.PlainText;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -83,8 +83,8 @@ class QuickStartTest {
 }
 ```
 
-- Run only this test: `mvn -Dtest=com.github.avec112.security.examples.QuickStartTest test`
-- Run a single method: `mvn -Dtest=com.github.avec112.security.examples.QuickStartTest#aes_encrypt_then_decrypt_roundtrip test`
+- Run only this test: `mvn -Dtest=io.github.avec112.security.examples.QuickStartTest test`
+- Run a single method: `mvn -Dtest=io.github.avec112.security.examples.QuickStartTest#aes_encrypt_then_decrypt_roundtrip test`
 - Note: We executed this example successfully during the preparation of this guide, then removed the file to keep the repo unchanged.
 
 ## 3. Additional development and debugging notes
@@ -123,8 +123,8 @@ class QuickStartTest {
 
 ## 5. Useful commands (recap)
 - `mvn -B clean verify`
-- `mvn -Dtest=com.github.avec112.security.crypto.CryptoUtilsFacadeTest test`
-- `mvn -Dtest=com.github.avec112.security.crypto.CryptoUtilsFacadeTest#aesEncryptAndDecrypt test`
+- `mvn -Dtest=crypto.io.github.avec112.security.CryptoUtilsFacadeTest test`
+- `mvn -Dtest=crypto.io.github.avec112.security.CryptoUtilsFacadeTest#aesEncryptAndDecrypt test`
 - `mvn verify jacoco:report && start target/site/jacoco/index.html`  # Windows: open coverage in default browser
 
 ---

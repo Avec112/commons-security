@@ -1,10 +1,10 @@
 package io.github.avec112.security.demo;
 
-import com.github.avec112.security.crypto.aes.AesEncryptor;
-import com.github.avec112.security.crypto.domain.CipherText;
-import com.github.avec112.security.crypto.domain.Password;
-import com.github.avec112.security.crypto.domain.PlainText;
-import com.github.avec112.security.crypto.error.BadCipherConfigurationException;
+import io.github.avec112.security.crypto.aes.AesEncryptor;
+import io.github.avec112.security.crypto.domain.CipherText;
+import io.github.avec112.security.crypto.domain.Password;
+import io.github.avec112.security.crypto.domain.PlainText;
+import io.github.avec112.security.crypto.error.BadCipherConfigurationException;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;

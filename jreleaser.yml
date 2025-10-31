@@ -11,7 +11,7 @@ project:
   license: Apache-2.0
   inceptionYear: 2024
   java:
-    groupId: com.github.avec112
+    groupId: io.github.avec112
     version: 11
     multiProject: true
   links:
