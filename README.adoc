@@ -37,7 +37,7 @@ endif::[]
 = Commons Security: Encryption done easy
 
 ifdef::status[]
-image:https://img.shields.io/badge/version-1.0--SNAPSHOT-blue[Version]
+image:https://img.shields.io/badge/version-0.9.0--SNAPSHOT-blue[Version]
 image:https://img.shields.io/github/actions/workflow/status/Avec112/commons-security/maven.yml?logo=github[Build status]
 image:https://img.shields.io/github/actions/workflow/status/Avec112/commons-security/codeql.yml?label=CodeQL&logo=github[CodeQL]
 image:https://coveralls.io/repos/github/Avec112/commons-security/badge.svg?branch=master[Coverage, link=https://coveralls.io/github/Avec112/commons-security?branch=master]
