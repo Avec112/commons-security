@@ -352,7 +352,7 @@ The JSON format includes a version field for future compatibility:
 
 The `describe()` method provides a convenient way to get a human-readable summary of the encryption configuration:
 
-[source,java]
+[source,java,opts=novalidate]
 .Get encryption configuration description
 ----
 HybridEncryptionResult result = CryptoUtils.hybridEncrypt(plainText, keyPair.getPublic());
@@ -428,7 +428,7 @@ The following hashing algorithms are [.underline]#*not*# recommended or supporte
 .Supported hashing algorithms
 [source,java]
 ----
-include::commons-security-core/src/main/java/com/github/avec112/security/crypto/digest/DigestAlgorithm.java[tag=algorithms]
+include::commons-security-core/src/main/java/io/github/avec112/security/crypto/digest/DigestAlgorithm.java[tag=algorithms]
 ----
 
 .Worth reading
@@ -576,7 +576,7 @@ A plaintext password should always be encoded in case of a breach. After a passw
 [source,java]
 .Supported password encoders
 ----
-include::commons-security-core/src/main/java/com/github/avec112/security/crypto/password/PasswordEncoderType.java[tag=algorithms]
+include::commons-security-core/src/main/java/io/github/avec112/security/crypto/password/PasswordEncoderType.java[tag=algorithms]
 ----
 
 [source,java]
@@ -619,7 +619,7 @@ TIP: `matchesPassword()` automatically detects the encoder type from the `{id}` 
 
 When migrating from an older hash algorithm (like BCRYPT or SCRYPT) to a stronger one (like ARGON2), you can use the password upgrade feature. This allows gradual migration during user login without requiring password resets.
 
-[source,java]
+[source,java,opts=novalidate]
 .Password upgrade using `CryptoUtils` (upgrades to ARGON2)
 ----
 // During user login
@@ -641,7 +641,7 @@ if (CryptoUtils.matchesPassword(rawPassword, storedEncodedPassword)) {
 }
 ----
 
-[source,java]
+[source,java,opts=novalidate]
 .Alternative using `PasswordEncoderUtils` directly
 ----
 // Check if password needs upgrade
