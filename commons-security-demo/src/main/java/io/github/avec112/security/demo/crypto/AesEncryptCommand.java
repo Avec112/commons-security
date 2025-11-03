@@ -1,4 +1,4 @@
-package io.github.avec112.security.demo;
+package io.github.avec112.security.demo.crypto;
 
 import io.github.avec112.security.crypto.aes.AesEncryptor;
 import io.github.avec112.security.crypto.domain.CipherText;
@@ -13,14 +13,15 @@ import picocli.CommandLine.Option;
  * Demonstrates AES-GCM encryption from commons-security-core.
  */
 @Command(
-        name = "aes",
-        description = "Encrypts text using AES-GCM with PBKDF2-derived key."
+        name = "aes-encrypt",
+        description = "Encrypts text using AES-GCM with PBKDF2-derived key.",
+        mixinStandardHelpOptions = true
 )
 public class AesEncryptCommand implements Runnable {
-    @Option(names = "--text", required = true, description = "The plaintext to encrypt.")
+    @Option(names = {"--text", "-t"}, required = true, description = "The plaintext to encrypt.")
     private String text;
 
-    @Option(names = "--password", required = true, description = "Password used to derive the encryption key.")
+    @Option(names = {"--password", "-p"}, required = true, description = "Password used to derive the encryption key.")
     private String password;
 
     @Override
@@ -28,7 +29,7 @@ public class AesEncryptCommand implements Runnable {
         try {
             PlainText plainText = new PlainText(text);
             Password pw = new Password(password);
-//        CipherText cipherText = CryptoUtils.aesEncrypt(plainText, pw);
+            // Alternative CryptoUtils.aesEncrypt(plainText, pw);
             CipherText cipherText = AesEncryptor.withPasswordAndText(pw, plainText).encrypt();
             System.out.println("Encrypted (Base64): " + cipherText.getValue());
         } catch (BadCipherConfigurationException e) {
