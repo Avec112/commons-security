@@ -25,22 +25,22 @@ import java.util.Objects;
  * <p><b>Example usage:</b></p>
  * <pre>{@code
  * // RSA signature
- * KeyPair rsaKeys = KeyGeneratorUtils.generateRsaKeyPair();
- * byte[] rsaSig = SignatureUtils.sign("data", rsaKeys.getPrivate());
- * boolean valid = SignatureUtils.verify(rsaSig, "data", rsaKeys.getPublic());
+ * KeyPair rsaKeys = KeyGeneratorUtil.generateRsaKeyPair();
+ * byte[] rsaSig = SignatureUtil.sign("data", rsaKeys.getPrivate());
+ * boolean valid = SignatureUtil.verify(rsaSig, "data", rsaKeys.getPublic());
  *
  * // Ed25519 signature (recommended for new applications)
- * KeyPair ed25519Keys = KeyGeneratorUtils.generateEd25519KeyPair();
- * byte[] ed25519Sig = SignatureUtils.signEd25519("data", ed25519Keys.getPrivate());
- * boolean valid = SignatureUtils.verifyEd25519(ed25519Sig, "data", ed25519Keys.getPublic());
+ * KeyPair ed25519Keys = KeyGeneratorUtil.generateEd25519KeyPair();
+ * byte[] ed25519Sig = SignatureUtil.signEd25519("data", ed25519Keys.getPrivate());
+ * boolean valid = SignatureUtil.verifyEd25519(ed25519Sig, "data", ed25519Keys.getPublic());
  *
  * // ECDSA signature
- * KeyPair ecKeys = KeyGeneratorUtils.generateSecp256r1KeyPair();
- * byte[] ecdsaSig = SignatureUtils.signEcdsa("data", ecKeys.getPrivate());
- * boolean valid = SignatureUtils.verifyEcdsa(ecdsaSig, "data", ecKeys.getPublic());
+ * KeyPair ecKeys = KeyGeneratorUtil.generateSecp256r1KeyPair();
+ * byte[] ecdsaSig = SignatureUtil.signEcdsa("data", ecKeys.getPrivate());
+ * boolean valid = SignatureUtil.verifyEcdsa(ecdsaSig, "data", ecKeys.getPublic());
  * }</pre>
  */
-public class SignatureUtils extends BouncyCastleProviderInitializer {
+public class SignatureUtil extends BouncyCastleProviderInitializer {
 
     private static final String RSA_ALGORITHM = "RSASSA-PSS";
     private static final String ED25519_ALGORITHM = "Ed25519";
@@ -54,7 +54,7 @@ public class SignatureUtils extends BouncyCastleProviderInitializer {
             1    // trailer field (always 1)
     );
 
-    private SignatureUtils() {
+    private SignatureUtil() {
     }
 
     // ========== RSA Signatures (RSASSA-PSS) ==========

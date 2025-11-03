@@ -2,8 +2,8 @@ package io.github.avec112.security.crypto.aes;
 
 import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
 import io.github.avec112.security.crypto.domain.Password;
-import io.github.avec112.security.crypto.random.RandomUtils;
-import io.github.avec112.security.encoding.EncodingUtils;
+import io.github.avec112.security.crypto.random.RandomUtil;
+import io.github.avec112.security.encoding.EncodingUtil;
 
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
@@ -19,9 +19,9 @@ import java.security.spec.KeySpec;
  * AES = Advanced Encryption Standard.
  * AES uses the same key for encryption also called symmetrical encryption.
  */
-public class AesUtils extends BouncyCastleProviderInitializer {
+public class AesUtil extends BouncyCastleProviderInitializer {
 
-    private AesUtils() {
+    private AesUtil() {
     }
 
     /**
@@ -32,7 +32,7 @@ public class AesUtils extends BouncyCastleProviderInitializer {
      */
     public static byte[] getRandomNonce(int numBytes) {
         byte [] nonce = new byte[numBytes];
-        RandomUtils.secureRandom().nextBytes(nonce);
+        RandomUtil.secureRandom().nextBytes(nonce);
         return nonce;
     }
 
@@ -78,7 +78,7 @@ public class AesUtils extends BouncyCastleProviderInitializer {
 
      */
     public static Cipher createCipher(Password password, byte[] salt, byte[] iv, int mode, EncryptionMode encryptionMode, int keyLength) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, InvalidKeySpecException {
-        Key key = AesUtils.getAESKeyFromPassword(password.getValue().toCharArray(), salt, keyLength);
+        Key key = AesUtil.getAESKeyFromPassword(password.getValue().toCharArray(), salt, keyLength);
         Cipher cipher = Cipher.getInstance(encryptionMode.getAlgorithm());
         cipher.init(mode, key, encryptionMode.getAlgorithmParameterSpec(iv));
         return cipher;
@@ -92,8 +92,8 @@ public class AesUtils extends BouncyCastleProviderInitializer {
      */
     public static String generateBase64Key(AesKeySize aesKeySize) {
         int keyBytes = aesKeySize.getKeySize() / 8;
-        byte[] key = RandomUtils.randomBytes(keyBytes);
-        return EncodingUtils.base64Encode(key);
+        byte[] key = RandomUtil.randomBytes(keyBytes);
+        return EncodingUtil.base64Encode(key);
     }
 
 }

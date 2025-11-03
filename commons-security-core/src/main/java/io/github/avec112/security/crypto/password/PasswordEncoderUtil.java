@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  * This class relies on the DelegatingPasswordEncoder to delegate encoding and matching
  * operations to the appropriate password encoder based on the specified or implied encoding type.
  */
-public class PasswordEncoderUtils {
+public class PasswordEncoderUtil {
 
     private static final Pattern PREFIX_PATTERN = Pattern.compile("^\\{([a-zA-Z0-9_-]+)}");
     private static final Map<String, PasswordEncoder> ENCODERS;
@@ -50,12 +50,12 @@ public class PasswordEncoderUtils {
     }
 
     /**
-     * Private constructor to prevent instantiation of the {@code PasswordEncoderUtils} utility class.
+     * Private constructor to prevent instantiation of the {@code PasswordEncoderUtil} utility class.
      *
      * This class is designed to provide static utility methods related to password encoding
      * and matching, and should not be instantiated.
      */
-    private PasswordEncoderUtils(){}
+    private PasswordEncoderUtil(){}
 
     /**
      * Returns a cached delegating password encoder for the specified type.

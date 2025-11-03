@@ -29,7 +29,7 @@ public class AesEncryptCommand implements Runnable {
         try {
             PlainText plainText = new PlainText(text);
             Password pw = new Password(password);
-            // Alternative CryptoUtils.aesEncrypt(plainText, pw);
+            // Alternative CryptoUtil.aesEncrypt(plainText, pw);
             CipherText cipherText = AesEncryptor.withPasswordAndText(pw, plainText).encrypt();
             System.out.println("Encrypted (Base64): " + cipherText.getValue());
         } catch (BadCipherConfigurationException e) {

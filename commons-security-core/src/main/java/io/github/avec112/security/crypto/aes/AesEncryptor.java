@@ -4,7 +4,7 @@ import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.domain.PlainText;
 import io.github.avec112.security.crypto.error.BadCipherConfigurationException;
-import io.github.avec112.security.encoding.EncodingUtils;
+import io.github.avec112.security.encoding.EncodingUtil;
 import lombok.Getter;
 import org.apache.commons.lang3.Validate;
 
@@ -92,7 +92,7 @@ public class AesEncryptor {
         try {
 
             final byte[] cipherText = encryptPlainText(plainText, password);
-            final String cipherTextEncoded = EncodingUtils.base64Encode(cipherText);
+            final String cipherTextEncoded = EncodingUtil.base64Encode(cipherText);
             return new CipherText(cipherTextEncoded);
 
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidAlgorithmParameterException | NoSuchPaddingException | IllegalBlockSizeException |
@@ -109,13 +109,13 @@ public class AesEncryptor {
      * @return The encrypted cipher text.
      */
     private byte[] encryptPlainText(PlainText plainText, Password password) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
-        byte[] salt = AesUtils.getRandomNonce(SALT_LENGTH_BYTE);
-        byte[] iv = AesUtils.getRandomNonce(getMode().getIvLength());
+        byte[] salt = AesUtil.getRandomNonce(SALT_LENGTH_BYTE);
+        byte[] iv = AesUtil.getRandomNonce(getMode().getIvLength());
 
         Charset encoding = StandardCharsets.UTF_8;
         int encryptionMode = Cipher.ENCRYPT_MODE;
 
-        Cipher cipher = AesUtils.createCipher(password, salt, iv, encryptionMode, getMode(), getAesKeySize().getKeySize());
+        Cipher cipher = AesUtil.createCipher(password, salt, iv, encryptionMode, getMode(), getAesKeySize().getKeySize());
         byte[] cText = cipher.doFinal(plainText.getValue().getBytes(encoding));
 
         return ByteBuffer.allocate(iv.length + salt.length + cText.length)

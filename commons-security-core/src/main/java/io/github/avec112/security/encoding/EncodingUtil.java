@@ -7,7 +7,7 @@ import org.apache.commons.lang3.Validate;
 
 import java.util.Objects;
 
-public class EncodingUtils {
+public class EncodingUtil {
 
     public static String base64Encode(byte [] src) {
         Objects.requireNonNull(src, "Argument src cannot be null");

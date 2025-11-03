@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Execution(ExecutionMode.CONCURRENT)
-class PasswordEncoderUtilsTest {
+class PasswordEncoderUtilTest {
 
     @ParameterizedTest
     @CsvSource({
@@ -17,7 +17,7 @@ class PasswordEncoderUtilsTest {
             "Password123!, '{argon2}$argon2id$v=19$m=16384,t=2,p=1'"
     })
     void encode(String password, String expectStartsWith) {
-        final String encodedPassword = PasswordEncoderUtils.encode(password);
+        final String encodedPassword = PasswordEncoderUtil.encode(password);
         assertTrue(encodedPassword.startsWith(expectStartsWith));
     }
 
@@ -28,7 +28,7 @@ class PasswordEncoderUtilsTest {
             "Password123!, '{argon2}$argon2id$v=19$m=4096,t=3,p=1$A4XnnF/0JEpSxG7MPKLZtg$S8q8gatvXDX7Ef/76V8VleFwMO3c7Tdo/mLOVtiecrQ'",
     })
     void matches(String password, String encodedPassword) {
-        assertTrue(PasswordEncoderUtils.matches(password, encodedPassword));
+        assertTrue(PasswordEncoderUtil.matches(password, encodedPassword));
     }
 
     @ParameterizedTest
@@ -38,8 +38,8 @@ class PasswordEncoderUtilsTest {
             "Password123!",
     })
     void encodeAndMatches(String password) {
-        final String encodedPassword = PasswordEncoderUtils.encode(password);
-        assertTrue(PasswordEncoderUtils.matches(password, encodedPassword));
+        final String encodedPassword = PasswordEncoderUtil.encode(password);
+        assertTrue(PasswordEncoderUtil.matches(password, encodedPassword));
     }
 
     @ParameterizedTest
@@ -50,7 +50,7 @@ class PasswordEncoderUtilsTest {
             "PBKDF2, Password, {pbkdf2}"
     })
     void encodeWithPasswordEncoderType(String encoder, String password, String expectStartsWith) {
-        final String encodedPassword = PasswordEncoderUtils.encode(password, PasswordEncoderType.valueOf(encoder));
+        final String encodedPassword = PasswordEncoderUtil.encode(password, PasswordEncoderType.valueOf(encoder));
         assertTrue(encodedPassword.startsWith(expectStartsWith));
     }
 
@@ -62,7 +62,7 @@ class PasswordEncoderUtilsTest {
             "PBKDF2, Password, {pbkdf2}3982ab2f19a3f8de63a110246301348fffc94c8fe96955771cdfd14ad41e3461946af959f92699bf31efc7cc4065592f"
     })
     void matchesWithPasswordEncoderType(String encoder, String password, String encodedPassword) {
-        assertTrue(PasswordEncoderUtils.matches(password, encodedPassword, PasswordEncoderType.valueOf(encoder)));
+        assertTrue(PasswordEncoderUtil.matches(password, encodedPassword, PasswordEncoderType.valueOf(encoder)));
     }
 
     @ParameterizedTest
@@ -73,7 +73,7 @@ class PasswordEncoderUtilsTest {
             "Password, {pbkdf2}3982ab2f19a3f8de63a110246301348fffc94c8fe96955771cdfd14ad41e3461946af959f92699bf31efc7cc4065592f"
     })
     void matches_shouldAutoDetectEncoderType(String password, String encodedPassword) {
-        assertTrue(PasswordEncoderUtils.matches(password, encodedPassword));
+        assertTrue(PasswordEncoderUtil.matches(password, encodedPassword));
     }
 
     @ParameterizedTest
@@ -84,7 +84,7 @@ class PasswordEncoderUtilsTest {
             "WrongPassword, {pbkdf2}3982ab2f19a3f8de63a110246301348fffc94c8fe96955771cdfd14ad41e3461946af959f92699bf31efc7cc4065592f"
     })
     void matches_shouldReturnFalseForWrongPassword(String wrongPassword, String encodedPassword) {
-        assertFalse(PasswordEncoderUtils.matches(wrongPassword, encodedPassword));
+        assertFalse(PasswordEncoderUtil.matches(wrongPassword, encodedPassword));
     }
 
     @ParameterizedTest
@@ -94,7 +94,7 @@ class PasswordEncoderUtilsTest {
             "Password123, '{argon2}$argon2id$v=19$m=4096,t=3,p=1$A4XnnF/0JEpSxG7MPKLZtg$S8q8gatvXDX7Ef/76V8VleFwMO3c7Tdo/mLOVtiecrQ'",
     })
     void matchesShouldReturnFalseForWrongPassword(String wrongPassword, String encodedPassword) {
-        assertFalse(PasswordEncoderUtils.matches(wrongPassword, encodedPassword));
+        assertFalse(PasswordEncoderUtil.matches(wrongPassword, encodedPassword));
     }
 
     @ParameterizedTest
@@ -105,7 +105,7 @@ class PasswordEncoderUtilsTest {
             "PBKDF2, WrongPassword, {pbkdf2}3982ab2f19a3f8de63a110246301348fffc94c8fe96955771cdfd14ad41e3461946af959f92699bf31efc7cc4065592f"
     })
     void matchesShouldReturnFalseForWrongPasswordAndEncoderType(String encoder, String wrongPassword, String encodedPassword) {
-        assertFalse(PasswordEncoderUtils.matches(wrongPassword, encodedPassword, PasswordEncoderType.valueOf(encoder)));
+        assertFalse(PasswordEncoderUtil.matches(wrongPassword, encodedPassword, PasswordEncoderType.valueOf(encoder)));
     }
 
     @ParameterizedTest
@@ -144,7 +144,7 @@ class PasswordEncoderUtilsTest {
     })
     void verifyDelegatingPasswordEncoderResolvesByPrefix(String wrongEncoder, String argon2Hash) {
         assertTrue(
-                PasswordEncoderUtils.matches("Password", argon2Hash, PasswordEncoderType.valueOf(wrongEncoder)),
+                PasswordEncoderUtil.matches("Password", argon2Hash, PasswordEncoderType.valueOf(wrongEncoder)),
                 "DelegatingPasswordEncoder should resolve by prefix and still validate regardless of default encoder"
         );
     }
@@ -158,7 +158,7 @@ class PasswordEncoderUtilsTest {
     })
     void verifyDelegatingPasswordEncoderUsesPrefix(String wrongEncoder, String bcryptHash) {
         assertTrue(
-                PasswordEncoderUtils.matches("Password", bcryptHash, PasswordEncoderType.valueOf(wrongEncoder)),
+                PasswordEncoderUtil.matches("Password", bcryptHash, PasswordEncoderType.valueOf(wrongEncoder)),
                 "DelegatingPasswordEncoder should still validate based on {bcrypt} prefix, regardless of default encoder"
         );
     }
@@ -171,7 +171,7 @@ class PasswordEncoderUtilsTest {
             "{pbkdf2}3982ab2f19a3f8de63a110246301348fffc94c8fe96955771cdfd14ad41e3461946af959f92699bf31efc7cc4065592f, pbkdf2"
     })
     void getPasswordEncoderType(String encodedPassword, String expected) {
-        assertEquals(expected, PasswordEncoderUtils.getPasswordEncoderType(encodedPassword).id());
+        assertEquals(expected, PasswordEncoderUtil.getPasswordEncoderType(encodedPassword).id());
     }
 
     @ParameterizedTest
@@ -182,7 +182,7 @@ class PasswordEncoderUtilsTest {
             "{pbkdf2}3982ab2f19a3f8de63a110246301348fffc94c8fe96955771cdfd14ad41e3461946af959f92699bf31efc7cc4065592f, pbkdf2"
     })
     void getPasswordEncoderTypeAsString(String encodedPassword, String expected) {
-        assertEquals(expected, PasswordEncoderUtils.getPasswordEncoderTypeAsString(encodedPassword));
+        assertEquals(expected, PasswordEncoderUtil.getPasswordEncoderTypeAsString(encodedPassword));
     }
 
     // ========== Password Upgrade Tests ==========
@@ -195,7 +195,7 @@ class PasswordEncoderUtilsTest {
             "'{argon2}$argon2id$v=19$m=4096,t=3,p=1$fwWOqRq6rOaSHGzCEA1p7A$lpxeUs+74bvj+kZdRO4Mna/jerRp0NueMZMZGRc+k1c', false"
     })
     void needsUpgrade_shouldDetectNonArgon2Passwords(String encodedPassword, boolean expectedNeedsUpgrade) {
-        assertEquals(expectedNeedsUpgrade, PasswordEncoderUtils.needsUpgrade(encodedPassword));
+        assertEquals(expectedNeedsUpgrade, PasswordEncoderUtil.needsUpgrade(encodedPassword));
     }
 
     @ParameterizedTest
@@ -206,7 +206,7 @@ class PasswordEncoderUtilsTest {
             "'{argon2}$argon2id$v=19$m=4096,t=3,p=1$fwWOqRq6rOaSHGzCEA1p7A$lpxeUs+74bvj+kZdRO4Mna/jerRp0NueMZMZGRc+k1c', BCRYPT, true"
     })
     void needsUpgrade_withSpecificTargetType(String encodedPassword, String targetType, boolean expectedNeedsUpgrade) {
-        assertEquals(expectedNeedsUpgrade, PasswordEncoderUtils.needsUpgrade(encodedPassword, PasswordEncoderType.valueOf(targetType)));
+        assertEquals(expectedNeedsUpgrade, PasswordEncoderUtil.needsUpgrade(encodedPassword, PasswordEncoderType.valueOf(targetType)));
     }
 
     @ParameterizedTest
@@ -216,13 +216,13 @@ class PasswordEncoderUtilsTest {
             "Password, {pbkdf2}3982ab2f19a3f8de63a110246301348fffc94c8fe96955771cdfd14ad41e3461946af959f92699bf31efc7cc4065592f, ARGON2"
     })
     void upgradePassword_shouldReEncodeWithTargetType(String rawPassword, String oldEncodedPassword, String targetType) {
-        String upgradedPassword = PasswordEncoderUtils.upgradePassword(rawPassword, oldEncodedPassword, PasswordEncoderType.valueOf(targetType));
+        String upgradedPassword = PasswordEncoderUtil.upgradePassword(rawPassword, oldEncodedPassword, PasswordEncoderType.valueOf(targetType));
 
         // Verify the upgraded password has the correct prefix
         assertTrue(upgradedPassword.startsWith("{" + targetType.toLowerCase() + "}"));
 
         // Verify the upgraded password matches the raw password
-        assertTrue(PasswordEncoderUtils.matches(rawPassword, upgradedPassword));
+        assertTrue(PasswordEncoderUtil.matches(rawPassword, upgradedPassword));
 
         // Verify it's different from the old encoded password
         assertNotEquals(oldEncodedPassword, upgradedPassword);
@@ -234,13 +234,13 @@ class PasswordEncoderUtilsTest {
             "Password, {scrypt}$e0801$3WQIalromBXCD0qL+q1j1R0pWmyHMkO0NteGGDc+TEBaIG25JMUNtmLtH/aNcMO+xbD21pv1hrM1zX29MwJ2oQ==$vmfA1aDb6vFKVH7JfqYOjM9iVMa2STgqJqFgHbcyNoA="
     })
     void upgradePassword_defaultToArgon2(String rawPassword, String oldEncodedPassword) {
-        String upgradedPassword = PasswordEncoderUtils.upgradePassword(rawPassword, oldEncodedPassword);
+        String upgradedPassword = PasswordEncoderUtil.upgradePassword(rawPassword, oldEncodedPassword);
 
         // Verify the upgraded password has the argon2 prefix
         assertTrue(upgradedPassword.startsWith("{argon2}"));
 
         // Verify the upgraded password matches the raw password
-        assertTrue(PasswordEncoderUtils.matches(rawPassword, upgradedPassword));
+        assertTrue(PasswordEncoderUtil.matches(rawPassword, upgradedPassword));
     }
 
     @ParameterizedTest
@@ -250,7 +250,7 @@ class PasswordEncoderUtilsTest {
     })
     void upgradePassword_shouldThrowIfPasswordDoesNotMatch(String wrongPassword, String encodedPassword) {
         assertThrows(IllegalArgumentException.class, () ->
-                PasswordEncoderUtils.upgradePassword(wrongPassword, encodedPassword)
+                PasswordEncoderUtil.upgradePassword(wrongPassword, encodedPassword)
         );
     }
 

@@ -4,9 +4,9 @@ import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.PlainText;
 import io.github.avec112.security.crypto.error.*;
-import io.github.avec112.security.crypto.random.RandomUtils;
+import io.github.avec112.security.crypto.random.RandomUtil;
 import io.github.avec112.security.crypto.validate.Validate;
-import io.github.avec112.security.encoding.EncodingUtils;
+import io.github.avec112.security.encoding.EncodingUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -48,7 +48,7 @@ public class RsaCipher extends BouncyCastleProviderInitializer {
         try {
             byte[] input = plainText.getValue().getBytes(StandardCharsets.UTF_8);
             byte[] cipherText = processCipher(Cipher.ENCRYPT_MODE, publicKey, input);
-            return new CipherText(EncodingUtils.base64Encode(cipherText));
+            return new CipherText(EncodingUtil.base64Encode(cipherText));
         } catch (Exception e) {
             throw new BadCipherConfigurationException(ExceptionUtils.getRootCauseMessage(e), e);
         }
@@ -71,7 +71,7 @@ public class RsaCipher extends BouncyCastleProviderInitializer {
         Validate.nonNull(privateKey, MissingPrivateKeyException::new);
 
         try {
-            byte[] decoded = EncodingUtils.base64Decode(cipherText.getValue());
+            byte[] decoded = EncodingUtil.base64Decode(cipherText.getValue());
             byte[] decrypted = processCipher(Cipher.DECRYPT_MODE, privateKey, decoded);
 
             String plain = new String(decrypted, StandardCharsets.UTF_8);
@@ -137,7 +137,7 @@ public class RsaCipher extends BouncyCastleProviderInitializer {
 
         Validate.nonNull(key, NullPointerException::new);
         Cipher cipher = Cipher.getInstance(RSA_TRANSFORMATION);
-        cipher.init(encryptMode, key, RandomUtils.secureRandom());
+        cipher.init(encryptMode, key, RandomUtil.secureRandom());
         return cipher;
     }
 }

@@ -2,7 +2,7 @@ package io.github.avec112.security.crypto;
 
 import io.github.avec112.security.crypto.aes.AesDecryptor;
 import io.github.avec112.security.crypto.aes.AesEncryptor;
-import io.github.avec112.security.crypto.digest.DigestUtils;
+import io.github.avec112.security.crypto.digest.DigestUtil;
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.domain.PlainText;
@@ -12,13 +12,13 @@ import io.github.avec112.security.crypto.error.BadCipherTextException;
 import io.github.avec112.security.crypto.hybrid.DecryptBuilder;
 import io.github.avec112.security.crypto.hybrid.EncryptBuilder;
 import io.github.avec112.security.crypto.hybrid.HybridEncryptionResult;
-import io.github.avec112.security.crypto.password.PasswordEncoderUtils;
+import io.github.avec112.security.crypto.password.PasswordEncoderUtil;
 import io.github.avec112.security.crypto.rsa.RsaCipher;
 import io.github.avec112.security.crypto.shamir.Secret;
 import io.github.avec112.security.crypto.shamir.Shamir;
 import io.github.avec112.security.crypto.shamir.Share;
 import io.github.avec112.security.crypto.shamir.Shares;
-import io.github.avec112.security.crypto.sign.SignatureUtils;
+import io.github.avec112.security.crypto.sign.SignatureUtil;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -29,7 +29,7 @@ import java.security.PublicKey;
  * operations, including AES encryption, RSA encryption, ECC signatures (Ed25519, ECDSA), ECIES encryption,
  * Shamir's Secret Sharing, message digests, and hybrid encryption.
  */
-public class CryptoUtils {
+public class CryptoUtil {
 
     /**
      * The version of the commons-security library.
@@ -38,7 +38,7 @@ public class CryptoUtils {
      */
     private static final String VERSION = "0.9.0-SNAPSHOT";
 
-    private CryptoUtils() {
+    private CryptoUtil() {
     }
 
     // ========== Symmetric Encryption Methods ==========
@@ -159,7 +159,7 @@ public class CryptoUtils {
      * @throws Exception if an error occurs during digesting
      */
     public static byte[] digest(String data) throws Exception {
-        return DigestUtils.digest(data);
+        return DigestUtil.digest(data);
     }
 
     /**
@@ -170,7 +170,7 @@ public class CryptoUtils {
      * @throws Exception if an error occurs during digesting
      */
     public static String base64Digest(String data) throws Exception {
-        return DigestUtils.base64Digest(data);
+        return DigestUtil.base64Digest(data);
     }
 
     /**
@@ -181,7 +181,7 @@ public class CryptoUtils {
      * @throws Exception if an error occurs during digesting
      */
     public static String hexDigest(String data) throws Exception {
-        return DigestUtils.hexDigest(data);
+        return DigestUtil.hexDigest(data);
     }
 
     // ========== Signature Methods ==========
@@ -197,7 +197,7 @@ public class CryptoUtils {
      * @throws Exception if an error occurs during signing
      */
     public static byte[] sign(String data, PrivateKey privateKey) throws Exception {
-        return SignatureUtils.sign(data, privateKey);
+        return SignatureUtil.sign(data, privateKey);
     }
 
     /**
@@ -210,7 +210,7 @@ public class CryptoUtils {
      * @throws Exception if an error occurs during verification
      */
     public static boolean verify(byte[] signature, String data, PublicKey publicKey) throws Exception {
-        return SignatureUtils.verify(signature, data, publicKey);
+        return SignatureUtil.verify(signature, data, publicKey);
     }
 
     // Ed25519 Signatures (ECC-based, modern and fast)
@@ -225,7 +225,7 @@ public class CryptoUtils {
      * @throws Exception if an error occurs during signing
      */
     public static byte[] signEd25519(String data, PrivateKey privateKey) throws Exception {
-        return SignatureUtils.signEd25519(data, privateKey);
+        return SignatureUtil.signEd25519(data, privateKey);
     }
 
     /**
@@ -238,7 +238,7 @@ public class CryptoUtils {
      * @throws Exception if an error occurs during verification
      */
     public static boolean verifyEd25519(byte[] signature, String data, PublicKey publicKey) throws Exception {
-        return SignatureUtils.verifyEd25519(signature, data, publicKey);
+        return SignatureUtil.verifyEd25519(signature, data, publicKey);
     }
 
     // ECDSA Signatures (ECC-based, standards-compliant)
@@ -253,7 +253,7 @@ public class CryptoUtils {
      * @throws Exception if an error occurs during signing
      */
     public static byte[] signEcdsa(String data, PrivateKey privateKey) throws Exception {
-        return SignatureUtils.signEcdsa(data, privateKey);
+        return SignatureUtil.signEcdsa(data, privateKey);
     }
 
     /**
@@ -266,7 +266,7 @@ public class CryptoUtils {
      * @throws Exception if an error occurs during verification
      */
     public static boolean verifyEcdsa(byte[] signature, String data, PublicKey publicKey) throws Exception {
-        return SignatureUtils.verifyEcdsa(signature, data, publicKey);
+        return SignatureUtil.verifyEcdsa(signature, data, publicKey);
     }
 
     // ========== Hybrid Encryption Methods ==========
@@ -315,7 +315,7 @@ public class CryptoUtils {
      * @return the encoded password string
      */
     public static String encodePassword(String rawPassword) {
-        return PasswordEncoderUtils.encode(rawPassword);
+        return PasswordEncoderUtil.encode(rawPassword);
     }
 
     /**
@@ -328,7 +328,7 @@ public class CryptoUtils {
      * @throws IllegalArgumentException if the encoded password doesn't have a valid prefix
      */
     public static boolean matchesPassword(String rawPassword, String encodedPassword) {
-        return PasswordEncoderUtils.matches(rawPassword, encodedPassword);
+        return PasswordEncoderUtil.matches(rawPassword, encodedPassword);
     }
 
     /**
@@ -338,7 +338,7 @@ public class CryptoUtils {
      * @return true if the password should be re-encoded with ARGON2
      */
     public static boolean needsPasswordUpgrade(String encodedPassword) {
-        return PasswordEncoderUtils.needsUpgrade(encodedPassword);
+        return PasswordEncoderUtil.needsUpgrade(encodedPassword);
     }
 
     /**
@@ -352,14 +352,14 @@ public class CryptoUtils {
      * @throws IllegalArgumentException if the raw password does not match the old encoded password
      */
     public static String upgradePassword(String rawPassword, String oldEncodedPassword) {
-        return PasswordEncoderUtils.upgradePassword(rawPassword, oldEncodedPassword);
+        return PasswordEncoderUtil.upgradePassword(rawPassword, oldEncodedPassword);
     }
 
 
     /**
-     * Retrieves the current version of the CryptoUtils utility.
+     * Retrieves the current version of the CryptoUtil utility.
      *
-     * @return a string representing the version of the CryptoUtils utility
+     * @return a string representing the version of the CryptoUtil utility
      */
     public static String getVersion() {
         return VERSION;

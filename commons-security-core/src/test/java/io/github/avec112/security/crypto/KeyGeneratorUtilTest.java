@@ -17,19 +17,19 @@ import java.security.interfaces.RSAPublicKey;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit tests for the methods in the {@code KeyGeneratorUtils} class.
+ * Unit tests for the methods in the {@code KeyGeneratorUtil} class.
  * This test class validates the generation and integrity of RSA key pairs using different key sizes.
  * Additionally, it ensures that generated key pairs meet expected criteria.
  */
 @Execution(ExecutionMode.CONCURRENT)
-class KeyGeneratorUtilsTest extends BouncyCastleProviderInitializer {
+class KeyGeneratorUtilTest extends BouncyCastleProviderInitializer {
 
 
     @ParameterizedTest
     @EnumSource(AesKeySize.class)
     void generateAesKey(AesKeySize keySize) throws Exception {
         int expectedKeySizeInBytes = keySize.getKeySize()/8;
-        final SecretKey secretKey = KeyGeneratorUtils.generateAesKey(keySize);
+        final SecretKey secretKey = KeyGeneratorUtil.generateAesKey(keySize);
         assertNotNull(secretKey);
         assertEquals(expectedKeySizeInBytes, secretKey.getEncoded().length);
     }
@@ -38,7 +38,7 @@ class KeyGeneratorUtilsTest extends BouncyCastleProviderInitializer {
     void generateDefaultAesKey() throws Exception {
         int expectedKeySizeInBytes = AesKeySize.BIT_256.getKeySize()/8;
 
-        final SecretKey secretKey = KeyGeneratorUtils.generateAesKey();
+        final SecretKey secretKey = KeyGeneratorUtil.generateAesKey();
 
         assertNotNull(secretKey);
         assertEquals(expectedKeySizeInBytes, secretKey.getEncoded().length);
@@ -48,7 +48,7 @@ class KeyGeneratorUtilsTest extends BouncyCastleProviderInitializer {
     @ParameterizedTest
     @EnumSource(RsaKeySize.class)
     void generateRsaKeyPair(RsaKeySize keySize) throws Exception {
-        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(keySize);
+        final KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair(keySize);
         assertKeyPairNotNull(keyPair);
         assertKeyPairBitLengthEquals(keyPair, keySize.getKeySize());
     }
@@ -60,7 +60,7 @@ class KeyGeneratorUtilsTest extends BouncyCastleProviderInitializer {
         RsaKeySize defaultKeySize = RsaKeySize.BIT_3072;
 
         // Act
-        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair();
+        final KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair();
 
         // Assert
         assertKeyPairNotNull(keyPair);
@@ -69,21 +69,21 @@ class KeyGeneratorUtilsTest extends BouncyCastleProviderInitializer {
 
     @Test
     void generateRsaKeyPair4096() throws Exception {
-        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair4096();
+        final KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair4096();
         assertKeyPairNotNull(keyPair);
         assertKeyPairBitLengthEquals(keyPair, RsaKeySize.BIT_4096.getKeySize());
     }
 
     @Test
     void generateRsaKeyPair3072() throws Exception {
-        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair3072();
+        final KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair3072();
         assertKeyPairNotNull(keyPair);
         assertKeyPairBitLengthEquals(keyPair, RsaKeySize.BIT_3072.getKeySize());
     }
 
     @Test
     void generateRsaKeyPair2048() throws Exception {
-        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair2048();
+        final KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair2048();
         assertKeyPairNotNull(keyPair);
         assertKeyPairBitLengthEquals(keyPair, RsaKeySize.BIT_2048.getKeySize());
     }
@@ -104,7 +104,7 @@ class KeyGeneratorUtilsTest extends BouncyCastleProviderInitializer {
 
     @Test
     void testGenerateEd25519KeyPair() throws Exception {
-        KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
+        KeyPair keyPair = KeyGeneratorUtil.generateEd25519KeyPair();
 
         assertNotNull(keyPair);
         assertNotNull(keyPair.getPublic());
@@ -115,7 +115,7 @@ class KeyGeneratorUtilsTest extends BouncyCastleProviderInitializer {
 
     @Test
     void testGenerateSecp256r1KeyPair() throws Exception {
-        KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtil.generateSecp256r1KeyPair();
 
         assertNotNull(keyPair);
         assertNotNull(keyPair.getPublic());
@@ -126,7 +126,7 @@ class KeyGeneratorUtilsTest extends BouncyCastleProviderInitializer {
 
     @Test
     void testGenerateSecp384r1KeyPair() throws Exception {
-        KeyPair keyPair = KeyGeneratorUtils.generateSecp384r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtil.generateSecp384r1KeyPair();
 
         assertNotNull(keyPair);
         assertNotNull(keyPair.getPublic());
@@ -137,7 +137,7 @@ class KeyGeneratorUtilsTest extends BouncyCastleProviderInitializer {
 
     @Test
     void testGenerateSecp521r1KeyPair() throws Exception {
-        KeyPair keyPair = KeyGeneratorUtils.generateSecp521r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtil.generateSecp521r1KeyPair();
 
         assertNotNull(keyPair);
         assertNotNull(keyPair.getPublic());
@@ -148,7 +148,7 @@ class KeyGeneratorUtilsTest extends BouncyCastleProviderInitializer {
 
     @Test
     void testGenerateEcKeyPairWithDefaultCurve() throws Exception {
-        KeyPair keyPair = KeyGeneratorUtils.generateEcKeyPair();
+        KeyPair keyPair = KeyGeneratorUtil.generateEcKeyPair();
 
         assertNotNull(keyPair);
         assertNotNull(keyPair.getPublic());
@@ -158,7 +158,7 @@ class KeyGeneratorUtilsTest extends BouncyCastleProviderInitializer {
 
     @Test
     void testGenerateEcKeyPairWithSpecificCurve() throws Exception {
-        KeyPair keyPair = KeyGeneratorUtils.generateEcKeyPair(EccCurve.SECP384R1);
+        KeyPair keyPair = KeyGeneratorUtil.generateEcKeyPair(EccCurve.SECP384R1);
 
         assertNotNull(keyPair);
         assertNotNull(keyPair.getPublic());
@@ -169,7 +169,7 @@ class KeyGeneratorUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void testGenerateEcKeyPairThrowsExceptionForEd25519() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            KeyGeneratorUtils.generateEcKeyPair(EccCurve.ED25519);
+            KeyGeneratorUtil.generateEcKeyPair(EccCurve.ED25519);
         });
 
         assertTrue(exception.getMessage().contains("Ed25519"));

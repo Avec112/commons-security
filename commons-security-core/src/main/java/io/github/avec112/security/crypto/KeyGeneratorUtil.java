@@ -28,21 +28,21 @@ import java.security.spec.RSAKeyGenParameterSpec;
  * <p><b>Example usage:</b></p>
  * <pre>{@code
  * // RSA keys
- * KeyPair rsaKeys = KeyGeneratorUtils.generateRsaKeyPair();
+ * KeyPair rsaKeys = KeyGeneratorUtil.generateRsaKeyPair();
  *
  * // Ed25519 keys for signatures
- * KeyPair ed25519Keys = KeyGeneratorUtils.generateEd25519KeyPair();
+ * KeyPair ed25519Keys = KeyGeneratorUtil.generateEd25519KeyPair();
  *
  * // EC keys for ECDSA or ECIES
- * KeyPair ecKeys = KeyGeneratorUtils.generateEcKeyPair(EccCurve.SECP256R1);
+ * KeyPair ecKeys = KeyGeneratorUtil.generateEcKeyPair(EccCurve.SECP256R1);
  * }</pre>
  */
-public class KeyGeneratorUtils extends BouncyCastleProviderInitializer {
+public class KeyGeneratorUtil extends BouncyCastleProviderInitializer {
 
     private static final RsaKeySize DEFAULT_RSA_KEY_SIZE = RsaKeySize.BIT_3072;
     private static final EccCurve DEFAULT_EC_CURVE = EccCurve.SECP256R1;
 
-    private KeyGeneratorUtils() {
+    private KeyGeneratorUtil() {
     }
 
     // ========== AES Key Generation ==========

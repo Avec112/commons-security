@@ -18,11 +18,11 @@ import java.security.PublicKey;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit tests for the {@code KeyStorageUtils} class.
+ * Unit tests for the {@code KeyStorageUtil} class.
  * Tests cover storage, loading, and format conversion of cryptographic keys.
  */
 @Execution(ExecutionMode.CONCURRENT)
-class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
+class KeyStorageUtilTest extends BouncyCastleProviderInitializer {
 
     @TempDir
     Path tempDir;
@@ -32,12 +32,12 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void saveAndLoadPrivateKey() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
+        KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair(RsaKeySize.BIT_2048);
         Path keyPath = tempDir.resolve("private_key.pem");
 
         // Act
-        KeyStorageUtils.savePrivateKey(keyPair.getPrivate(), keyPath);
-        PrivateKey loadedKey = KeyStorageUtils.loadPrivateKey(keyPath, "RSA");
+        KeyStorageUtil.savePrivateKey(keyPair.getPrivate(), keyPath);
+        PrivateKey loadedKey = KeyStorageUtil.loadPrivateKey(keyPath, "RSA");
 
         // Assert
         assertNotNull(loadedKey);
@@ -48,12 +48,12 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void saveAndLoadPublicKey() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
+        KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair(RsaKeySize.BIT_2048);
         Path keyPath = tempDir.resolve("public_key.pem");
 
         // Act
-        KeyStorageUtils.savePublicKey(keyPair.getPublic(), keyPath);
-        PublicKey loadedKey = KeyStorageUtils.loadPublicKey(keyPath, "RSA");
+        KeyStorageUtil.savePublicKey(keyPair.getPublic(), keyPath);
+        PublicKey loadedKey = KeyStorageUtil.loadPublicKey(keyPath, "RSA");
 
         // Assert
         assertNotNull(loadedKey);
@@ -64,11 +64,11 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void savePrivateKeyCreatesPemFormat() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
+        KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair(RsaKeySize.BIT_2048);
         Path keyPath = tempDir.resolve("private_key.pem");
 
         // Act
-        KeyStorageUtils.savePrivateKey(keyPair.getPrivate(), keyPath);
+        KeyStorageUtil.savePrivateKey(keyPair.getPrivate(), keyPath);
         String content = Files.readString(keyPath);
 
         // Assert
@@ -79,11 +79,11 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void savePublicKeyCreatesPemFormat() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
+        KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair(RsaKeySize.BIT_2048);
         Path keyPath = tempDir.resolve("public_key.pem");
 
         // Act
-        KeyStorageUtils.savePublicKey(keyPair.getPublic(), keyPath);
+        KeyStorageUtil.savePublicKey(keyPair.getPublic(), keyPath);
         String content = Files.readString(keyPath);
 
         // Assert
@@ -96,12 +96,12 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void saveAndLoadEcPrivateKey() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtil.generateSecp256r1KeyPair();
         Path keyPath = tempDir.resolve("ec_private_key.pem");
 
         // Act
-        KeyStorageUtils.savePrivateKey(keyPair.getPrivate(), keyPath);
-        PrivateKey loadedKey = KeyStorageUtils.loadPrivateKey(keyPath, "EC");
+        KeyStorageUtil.savePrivateKey(keyPair.getPrivate(), keyPath);
+        PrivateKey loadedKey = KeyStorageUtil.loadPrivateKey(keyPath, "EC");
 
         // Assert
         assertNotNull(loadedKey);
@@ -112,12 +112,12 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void saveAndLoadEcPublicKey() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtil.generateSecp256r1KeyPair();
         Path keyPath = tempDir.resolve("ec_public_key.pem");
 
         // Act
-        KeyStorageUtils.savePublicKey(keyPair.getPublic(), keyPath);
-        PublicKey loadedKey = KeyStorageUtils.loadPublicKey(keyPath, "EC");
+        KeyStorageUtil.savePublicKey(keyPair.getPublic(), keyPath);
+        PublicKey loadedKey = KeyStorageUtil.loadPublicKey(keyPath, "EC");
 
         // Assert
         assertNotNull(loadedKey);
@@ -130,12 +130,12 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void saveAndLoadEd25519PrivateKey() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
+        KeyPair keyPair = KeyGeneratorUtil.generateEd25519KeyPair();
         Path keyPath = tempDir.resolve("ed25519_private_key.pem");
 
         // Act
-        KeyStorageUtils.savePrivateKey(keyPair.getPrivate(), keyPath);
-        PrivateKey loadedKey = KeyStorageUtils.loadPrivateKey(keyPath, "Ed25519");
+        KeyStorageUtil.savePrivateKey(keyPair.getPrivate(), keyPath);
+        PrivateKey loadedKey = KeyStorageUtil.loadPrivateKey(keyPath, "Ed25519");
 
         // Assert
         assertNotNull(loadedKey);
@@ -146,12 +146,12 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void saveAndLoadEd25519PublicKey() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
+        KeyPair keyPair = KeyGeneratorUtil.generateEd25519KeyPair();
         Path keyPath = tempDir.resolve("ed25519_public_key.pem");
 
         // Act
-        KeyStorageUtils.savePublicKey(keyPair.getPublic(), keyPath);
-        PublicKey loadedKey = KeyStorageUtils.loadPublicKey(keyPath, "Ed25519");
+        KeyStorageUtil.savePublicKey(keyPair.getPublic(), keyPath);
+        PublicKey loadedKey = KeyStorageUtil.loadPublicKey(keyPath, "Ed25519");
 
         // Assert
         assertNotNull(loadedKey);
@@ -164,12 +164,12 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void saveAndLoadAesKey() throws Exception {
         // Arrange
-        SecretKey secretKey = KeyGeneratorUtils.generateAesKey(AesKeySize.BIT_256);
+        SecretKey secretKey = KeyGeneratorUtil.generateAesKey(AesKeySize.BIT_256);
         Path keyPath = tempDir.resolve("aes_key.txt");
 
         // Act
-        KeyStorageUtils.saveAesKey(secretKey, keyPath);
-        SecretKey loadedKey = KeyStorageUtils.loadAesKey(keyPath);
+        KeyStorageUtil.saveAesKey(secretKey, keyPath);
+        SecretKey loadedKey = KeyStorageUtil.loadAesKey(keyPath);
 
         // Assert
         assertNotNull(loadedKey);
@@ -180,13 +180,13 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void saveAndLoadAesKeyEncrypted() throws Exception {
         // Arrange
-        SecretKey secretKey = KeyGeneratorUtils.generateAesKey(AesKeySize.BIT_256);
+        SecretKey secretKey = KeyGeneratorUtil.generateAesKey(AesKeySize.BIT_256);
         Password password = new Password("StrongPassword123!");
         Path keyPath = tempDir.resolve("aes_key_encrypted.txt");
 
         // Act
-        KeyStorageUtils.saveAesKeyEncrypted(secretKey, password, keyPath);
-        SecretKey loadedKey = KeyStorageUtils.loadAesKeyEncrypted(keyPath, password);
+        KeyStorageUtil.saveAesKeyEncrypted(secretKey, password, keyPath);
+        SecretKey loadedKey = KeyStorageUtil.loadAesKeyEncrypted(keyPath, password);
 
         // Assert
         assertNotNull(loadedKey);
@@ -197,15 +197,15 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void loadAesKeyEncryptedWithWrongPasswordThrowsException() throws Exception {
         // Arrange
-        SecretKey secretKey = KeyGeneratorUtils.generateAesKey(AesKeySize.BIT_256);
+        SecretKey secretKey = KeyGeneratorUtil.generateAesKey(AesKeySize.BIT_256);
         Password correctPassword = new Password("CorrectPassword123!");
         Password wrongPassword = new Password("WrongPassword456!");
         Path keyPath = tempDir.resolve("aes_key_encrypted.txt");
-        KeyStorageUtils.saveAesKeyEncrypted(secretKey, correctPassword, keyPath);
+        KeyStorageUtil.saveAesKeyEncrypted(secretKey, correctPassword, keyPath);
 
         // Act & Assert
         assertThrows(Exception.class, () ->
-            KeyStorageUtils.loadAesKeyEncrypted(keyPath, wrongPassword)
+            KeyStorageUtil.loadAesKeyEncrypted(keyPath, wrongPassword)
         );
     }
 
@@ -214,11 +214,11 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void toPemFormatCreatesCorrectStructure() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
+        KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair(RsaKeySize.BIT_2048);
         byte[] keyBytes = keyPair.getPublic().getEncoded();
 
         // Act
-        String pem = KeyStorageUtils.toPemFormat(keyBytes, "PUBLIC KEY");
+        String pem = KeyStorageUtil.toPemFormat(keyBytes, "PUBLIC KEY");
 
         // Assert
         assertTrue(pem.startsWith("-----BEGIN PUBLIC KEY-----\n"));
@@ -236,12 +236,12 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void fromPemFormatExtractsCorrectBytes() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
+        KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair(RsaKeySize.BIT_2048);
         byte[] originalBytes = keyPair.getPublic().getEncoded();
-        String pem = KeyStorageUtils.toPemFormat(originalBytes, "PUBLIC KEY");
+        String pem = KeyStorageUtil.toPemFormat(originalBytes, "PUBLIC KEY");
 
         // Act
-        byte[] extractedBytes = KeyStorageUtils.fromPemFormat(pem);
+        byte[] extractedBytes = KeyStorageUtil.fromPemFormat(pem);
 
         // Assert
         assertArrayEquals(originalBytes, extractedBytes);
@@ -250,12 +250,12 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void toPemAndFromPemAreReversible() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
+        KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair(RsaKeySize.BIT_2048);
         byte[] originalBytes = keyPair.getPrivate().getEncoded();
 
         // Act
-        String pem = KeyStorageUtils.toPemFormat(originalBytes, "PRIVATE KEY");
-        byte[] extractedBytes = KeyStorageUtils.fromPemFormat(pem);
+        String pem = KeyStorageUtil.toPemFormat(originalBytes, "PRIVATE KEY");
+        byte[] extractedBytes = KeyStorageUtil.fromPemFormat(pem);
 
         // Assert
         assertArrayEquals(originalBytes, extractedBytes);
@@ -266,11 +266,11 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void exportAndImportPublicKeyAsBase64() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
+        KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair(RsaKeySize.BIT_2048);
 
         // Act
-        String base64Key = KeyStorageUtils.exportPublicKeyAsBase64(keyPair.getPublic());
-        PublicKey importedKey = KeyStorageUtils.importPublicKeyFromBase64(base64Key, "RSA");
+        String base64Key = KeyStorageUtil.exportPublicKeyAsBase64(keyPair.getPublic());
+        PublicKey importedKey = KeyStorageUtil.importPublicKeyFromBase64(base64Key, "RSA");
 
         // Assert
         assertNotNull(importedKey);
@@ -281,11 +281,11 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void exportAndImportEcPublicKeyAsBase64() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtil.generateSecp256r1KeyPair();
 
         // Act
-        String base64Key = KeyStorageUtils.exportPublicKeyAsBase64(keyPair.getPublic());
-        PublicKey importedKey = KeyStorageUtils.importPublicKeyFromBase64(base64Key, "EC");
+        String base64Key = KeyStorageUtil.exportPublicKeyAsBase64(keyPair.getPublic());
+        PublicKey importedKey = KeyStorageUtil.importPublicKeyFromBase64(base64Key, "EC");
 
         // Assert
         assertNotNull(importedKey);
@@ -296,11 +296,11 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void exportAndImportEd25519PublicKeyAsBase64() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
+        KeyPair keyPair = KeyGeneratorUtil.generateEd25519KeyPair();
 
         // Act
-        String base64Key = KeyStorageUtils.exportPublicKeyAsBase64(keyPair.getPublic());
-        PublicKey importedKey = KeyStorageUtils.importPublicKeyFromBase64(base64Key, "Ed25519");
+        String base64Key = KeyStorageUtil.exportPublicKeyAsBase64(keyPair.getPublic());
+        PublicKey importedKey = KeyStorageUtil.importPublicKeyFromBase64(base64Key, "Ed25519");
 
         // Assert
         assertNotNull(importedKey);
@@ -313,10 +313,10 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void isRsaKeySufficientReturnsTrueForValidKey() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_3072);
+        KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair(RsaKeySize.BIT_3072);
 
         // Act
-        boolean isSufficient = KeyStorageUtils.isRsaKeySufficient(keyPair, 2048);
+        boolean isSufficient = KeyStorageUtil.isRsaKeySufficient(keyPair, 2048);
 
         // Assert
         assertTrue(isSufficient);
@@ -325,10 +325,10 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void isRsaKeySufficientReturnsFalseForWeakKey() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
+        KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair(RsaKeySize.BIT_2048);
 
         // Act
-        boolean isSufficient = KeyStorageUtils.isRsaKeySufficient(keyPair, 3072);
+        boolean isSufficient = KeyStorageUtil.isRsaKeySufficient(keyPair, 3072);
 
         // Assert
         assertFalse(isSufficient);
@@ -337,10 +337,10 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void isRsaKeySufficientReturnsFalseForNonRsaKey() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtil.generateSecp256r1KeyPair();
 
         // Act
-        boolean isSufficient = KeyStorageUtils.isRsaKeySufficient(keyPair, 2048);
+        boolean isSufficient = KeyStorageUtil.isRsaKeySufficient(keyPair, 2048);
 
         // Assert
         assertFalse(isSufficient);
@@ -351,10 +351,10 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void getKeyMetadataForRsaKey() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
+        KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair(RsaKeySize.BIT_2048);
 
         // Act
-        KeyStorageUtils.KeyMetadata metadata = KeyStorageUtils.getKeyMetadata(keyPair);
+        KeyStorageUtil.KeyMetadata metadata = KeyStorageUtil.getKeyMetadata(keyPair);
 
         // Assert
         assertNotNull(metadata);
@@ -366,10 +366,10 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void getKeyMetadataForEcKey() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtil.generateSecp256r1KeyPair();
 
         // Act
-        KeyStorageUtils.KeyMetadata metadata = KeyStorageUtils.getKeyMetadata(keyPair);
+        KeyStorageUtil.KeyMetadata metadata = KeyStorageUtil.getKeyMetadata(keyPair);
 
         // Assert
         assertNotNull(metadata);
@@ -381,10 +381,10 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void getKeyMetadataForEd25519Key() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
+        KeyPair keyPair = KeyGeneratorUtil.generateEd25519KeyPair();
 
         // Act
-        KeyStorageUtils.KeyMetadata metadata = KeyStorageUtils.getKeyMetadata(keyPair);
+        KeyStorageUtil.KeyMetadata metadata = KeyStorageUtil.getKeyMetadata(keyPair);
 
         // Assert
         assertNotNull(metadata);
@@ -401,7 +401,7 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
 
         // Act & Assert
         assertThrows(Exception.class, () ->
-            KeyStorageUtils.loadPrivateKey(nonExistentPath, "RSA")
+            KeyStorageUtil.loadPrivateKey(nonExistentPath, "RSA")
         );
     }
 
@@ -412,7 +412,7 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
 
         // Act & Assert
         assertThrows(Exception.class, () ->
-            KeyStorageUtils.loadPublicKey(nonExistentPath, "RSA")
+            KeyStorageUtil.loadPublicKey(nonExistentPath, "RSA")
         );
     }
 
@@ -423,7 +423,7 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
 
         // Act & Assert
         assertThrows(Exception.class, () ->
-            KeyStorageUtils.importPublicKeyFromBase64(invalidBase64, "RSA")
+            KeyStorageUtil.importPublicKeyFromBase64(invalidBase64, "RSA")
         );
     }
 
@@ -432,13 +432,13 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void savePrivateKeyEncryptedThrowsUnsupportedOperationException() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
+        KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair(RsaKeySize.BIT_2048);
         Password password = new Password("TestPassword123!");
         Path keyPath = tempDir.resolve("encrypted_private_key.pem");
 
         // Act & Assert
         assertThrows(UnsupportedOperationException.class, () ->
-            KeyStorageUtils.savePrivateKeyEncrypted(keyPair.getPrivate(), password, keyPath)
+            KeyStorageUtil.savePrivateKeyEncrypted(keyPair.getPrivate(), password, keyPath)
         );
     }
 
@@ -451,21 +451,21 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
 
         // Act & Assert
         assertThrows(UnsupportedOperationException.class, () ->
-            KeyStorageUtils.loadPrivateKeyEncrypted(keyPath, password, "RSA")
+            KeyStorageUtil.loadPrivateKeyEncrypted(keyPath, password, "RSA")
         );
     }
 
     @Test
     void saveKeyPairThrowsUnsupportedOperationException() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
+        KeyPair keyPair = KeyGeneratorUtil.generateRsaKeyPair(RsaKeySize.BIT_2048);
         Password password = new Password("TestPassword123!");
         Path privateKeyPath = tempDir.resolve("private_key.pem");
         Path publicKeyPath = tempDir.resolve("public_key.pem");
 
         // Act & Assert
         assertThrows(UnsupportedOperationException.class, () ->
-            KeyStorageUtils.saveKeyPair(keyPair, password, privateKeyPath, publicKeyPath)
+            KeyStorageUtil.saveKeyPair(keyPair, password, privateKeyPath, publicKeyPath)
         );
     }
 
@@ -480,7 +480,7 @@ class KeyStorageUtilsTest extends BouncyCastleProviderInitializer {
 
         // Act & Assert
         assertThrows(UnsupportedOperationException.class, () ->
-            KeyStorageUtils.loadKeyPair(privateKeyPath, publicKeyPath, password, "RSA")
+            KeyStorageUtil.loadKeyPair(privateKeyPath, publicKeyPath, password, "RSA")
         );
     }
 }

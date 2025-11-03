@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class EncodingUtilsTest {
+class EncodingUtilTest {
 
     @ParameterizedTest
     @CsvSource({
@@ -20,18 +20,18 @@ class EncodingUtilsTest {
     })
     void base64Encode(String input, String expected) {
         byte [] src = input.getBytes(StandardCharsets.UTF_8);
-        assertEquals(expected, EncodingUtils.base64Encode(src));
+        assertEquals(expected, EncodingUtil.base64Encode(src));
     }
 
     @Test
     void base64EncodeBadInput() {
         // null
         assertThrows(NullPointerException.class, () ->
-                EncodingUtils.base64Encode(null));
+                EncodingUtil.base64Encode(null));
         // blank
         byte[] bytes = "".getBytes(StandardCharsets.UTF_8);
         assertThrows(IllegalArgumentException.class, () ->
-                EncodingUtils.base64Encode(bytes));
+                EncodingUtil.base64Encode(bytes));
     }
 
     @ParameterizedTest
@@ -41,7 +41,7 @@ class EncodingUtilsTest {
             "1234!#&, MTIzNCEjJg=="
     })
     void base64Decode(String expected, String input) {
-        final String actual = new String(EncodingUtils.base64Decode(input), StandardCharsets.UTF_8);
+        final String actual = new String(EncodingUtil.base64Decode(input), StandardCharsets.UTF_8);
         assertEquals(expected, actual);
     }
 
@@ -54,18 +54,18 @@ class EncodingUtilsTest {
     })
     void hexEncode(String input, String expected) {
         byte [] src = input.getBytes(StandardCharsets.UTF_8);
-        assertEquals(expected, EncodingUtils.hexEncode(src));
+        assertEquals(expected, EncodingUtil.hexEncode(src));
     }
 
     @Test
     void hexEncodeBadInput() {
         // null
         assertThrows(NullPointerException.class, () ->
-                EncodingUtils.hexEncode(null));
+                EncodingUtil.hexEncode(null));
         // blank
         byte[] bytes = "".getBytes(StandardCharsets.UTF_8);
         assertThrows(IllegalArgumentException.class, () ->
-                EncodingUtils.hexEncode(bytes));
+                EncodingUtil.hexEncode(bytes));
     }
 
     @ParameterizedTest
@@ -75,7 +75,7 @@ class EncodingUtilsTest {
             "1234!#&, 31323334212326"
     })
     void hexDecode(String expected, String input) throws DecoderException {
-        final String actual = new String(EncodingUtils.hexDecode(input), StandardCharsets.UTF_8);
+        final String actual = new String(EncodingUtil.hexDecode(input), StandardCharsets.UTF_8);
         assertEquals(expected, actual);
     }
 }

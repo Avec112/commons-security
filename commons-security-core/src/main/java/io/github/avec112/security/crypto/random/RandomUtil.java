@@ -1,15 +1,15 @@
 package io.github.avec112.security.crypto.random;
 
 
-import io.github.avec112.security.encoding.EncodingUtils;
+import io.github.avec112.security.encoding.EncodingUtil;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 /**
- * The RandomUtils class provides utility methods for generating random values.
+ * The RandomUtil class provides utility methods for generating random values.
  */
-public class RandomUtils {
+public class RandomUtil {
 
     private static final SecureRandom SECURE_RANDOM;
 
@@ -25,7 +25,7 @@ public class RandomUtils {
         SECURE_RANDOM = tmp;
     }
 
-    private RandomUtils() {
+    private RandomUtil() {
     }
 
     /**
@@ -45,7 +45,7 @@ public class RandomUtils {
      * @return hex encoded random bytes
      */
     public static String randomString(int size) {
-        return EncodingUtils.hexEncode(randomBytes(size));
+        return EncodingUtil.hexEncode(randomBytes(size));
     }
 
     /**

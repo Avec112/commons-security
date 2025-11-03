@@ -1,8 +1,8 @@
 package io.github.avec112.security.crypto.shamir;
 
 import com.codahale.shamir.Scheme;
-import io.github.avec112.security.crypto.random.RandomUtils;
-import io.github.avec112.security.encoding.EncodingUtils;
+import io.github.avec112.security.crypto.random.RandomUtil;
+import io.github.avec112.security.encoding.EncodingUtil;
 import org.apache.commons.lang3.Validate;
 
 import java.nio.charset.StandardCharsets;
@@ -52,8 +52,8 @@ public class Shamir {
         Map<Integer, byte[]> shareMap = getShareMap(secret.getValue(), n, k);
         Shares shares = new Shares();
         shareMap.forEach((index, bytes) -> {
-            final String indexAndShare = index + "+" + EncodingUtils.base64Encode(bytes);
-            final String indexAndShareEncoded = EncodingUtils.base64Encode(indexAndShare.getBytes(StandardCharsets.UTF_8));
+            final String indexAndShare = index + "+" + EncodingUtil.base64Encode(bytes);
+            final String indexAndShareEncoded = EncodingUtil.base64Encode(indexAndShare.getBytes(StandardCharsets.UTF_8));
             shares.add(new Share(indexAndShareEncoded));
         });
         return shares;
@@ -91,14 +91,14 @@ public class Shamir {
         // start loop
         for(Share share:shares) {
             // decode once
-            final String indexAndShare = new String(EncodingUtils.base64Decode(share.getValue()), StandardCharsets.UTF_8);
+            final String indexAndShare = new String(EncodingUtil.base64Decode(share.getValue()), StandardCharsets.UTF_8);
             // split out index and encoded share
             Matcher m = SHARE_PATTERN.matcher(indexAndShare);
             if(m.matches()) {
                 String index = m.group(1);
                 String s = m.group(2);
                 // decode a second time
-                final byte[] shareDecoded = EncodingUtils.base64Decode(s);
+                final byte[] shareDecoded = EncodingUtil.base64Decode(s);
                 // add to map
                 providedParts.put(Integer.parseInt(index), shareDecoded);
             } else {
@@ -108,7 +108,7 @@ public class Shamir {
         // schema join
         int n = providedParts.keySet().stream().max(Integer::compareTo).orElse(shares.length);
         int k = shares.length;
-        Scheme scheme = new Scheme(RandomUtils.secureRandom(), n, k);
+        Scheme scheme = new Scheme(RandomUtil.secureRandom(), n, k);
 
         final byte[] secretAsBytes = scheme.join(providedParts);
 
@@ -117,7 +117,7 @@ public class Shamir {
     }
 
     private static Map<Integer, byte[]> getShareMap(String s, int n, int k) {
-        final Scheme scheme = new Scheme(RandomUtils.secureRandom(), n, k);
+        final Scheme scheme = new Scheme(RandomUtil.secureRandom(), n, k);
         final byte[] secret = s.getBytes(StandardCharsets.UTF_8);
         return scheme.split(secret);
     }

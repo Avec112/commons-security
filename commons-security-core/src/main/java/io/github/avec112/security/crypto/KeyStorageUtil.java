@@ -3,7 +3,7 @@ package io.github.avec112.security.crypto;
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.domain.PlainText;
-import io.github.avec112.security.encoding.EncodingUtils;
+import io.github.avec112.security.encoding.EncodingUtil;
 import lombok.Value;
 
 import javax.crypto.SecretKey;
@@ -24,9 +24,9 @@ import java.security.spec.X509EncodedKeySpec;
  * 
  * Supports RSA, EC (ECDSA/ECIES), Ed25519, and symmetric AES keys.
  */
-public class KeyStorageUtils extends BouncyCastleProviderInitializer {
+public class KeyStorageUtil extends BouncyCastleProviderInitializer {
 
-    private KeyStorageUtils() {
+    private KeyStorageUtil() {
     }
 
 
@@ -172,7 +172,7 @@ public class KeyStorageUtils extends BouncyCastleProviderInitializer {
      * @param filePath path where to save the key
      */
     public static void saveAesKey(SecretKey secretKey, Path filePath) throws IOException {
-        String encoded = EncodingUtils.base64Encode(secretKey.getEncoded());
+        String encoded = EncodingUtil.base64Encode(secretKey.getEncoded());
         Files.writeString(filePath, encoded, StandardCharsets.UTF_8);
     }
 
@@ -185,8 +185,8 @@ public class KeyStorageUtils extends BouncyCastleProviderInitializer {
      */
     public static void saveAesKeyEncrypted(SecretKey secretKey, Password password, Path filePath) 
             throws Exception {
-        PlainText keyData = new PlainText(EncodingUtils.base64Encode(secretKey.getEncoded()));
-        CipherText encrypted = CryptoUtils.aesEncrypt(keyData, password);
+        PlainText keyData = new PlainText(EncodingUtil.base64Encode(secretKey.getEncoded()));
+        CipherText encrypted = CryptoUtil.aesEncrypt(keyData, password);
         Files.writeString(filePath, encrypted.getValue(), StandardCharsets.UTF_8);
     }
 
@@ -198,7 +198,7 @@ public class KeyStorageUtils extends BouncyCastleProviderInitializer {
      */
     public static SecretKey loadAesKey(Path filePath) throws IOException {
         String encoded = Files.readString(filePath, StandardCharsets.UTF_8).trim();
-        byte[] keyBytes = EncodingUtils.base64Decode(encoded);
+        byte[] keyBytes = EncodingUtil.base64Decode(encoded);
         return new SecretKeySpec(keyBytes, "AES");
     }
 
@@ -211,8 +211,8 @@ public class KeyStorageUtils extends BouncyCastleProviderInitializer {
      */
     public static SecretKey loadAesKeyEncrypted(Path filePath, Password password) throws Exception {
         String cipherText = Files.readString(filePath, StandardCharsets.UTF_8);
-        PlainText decrypted = CryptoUtils.aesDecrypt(new CipherText(cipherText), password);
-        byte[] keyBytes = EncodingUtils.base64Decode(decrypted.getValue());
+        PlainText decrypted = CryptoUtil.aesDecrypt(new CipherText(cipherText), password);
+        byte[] keyBytes = EncodingUtil.base64Decode(decrypted.getValue());
         return new SecretKeySpec(keyBytes, "AES");
     }
 
@@ -226,7 +226,7 @@ public class KeyStorageUtils extends BouncyCastleProviderInitializer {
      * @return PEM-formatted string
      */
     public static String toPemFormat(byte[] keyBytes, String type) {
-        String base64 = EncodingUtils.base64Encode(keyBytes);
+        String base64 = EncodingUtil.base64Encode(keyBytes);
         StringBuilder pem = new StringBuilder();
         pem.append("-----BEGIN ").append(type).append("-----\n");
         
@@ -251,7 +251,7 @@ public class KeyStorageUtils extends BouncyCastleProviderInitializer {
                 .replaceAll("-----BEGIN.*-----", "")
                 .replaceAll("-----END.*-----", "")
                 .replaceAll("\\s", "");
-        return EncodingUtils.base64Decode(base64);
+        return EncodingUtil.base64Decode(base64);
     }
 
     /**
@@ -261,7 +261,7 @@ public class KeyStorageUtils extends BouncyCastleProviderInitializer {
      * @return Base64-encoded public key
      */
     public static String exportPublicKeyAsBase64(PublicKey publicKey) {
-        return EncodingUtils.base64Encode(publicKey.getEncoded());
+        return EncodingUtil.base64Encode(publicKey.getEncoded());
     }
 
     /**
@@ -273,7 +273,7 @@ public class KeyStorageUtils extends BouncyCastleProviderInitializer {
      */
     public static PublicKey importPublicKeyFromBase64(String base64Key, String algorithm) 
             throws GeneralSecurityException {
-        byte[] keyBytes = EncodingUtils.base64Decode(base64Key);
+        byte[] keyBytes = EncodingUtil.base64Decode(base64Key);
         KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
         return keyFactory.generatePublic(keySpec);

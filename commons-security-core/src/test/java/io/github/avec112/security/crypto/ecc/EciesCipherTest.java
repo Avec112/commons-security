@@ -1,6 +1,6 @@
 package io.github.avec112.security.crypto.ecc;
 
-import io.github.avec112.security.crypto.KeyGeneratorUtils;
+import io.github.avec112.security.crypto.KeyGeneratorUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,8 +20,8 @@ class EciesCipherTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        keyPair256 = KeyGeneratorUtils.generateSecp256r1KeyPair();
-        keyPair384 = KeyGeneratorUtils.generateSecp384r1KeyPair();
+        keyPair256 = KeyGeneratorUtil.generateSecp256r1KeyPair();
+        keyPair384 = KeyGeneratorUtil.generateSecp384r1KeyPair();
         testPlaintext = "Hello, ECIES encryption!";
     }
 
@@ -88,7 +88,7 @@ class EciesCipherTest {
         byte[] ciphertext = EciesCipher.encrypt(testPlaintext, keyPair256.getPublic());
 
         // Try to decrypt with a different key pair
-        KeyPair wrongKeyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
+        KeyPair wrongKeyPair = KeyGeneratorUtil.generateSecp256r1KeyPair();
 
         assertThrows(Exception.class, () -> {
             EciesCipher.decrypt(ciphertext, wrongKeyPair.getPrivate());

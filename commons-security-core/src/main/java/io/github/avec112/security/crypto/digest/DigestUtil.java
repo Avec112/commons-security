@@ -1,7 +1,7 @@
 package io.github.avec112.security.crypto.digest;
 
 import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
-import io.github.avec112.security.encoding.EncodingUtils;
+import io.github.avec112.security.encoding.EncodingUtil;
 import org.apache.commons.lang3.Validate;
 
 import java.nio.charset.StandardCharsets;
@@ -11,9 +11,9 @@ import java.util.Objects;
 /**
  * This class might use algorithms from BouncyCastle so BouncyCastleProvider is added statically
  */
-public class DigestUtils extends BouncyCastleProviderInitializer {
+public class DigestUtil extends BouncyCastleProviderInitializer {
 
-    private DigestUtils() {}
+    private DigestUtil() {}
 
     /**
      * Create SHA-512/256 digest
@@ -51,7 +51,7 @@ public class DigestUtils extends BouncyCastleProviderInitializer {
      */
     public static String base64Digest(String data) throws Exception {
         byte[] digest = digest(data);
-        return EncodingUtils.base64Encode(digest);
+        return EncodingUtil.base64Encode(digest);
     }
 
     /**
@@ -62,6 +62,6 @@ public class DigestUtils extends BouncyCastleProviderInitializer {
      */
     public static String hexDigest(String data) throws Exception {
         byte[] digest = digest(data);
-        return EncodingUtils.hexEncode(digest);
+        return EncodingUtil.hexEncode(digest);
     }
 }

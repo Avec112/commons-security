@@ -3,14 +3,17 @@ package io.github.avec112.security.crypto.aes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import javax.crypto.SecretKey;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AesUtilsTest {
+class AesUtilTest {
 
     // Reuse one SecureRandom instance across tests
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
@@ -21,14 +24,36 @@ class AesUtilsTest {
         int length = 12;
 
         // Act
-        byte[] nonce1 = AesUtils.getRandomNonce(length);
-        byte[] nonce2 = AesUtils.getRandomNonce(length);
+        byte[] nonce1 = AesUtil.getRandomNonce(length);
+        byte[] nonce2 = AesUtil.getRandomNonce(length);
 
         // Assert
         assertNotNull(nonce1);
         assertEquals(length, nonce1.length);
         assertFalse(java.util.Arrays.equals(nonce1, nonce2),
                 "Nonces should be different on each call");
+    }
+
+    /**
+     * 1 byte Secure Random Nonce has 129 possible results.
+     * With 10000 tries we should hit every 129 by a good margin.
+     * This test validates that SecureRandom properly distributes values.
+     */
+    @ParameterizedTest
+    @ValueSource(ints = 10000)
+    void getRandomNonce_producesFullRangeOfByteValues(int iterations) {
+        // Arrange
+        Set<String> uniqueValues = new HashSet<>();
+
+        // Act
+        for (int i = 0; i < iterations; i++) {
+            byte[] nonce = AesUtil.getRandomNonce(1);
+            uniqueValues.add(new String(nonce));
+        }
+
+        // Assert
+        assertEquals(129, uniqueValues.size(),
+                "1-byte nonce should produce all 129 possible byte values over " + iterations + " iterations");
     }
 
     @ParameterizedTest
@@ -38,7 +63,7 @@ class AesUtilsTest {
         int expectedBytes = aesKeySize.getKeySize() / 8;
 
         // Act
-        String key = AesUtils.generateBase64Key(aesKeySize);
+        String key = AesUtil.generateBase64Key(aesKeySize);
         byte[] decoded = Base64.getDecoder().decode(key);
 
         // Assert
@@ -49,19 +74,18 @@ class AesUtilsTest {
                 "Decoded key length must match AES keySize");
     }
 
-    @Test
-    void getAESKey_returnsKeyWithCorrectLength() throws Exception {
+    @ParameterizedTest
+    @ValueSource(ints = {128, 192, 256})
+    void getAESKey_returnsKeyWithCorrectLength(int keySize) throws Exception {
         // Arrange
-        int key128 = 128;
-        int key256 = 256;
+        int expectedBytes = keySize / 8;
 
         // Act
-        SecretKey secret128 = AesUtils.getAESKey(key128);
-        SecretKey secret256 = AesUtils.getAESKey(key256);
+        SecretKey secretKey = AesUtil.getAESKey(keySize);
 
         // Assert
-        assertEquals(16, secret128.getEncoded().length);
-        assertEquals(32, secret256.getEncoded().length);
+        assertEquals(expectedBytes, secretKey.getEncoded().length,
+                "AES-" + keySize + " key should be " + expectedBytes + " bytes");
     }
 
     @Test
@@ -72,8 +96,8 @@ class AesUtilsTest {
         SECURE_RANDOM.nextBytes(salt);
 
         // Act
-        SecretKey key1 = AesUtils.getAESKeyFromPassword(password, salt, 256);
-        SecretKey key2 = AesUtils.getAESKeyFromPassword(password, salt, 256);
+        SecretKey key1 = AesUtil.getAESKeyFromPassword(password, salt, 256);
+        SecretKey key2 = AesUtil.getAESKeyFromPassword(password, salt, 256);
 
         // Assert
         assertArrayEquals(key1.getEncoded(), key2.getEncoded(),
@@ -90,8 +114,8 @@ class AesUtilsTest {
         SECURE_RANDOM.nextBytes(salt2);
 
         // Act
-        SecretKey key1 = AesUtils.getAESKeyFromPassword(password, salt1, 256);
-        SecretKey key2 = AesUtils.getAESKeyFromPassword(password, salt2, 256);
+        SecretKey key1 = AesUtil.getAESKeyFromPassword(password, salt1, 256);
+        SecretKey key2 = AesUtil.getAESKeyFromPassword(password, salt2, 256);
 
         // Assert
         assertFalse(java.util.Arrays.equals(key1.getEncoded(), key2.getEncoded()),

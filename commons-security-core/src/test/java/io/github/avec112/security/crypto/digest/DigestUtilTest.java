@@ -12,7 +12,7 @@ import java.security.MessageDigest;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class DigestUtilsTest extends BouncyCastleProviderInitializer {
+class DigestUtilTest extends BouncyCastleProviderInitializer {
 
 
 
@@ -27,7 +27,7 @@ class DigestUtilsTest extends BouncyCastleProviderInitializer {
         final byte[] expected = MessageDigest.getInstance("SHA-512/256").digest(data.getBytes(StandardCharsets.UTF_8));
 
         // Act
-        final byte[] actual = DigestUtils.digest(data);
+        final byte[] actual = DigestUtil.digest(data);
 
         // Assert
         assertArrayEquals(expected, actual);
@@ -40,7 +40,7 @@ class DigestUtilsTest extends BouncyCastleProviderInitializer {
             "1234!#&, 7tFYVk6O4ihJ4xSoT7b1owFEy+9ObozhGQKrIWI1EKo="
     })
     void base64Digest(String data, String expected) throws Exception {
-        final String actual = DigestUtils.base64Digest(data);
+        final String actual = DigestUtil.base64Digest(data);
         assertEquals(expected, actual);
     }
 
@@ -51,7 +51,7 @@ class DigestUtilsTest extends BouncyCastleProviderInitializer {
             "1234!#&, eed158564e8ee22849e314a84fb6f5a30144cbef4e6e8ce11902ab21623510aa"
     })
     void hexDigest(String data, String expected) throws Exception {
-        final String actual = DigestUtils.hexDigest(data);
+        final String actual = DigestUtil.hexDigest(data);
         assertEquals(expected, actual);
     }
 
@@ -59,7 +59,7 @@ class DigestUtilsTest extends BouncyCastleProviderInitializer {
     @EnumSource(DigestAlgorithm.class)
     void digestWithAlgorithm(DigestAlgorithm digestAlgorithm) throws Exception {
         final String data = "test data";
-        final byte[] actual = DigestUtils.digest(data, digestAlgorithm);
+        final byte[] actual = DigestUtil.digest(data, digestAlgorithm);
         final byte[] expected = MessageDigest.getInstance(digestAlgorithm.getAlgorithm()).digest(data.getBytes(StandardCharsets.UTF_8));
         assertArrayEquals(expected, actual);
     }
@@ -75,7 +75,7 @@ class DigestUtilsTest extends BouncyCastleProviderInitializer {
         final String expectedHex = "88d4629ddbe9e0f14fe203e5a1cfa06a00793c20ea32a734d406452d29b6f838";
 
         // Act
-        final String actualHex = DigestUtils.hexDigest(data);
+        final String actualHex = DigestUtil.hexDigest(data);
 
         // Assert
         assertEquals(expectedHex, actualHex);

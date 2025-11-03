@@ -30,7 +30,7 @@ public class AesDecryptCommand implements Runnable {
         try {
             CipherText cipherText = new CipherText(cipher);
             Password pw = new Password(password);
-            // Alternative CryptoUtils.aesDecrypt(cipherText, pw);
+            // Alternative CryptoUtil.aesDecrypt(cipherText, pw);
             PlainText plainText = AesDecryptor.withPasswordAndCipherText(pw, cipherText).decrypt();
             System.out.println("Decrypted: " + plainText.getValue());
         } catch (BadCipherConfigurationException | BadCipherTextException e) {

@@ -1,6 +1,6 @@
 package io.github.avec112.security.crypto.hybrid;
 
-import io.github.avec112.security.crypto.KeyGeneratorUtils;
+import io.github.avec112.security.crypto.KeyGeneratorUtil;
 import io.github.avec112.security.crypto.aes.AesKeySize;
 import io.github.avec112.security.crypto.aes.EncryptionMode;
 import io.github.avec112.security.crypto.domain.CipherText;
@@ -24,7 +24,7 @@ class HybridCryptoTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        keyPair = KeyGeneratorUtils.generateRsaKeyPair();
+        keyPair = KeyGeneratorUtil.generateRsaKeyPair();
     }
 
     @Test

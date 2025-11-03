@@ -5,7 +5,7 @@ import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.domain.PlainText;
 import io.github.avec112.security.crypto.error.BadCipherConfigurationException;
 import io.github.avec112.security.crypto.error.BadCipherTextException;
-import io.github.avec112.security.encoding.EncodingUtils;
+import io.github.avec112.security.encoding.EncodingUtil;
 import lombok.Getter;
 import org.apache.commons.lang3.Validate;
 
@@ -108,7 +108,7 @@ public class AesDecryptor {
      */
     private byte[] decryptCipherText(CipherText cipherText, Password password) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         final String cipherTextEncoded = cipherText.getValue();
-        final byte[] cipherTextBytes = EncodingUtils.base64Decode(cipherTextEncoded);
+        final byte[] cipherTextBytes = EncodingUtil.base64Decode(cipherTextEncoded);
 
         ByteBuffer buffer = ByteBuffer.wrap(cipherTextBytes); // IV+SALT+CIPHERTEXT
 
@@ -124,7 +124,7 @@ public class AesDecryptor {
         byte[] cText = new byte[buffer.remaining()];
         buffer.get(cText);
 
-        Cipher cipher = AesUtils.createCipher(password, salt, iv, Cipher.DECRYPT_MODE, getMode(), getAesKeySize().getKeySize());
+        Cipher cipher = AesUtil.createCipher(password, salt, iv, Cipher.DECRYPT_MODE, getMode(), getAesKeySize().getKeySize());
         return cipher.doFinal(cText);
     }
 

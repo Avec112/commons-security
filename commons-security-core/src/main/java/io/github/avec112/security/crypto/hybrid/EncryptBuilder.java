@@ -10,7 +10,7 @@ import io.github.avec112.security.crypto.domain.PlainText;
 import io.github.avec112.security.crypto.error.BlankPlainTextException;
 import io.github.avec112.security.crypto.error.MissingPlainTextException;
 import io.github.avec112.security.crypto.error.MissingPublicKeyException;
-import io.github.avec112.security.crypto.random.RandomUtils;
+import io.github.avec112.security.crypto.random.RandomUtil;
 import io.github.avec112.security.crypto.rsa.RsaCipher;
 import io.github.avec112.security.crypto.validate.Validate;
 
@@ -102,7 +102,7 @@ public class EncryptBuilder {
         Validate.nonBlank(plainText.getValue(), BlankPlainTextException::new);
 
 
-        final String randomPassword = RandomUtils.randomString(20);
+        final String randomPassword = RandomUtil.randomString(20);
         final String rsaEncryptedKey = rsaEncryptedKey(publicKey, randomPassword);
         final CipherText cipherText = AesEncryptor.withPasswordAndText(new Password(randomPassword), plainText)
                 .withMode(encryptionMode)
