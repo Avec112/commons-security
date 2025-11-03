@@ -1,8 +1,8 @@
 package io.github.avec112.security.crypto.hybrid;
 
 import io.github.avec112.security.crypto.aes.AesDecryptor;
+import io.github.avec112.security.crypto.aes.AesKeySize;
 import io.github.avec112.security.crypto.aes.EncryptionMode;
-import io.github.avec112.security.crypto.aes.EncryptionStrength;
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.domain.PlainText;
@@ -21,7 +21,8 @@ import java.security.PrivateKey;
  */
 public class DecryptBuilder {
 
-    private EncryptionStrength encryptionStrength = EncryptionStrength.BIT_128;
+    private AesKeySize aesKeySize = AesKeySize.BIT_256;
+
     private EncryptionMode encryptionMode = EncryptionMode.GCM;
 
     private String encryptedKey;
@@ -72,7 +73,7 @@ public class DecryptBuilder {
         final PlainText symKey = rsaCipher.decrypt(new CipherText(encryptedKey), privateKey);
         return AesDecryptor.withPasswordAndCipherText(new Password(symKey.getValue()), cipherText)
                 .withMode(encryptionMode)
-                .withStrength(encryptionStrength)
+                .withKeySize(aesKeySize)
                 .decrypt();
     }
 
@@ -82,9 +83,9 @@ public class DecryptBuilder {
         return this;
     }
 
-    public DecryptBuilder withStrength(EncryptionStrength encryptionStrength) {
-        Validate.nonNull(encryptionStrength, "encryptionStrength");
-        this.encryptionStrength = encryptionStrength;
+    public DecryptBuilder withKeySize(AesKeySize aesKeySize) {
+        Validate.nonNull(aesKeySize, "aesKeySize");
+        this.aesKeySize = aesKeySize;
         return this;
     }
 

@@ -86,8 +86,8 @@ class AESCipherUtilsTest {
 
     private SecretKey getAESKeyFromPassword(String password, byte[] salt, int keyLengthInBits) throws InvalidKeySpecException, NoSuchAlgorithmException {
         char[] passwordAsChars = password.toCharArray();
-        EncryptionStrength encryptionStrength = EncryptionStrength.getAESKeyLength(keyLengthInBits);
-        return AesUtils.getAESKeyFromPassword(passwordAsChars, salt, encryptionStrength.getLength());
+        AesKeySize aesKeySize = AesKeySize.getKeySize(keyLengthInBits);
+        return AesUtils.getAESKeyFromPassword(passwordAsChars, salt, aesKeySize.getKeySize());
     }
 
 }

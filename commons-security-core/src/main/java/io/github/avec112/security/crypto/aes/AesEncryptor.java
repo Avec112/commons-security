@@ -30,7 +30,7 @@ public class AesEncryptor {
     private final PlainText plainText;
     private static final int SALT_LENGTH_BYTE = 16;
     private EncryptionMode mode = EncryptionMode.GCM; // default value
-    private EncryptionStrength strength = EncryptionStrength.BIT_256; // default value
+    private AesKeySize aesKeySize = AesKeySize.BIT_256; // default value
 
     private AesEncryptor(Password password, PlainText plainText) {
         this.password = password;
@@ -69,15 +69,15 @@ public class AesEncryptor {
     }
 
     /**
-     * Sets the encryption strength for the AES encryptor.
+     * Sets the encryption keySize for the AES encryptor.
      *
-     * @param strength The encryption strength to set. Cannot be null.
+     * @param aesKeySize The encryption keySize to set. Cannot be null.
      * @return The AES encryptor instance for method chaining.
-     * @throws IllegalArgumentException if the strength is null.
+     * @throws IllegalArgumentException if the aesKeySize is null.
      */
-    public AesEncryptor withStrength(EncryptionStrength strength) {
-        Validate.notNull(strength, "Encryption strength cannot be null");
-        this.strength = strength;
+    public AesEncryptor withKeySize(AesKeySize aesKeySize) {
+        Validate.notNull(aesKeySize, "Encryption aesKeySize cannot be null");
+        this.aesKeySize = aesKeySize;
 
         return this; // for chaining
     }
@@ -115,7 +115,7 @@ public class AesEncryptor {
         Charset encoding = StandardCharsets.UTF_8;
         int encryptionMode = Cipher.ENCRYPT_MODE;
 
-        Cipher cipher = AesUtils.createCipher(password, salt, iv, encryptionMode, getMode(), getStrength().getLength());
+        Cipher cipher = AesUtils.createCipher(password, salt, iv, encryptionMode, getMode(), getAesKeySize().getKeySize());
         byte[] cText = cipher.doFinal(plainText.getValue().getBytes(encoding));
 
         return ByteBuffer.allocate(iv.length + salt.length + cText.length)

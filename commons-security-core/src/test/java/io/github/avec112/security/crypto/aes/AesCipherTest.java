@@ -41,22 +41,22 @@ class AesCipherTest {
             "GCM, 192",
             "GCM, 256"
     })
-    void aesMoreConfigWithObjects(String mode, int strength) throws Exception {
+    void aesMoreConfigWithObjects(String mode, int keySize) throws Exception {
         final EncryptionMode encryptionMode = EncryptionMode.valueOf(mode);
-        final EncryptionStrength encryptionStrength = EncryptionStrength.getAESKeyLength(strength);
+        final AesKeySize aesKeySize = AesKeySize.getKeySize(keySize);
         final PlainText plaintextOriginal = new PlainText("Secret text");
         final Password password = new Password("password");
 
         // encrypt
         CipherText cipherText = AesEncryptor.withPasswordAndText(password, plaintextOriginal)
                 .withMode(encryptionMode)
-                .withStrength(encryptionStrength)
+                .withKeySize(aesKeySize)
                 .encrypt();
 
         // decrypt
         PlainText plainTextResult = AesDecryptor.withPasswordAndCipherText(password, cipherText)
                 .withMode(encryptionMode)
-                .withStrength(encryptionStrength)
+                .withKeySize(aesKeySize)
                 .decrypt();
 
         assertThat(plaintextOriginal).isEqualTo(plainTextResult);
@@ -71,23 +71,23 @@ class AesCipherTest {
             "GCM, 192",
             "GCM, 256"
     })
-    void aesMoreConfigWithStrings(String mode, int strength) throws Exception {
+    void aesMoreConfigWithStrings(String mode, int keySize) throws Exception {
 
         // Arrange
         final EncryptionMode encryptionMode = EncryptionMode.valueOf(mode);
-        final EncryptionStrength encryptionStrength = EncryptionStrength.getAESKeyLength(strength);
+        final AesKeySize aesKeySize = AesKeySize.getKeySize(keySize);
         final PlainText plaintextOriginal = new PlainText("My secret text!");
         final Password password = new Password("OtherPassword123");
 
         // Act
         CipherText cipherText = AesEncryptor.withPasswordAndText(password, plaintextOriginal)
                 .withMode(encryptionMode)
-                .withStrength(encryptionStrength)
+                .withKeySize(aesKeySize)
                 .encrypt();
 
         PlainText plainTextResult = AesDecryptor.withPasswordAndCipherText(password, cipherText)
                 .withMode(encryptionMode)
-                .withStrength(encryptionStrength)
+                .withKeySize(aesKeySize)
                 .decrypt();
 
         // Assert

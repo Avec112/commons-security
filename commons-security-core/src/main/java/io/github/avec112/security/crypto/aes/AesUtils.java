@@ -85,13 +85,13 @@ public class AesUtils extends BouncyCastleProviderInitializer {
     }
 
     /**
-     * Generates a Base64-encoded random key sized according to the given AES encryption strength.
+     * Generates a Base64-encoded random key, sized according to the given AES encryption aesKeySize.
      *
-     * @param strength the desired AES key strength (128, 192, or 256 bits)
+     * @param aesKeySize the desired AES key size (128, 192, or 256 bits)
      * @return Base64-encoded random key
      */
-    public static String generateBase64Key(EncryptionStrength strength) {
-        int keyBytes = strength.getLength() / 8;
+    public static String generateBase64Key(AesKeySize aesKeySize) {
+        int keyBytes = aesKeySize.getKeySize() / 8;
         byte[] key = RandomUtils.randomBytes(keyBytes);
         return EncodingUtils.base64Encode(key);
     }

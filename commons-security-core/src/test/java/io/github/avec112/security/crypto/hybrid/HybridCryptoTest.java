@@ -1,11 +1,10 @@
 package io.github.avec112.security.crypto.hybrid;
 
+import io.github.avec112.security.crypto.KeyGeneratorUtils;
+import io.github.avec112.security.crypto.aes.AesKeySize;
 import io.github.avec112.security.crypto.aes.EncryptionMode;
-import io.github.avec112.security.crypto.aes.EncryptionStrength;
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.PlainText;
-import io.github.avec112.security.crypto.error.*;
-import io.github.avec112.security.crypto.KeyUtils;
 import io.github.avec112.security.crypto.error.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,7 @@ class HybridCryptoTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        keyPair = KeyUtils.generateRsaKeyPair();
+        keyPair = KeyGeneratorUtils.generateRsaKeyPair();
     }
 
     @Test
@@ -48,7 +47,7 @@ class HybridCryptoTest {
 
         assertAll(
                 () -> assertThat(hybridEncryptionResult.getCipherText().getValue()).isNotEqualTo(plainText.getValue()),
-                () -> assertThat(hybridEncryptionResult.getAesEncryptionStrength()).isEqualTo(EncryptionStrength.BIT_128),
+                () -> assertThat(hybridEncryptionResult.getAesKeySize()).isEqualTo(AesKeySize.BIT_256),
                 () -> assertThat(hybridEncryptionResult.getAesEncryptionMode()).isEqualTo(EncryptionMode.GCM),
                 () -> assertThat(hybridEncryptionResult.getEncryptedKey()).isNotBlank(),
                 () -> assertThat(plainTextResult).isEqualTo(plainText)
@@ -65,9 +64,9 @@ class HybridCryptoTest {
             "GCM, 192",
             "GCM, 256"
     })
-    void encryptAndDecrypt(String mode, int strength) throws Exception {
+    void encryptAndDecrypt(String mode, int keySize) throws Exception {
         final EncryptionMode encryptionMode = EncryptionMode.valueOf(mode);
-        final EncryptionStrength encryptionStrength = EncryptionStrength.getAESKeyLength(strength);
+        final AesKeySize aesKeySize = AesKeySize.getKeySize(keySize);
         final PlainText plainText = new PlainText("plainText");
 
         // Encrypt
@@ -75,7 +74,7 @@ class HybridCryptoTest {
                 .key(keyPair.getPublic())
                 .plainText(plainText)
                 .withMode(encryptionMode)
-                .withStrength(encryptionStrength)
+                .withKeySize(aesKeySize)
                 .build();
 
         // Decrypt
@@ -84,12 +83,12 @@ class HybridCryptoTest {
                 .encryptedKey(hybridEncryptionResult.getEncryptedKey())
                 .cipherText(hybridEncryptionResult.getCipherText())
                 .withMode(encryptionMode)
-                .withStrength(encryptionStrength)
+                .withKeySize(aesKeySize)
                 .build();
 
         assertAll(
                 () -> assertThat(hybridEncryptionResult.getCipherText().getValue()).isNotEqualTo(plainText.getValue()),
-                () -> assertThat(hybridEncryptionResult.getAesEncryptionStrength()).isEqualTo(encryptionStrength),
+                () -> assertThat(hybridEncryptionResult.getAesKeySize()).isEqualTo(aesKeySize),
                 () -> assertThat(hybridEncryptionResult.getAesEncryptionMode()).isEqualTo(encryptionMode),
                 () -> assertThat(hybridEncryptionResult.getEncryptedKey()).isNotBlank(),
                 () -> assertThat(plainTextResult).isEqualTo(plainText)
@@ -145,7 +144,7 @@ class HybridCryptoTest {
                 .contains("\"cipherText\"")
                 .contains("\"encryptedKey\"")
                 .contains("\"aesEncryptionMode\"")
-                .contains("\"aesEncryptionStrength\"");
+                .contains("\"aesKeySize\"");
     }
 
     @Test
@@ -157,7 +156,7 @@ class HybridCryptoTest {
                 .key(keyPair.getPublic())
                 .plainText(plainText)
                 .withMode(EncryptionMode.GCM)
-                .withStrength(EncryptionStrength.BIT_256)
+                .withKeySize(AesKeySize.BIT_256)
                 .build();
 
         // Serialize to JSON
@@ -171,7 +170,7 @@ class HybridCryptoTest {
                 () -> assertThat(deserialized.getCipherText()).isEqualTo(original.getCipherText()),
                 () -> assertThat(deserialized.getEncryptedKey()).isEqualTo(original.getEncryptedKey()),
                 () -> assertThat(deserialized.getAesEncryptionMode()).isEqualTo(EncryptionMode.GCM),
-                () -> assertThat(deserialized.getAesEncryptionStrength()).isEqualTo(EncryptionStrength.BIT_256)
+                () -> assertThat(deserialized.getAesKeySize()).isEqualTo(AesKeySize.BIT_256)
         );
     }
 
@@ -195,7 +194,7 @@ class HybridCryptoTest {
                 .cipherText(deserialized.getCipherText())
                 .encryptedKey(deserialized.getEncryptedKey())
                 .withMode(deserialized.getAesEncryptionMode())
-                .withStrength(deserialized.getAesEncryptionStrength())
+                .withKeySize(deserialized.getAesKeySize())
                 .build();
 
         assertThat(decrypted).isEqualTo(expected);
@@ -223,16 +222,16 @@ class HybridCryptoTest {
             "CTR, 192, CTR@192-bit",
             "CTR, 256, CTR@256-bit"
     })
-    void describe_shouldReturnHumanReadableFormat(String mode, int strength, String expected) throws Exception {
+    void describe_shouldReturnHumanReadableFormat(String mode, int keySize, String expected) throws Exception {
         final PlainText plainText = new PlainText("Test data");
         final EncryptionMode encryptionMode = EncryptionMode.valueOf(mode);
-        final EncryptionStrength encryptionStrength = EncryptionStrength.getAESKeyLength(strength);
+        final AesKeySize aesKeySize = AesKeySize.getKeySize(keySize);
 
         HybridEncryptionResult result = EncryptBuilder.encryptionBuilder()
                 .key(keyPair.getPublic())
                 .plainText(plainText)
                 .withMode(encryptionMode)
-                .withStrength(encryptionStrength)
+                .withKeySize(aesKeySize)
                 .build();
 
         assertThat(result.describe()).isEqualTo(expected);

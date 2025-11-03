@@ -1,8 +1,15 @@
 package io.github.avec112.security.crypto;
 
+import io.github.avec112.security.crypto.aes.AesKeySize;
 import io.github.avec112.security.crypto.ecc.EccCurve;
+import io.github.avec112.security.crypto.rsa.RsaKeySize;
 
-import java.security.*;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.RSAKeyGenParameterSpec;
 
@@ -21,35 +28,61 @@ import java.security.spec.RSAKeyGenParameterSpec;
  * <p><b>Example usage:</b></p>
  * <pre>{@code
  * // RSA keys
- * KeyPair rsaKeys = KeyUtils.generateRsaKeyPair();
+ * KeyPair rsaKeys = KeyGeneratorUtils.generateRsaKeyPair();
  *
  * // Ed25519 keys for signatures
- * KeyPair ed25519Keys = KeyUtils.generateEd25519KeyPair();
+ * KeyPair ed25519Keys = KeyGeneratorUtils.generateEd25519KeyPair();
  *
  * // EC keys for ECDSA or ECIES
- * KeyPair ecKeys = KeyUtils.generateEcKeyPair(EccCurve.SECP256R1);
+ * KeyPair ecKeys = KeyGeneratorUtils.generateEcKeyPair(EccCurve.SECP256R1);
  * }</pre>
  */
-public class KeyUtils extends BouncyCastleProviderInitializer {
+public class KeyGeneratorUtils extends BouncyCastleProviderInitializer {
 
-    private static final KeySize DEFAULT_RSA_KEY_SIZE = KeySize.BIT_3072;
+    private static final RsaKeySize DEFAULT_RSA_KEY_SIZE = RsaKeySize.BIT_3072;
     private static final EccCurve DEFAULT_EC_CURVE = EccCurve.SECP256R1;
 
-    private KeyUtils() {
+    private KeyGeneratorUtils() {
     }
 
+    // ========== AES Key Generation ==========
+
+    /**
+     * Generates a symmetric AES key with specified key size.
+     *
+     * @param keySize the AES key size as {@link AesKeySize} enum (BIT_128, BIT_192, or BIT_256)
+     * @return generated SecretKey for AES encryption
+     * @throws NoSuchAlgorithmException if AES algorithm is not available
+     */
+    public static SecretKey generateAesKey(AesKeySize keySize) throws NoSuchAlgorithmException {
+        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+        keyGen.init(keySize.getKeySize());
+        return keyGen.generateKey();
+    }
+
+    /**
+     * Generates a 256-bit AES key (default and recommended).
+     *
+     * @return generated 256-bit SecretKey for AES encryption
+     * @throws NoSuchAlgorithmException if AES algorithm is not available
+     */
+    public static SecretKey generateAesKey() throws NoSuchAlgorithmException {
+        return generateAesKey(AesKeySize.BIT_256);
+    }
+
+    // ========== RSA Key Generation ==========
 
     /**
      * Generates an RSA key pair with the specified key size.
      *
-     * @param keySize the key size for the RSA key pair, represented as a {@link KeySize} enum. It supports key sizes of
+     * @param keySize the key size for the RSA key pair, represented as a {@link RsaKeySize} enum. It supports key sizes of
      *                1024, 2048, 3072, or 4096 bits. Using 1024 bits is deprecated and not recommended due to
      *                insufficient security strength.
      * @return a {@link KeyPair} containing the public and private RSA keys generated with the specified size.
      * @throws NoSuchAlgorithmException if the cryptographic algorithm "RSA" is not available in the environment.
      * @throws InvalidAlgorithmParameterException if the specified key size or parameters are invalid.
      */
-    public static KeyPair generateRsaKeyPair(KeySize keySize ) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+    public static KeyPair generateRsaKeyPair(RsaKeySize keySize) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         keyPairGenerator.initialize(new RSAKeyGenParameterSpec(keySize.getKeySize(), RSAKeyGenParameterSpec.F4));
         return keyPairGenerator.generateKeyPair();
@@ -67,15 +100,15 @@ public class KeyUtils extends BouncyCastleProviderInitializer {
     }
 
     public static KeyPair generateRsaKeyPair4096() throws Exception {
-        return generateRsaKeyPair(KeySize.BIT_4096);
+        return generateRsaKeyPair(RsaKeySize.BIT_4096);
     }
 
     public static KeyPair generateRsaKeyPair3072() throws Exception {
-        return generateRsaKeyPair(KeySize.BIT_3072);
+        return generateRsaKeyPair(RsaKeySize.BIT_3072);
     }
 
     public static KeyPair generateRsaKeyPair2048() throws Exception {
-        return generateRsaKeyPair(KeySize.BIT_2048);
+        return generateRsaKeyPair(RsaKeySize.BIT_2048);
     }
 
     // ========== ECC Key Generation Methods ==========

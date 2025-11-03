@@ -34,7 +34,7 @@ ifdef::env-idea[]
 :!status:
 endif::[]
 
-= Commons Security: Encryption done easy
+= Commons Security: Cryptography made simple
 
 ifdef::status[]
 image:https://img.shields.io/badge/version-0.9.0--SNAPSHOT-blue[Version]
@@ -133,9 +133,9 @@ NOTE: A key size of `3072` bit or higher is recommended for strong security. Key
 TIP: Any secret encrypted with a _public key_ can only be decrypted with the associated _private key_.
 
 [source,java]
-.Using `KeyUtils` to generate a `4096` bit `KeyPair`
+.Using `KeyGeneratorUtils` to generate a `4096` bit `KeyPair`
 ----
-KeyPair keyPair = KeyUtils.generateRsaKeyPair4096();
+KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair4096();
 ----
 [source,java]
 .Alternative
@@ -185,19 +185,19 @@ ECC provides equivalent security to RSA with much smaller key sizes, resulting i
 [source,java]
 .Generate Ed25519 keypair for signatures
 ----
-KeyPair ed25519Keys = KeyUtils.generateEd25519KeyPair();
+KeyPair ed25519Keys = KeyGeneratorUtils.generateEd25519KeyPair();
 ----
 
 [source,java]
 .Generate secp256r1 keypair for ECDSA or ECIES
 ----
-KeyPair ecKeys = KeyUtils.generateSecp256r1KeyPair();
+KeyPair ecKeys = KeyGeneratorUtils.generateSecp256r1KeyPair();
 ----
 
 [source,java]
 .Generate with specific curve
 ----
-KeyPair ecKeys = KeyUtils.generateEcKeyPair(EccCurve.SECP384R1);
+KeyPair ecKeys = KeyGeneratorUtils.generateEcKeyPair(EccCurve.SECP384R1);
 ----
 
 ==== ECIES Encryption
@@ -207,7 +207,7 @@ ECIES (Elliptic Curve Integrated Encryption Scheme) is a hybrid encryption schem
 [source,java]
 .ECIES encryption using `CryptoUtils`
 ----
-KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
 
 // Encrypt
 byte[] ciphertext = CryptoUtils.eciesEncrypt("Secret message", keyPair.getPublic());
@@ -219,7 +219,7 @@ String plaintext = CryptoUtils.eciesDecrypt(ciphertext, keyPair.getPrivate());
 [source,java]
 .Alternative using `EciesCipher` directly
 ----
-KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
 
 byte[] ciphertext = EciesCipher.encrypt("Secret message", keyPair.getPublic());
 String plaintext = EciesCipher.decrypt(ciphertext, keyPair.getPrivate());
@@ -278,7 +278,7 @@ TIP: Hybrid encryption is the recommended approach for encrypting large files or
 [source,java]
 .Hybrid encryption and decryption using `CryptoUtils`
 ----
-KeyPair keyPair = KeyUtils.generateRsaKeyPair3072();
+KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair3072();
 PlainText plainText = new PlainText("Large amount of sensitive data...");
 
 // Encrypt
@@ -291,7 +291,7 @@ PlainText decrypted = CryptoUtils.hybridDecrypt(result, keyPair.getPrivate());
 [source,java]
 .Alternative using builders with custom AES mode and strength
 ----
-KeyPair keyPair = KeyUtils.generateRsaKeyPair3072();
+KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair3072();
 PlainText plainText = new PlainText("Large amount of sensitive data...");
 
 // Encrypt with custom settings
@@ -482,7 +482,7 @@ Commons Security uses `RSASSA-PSS` (SHA-256 with MGF1)footnote:[https://www.encr
 [source,java]
 .Using `CryptoUtils` (recommended for simple use cases)
 ----
-KeyPair keyPair = KeyUtils.generateRsaKeyPair2048();
+KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair2048();
 
 // Sign data
 byte[] signature = CryptoUtils.sign("My data", keyPair.getPrivate());
@@ -494,7 +494,7 @@ boolean verified = CryptoUtils.verify(signature, "My data", keyPair.getPublic())
 [source,java]
 .Alternative using `SignatureUtils` directly
 ----
-KeyPair keyPair = KeyUtils.generateRsaKeyPair2048();
+KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair2048();
 byte[] signature = SignatureUtils.sign("My data", keyPair.getPrivate());
 boolean verified = SignatureUtils.verify(signature, "My data", keyPair.getPublic());
 ----
@@ -514,7 +514,7 @@ Ed25519 is a modern signature algorithm providing:
 [source,java]
 .Ed25519 signatures using `CryptoUtils`
 ----
-KeyPair keyPair = KeyUtils.generateEd25519KeyPair();
+KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
 
 // Sign data
 byte[] signature = CryptoUtils.signEd25519("My data", keyPair.getPrivate());
@@ -526,7 +526,7 @@ boolean verified = CryptoUtils.verifyEd25519(signature, "My data", keyPair.getPu
 [source,java]
 .Alternative using `SignatureUtils` directly
 ----
-KeyPair keyPair = KeyUtils.generateEd25519KeyPair();
+KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
 byte[] signature = SignatureUtils.signEd25519("My data", keyPair.getPrivate());
 boolean verified = SignatureUtils.verifyEd25519(signature, "My data", keyPair.getPublic());
 ----
@@ -544,7 +544,7 @@ ECDSA provides standards-compliant ECC signatures with much smaller key sizes th
 [source,java]
 .ECDSA signatures using `CryptoUtils`
 ----
-KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
 
 // Sign data (hash algorithm auto-selected based on curve)
 byte[] signature = CryptoUtils.signEcdsa("My data", keyPair.getPrivate());
@@ -556,12 +556,144 @@ boolean verified = CryptoUtils.verifyEcdsa(signature, "My data", keyPair.getPubl
 [source,java]
 .Alternative using `SignatureUtils` directly
 ----
-KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
 byte[] signature = SignatureUtils.signEcdsa("My data", keyPair.getPrivate());
 boolean verified = SignatureUtils.verifyEcdsa(signature, "My data", keyPair.getPublic());
 ----
 
 TIP: ECDSA signatures are probabilistic (include random nonce), meaning signing the same data twice produces different signatures.
+
+== Key Storage and Management
+
+`KeyStorageUtils` provides utilities for storing and loading cryptographic keys in standard formats. It supports RSA, EC (ECDSA/ECIES), Ed25519, and symmetric AES keys.
+
+=== Storing and Loading RSA Keys
+
+[source,java]
+.Save and load RSA key pair
+----
+KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair3072();
+
+// Save keys to disk (PEM format)
+KeyStorageUtils.savePrivateKey(keyPair.getPrivate(), Path.of("private.pem"));
+KeyStorageUtils.savePublicKey(keyPair.getPublic(), Path.of("public.pem"));
+
+// Load keys from disk
+PrivateKey privateKey = KeyStorageUtils.loadPrivateKey(Path.of("private.pem"), "RSA");
+PublicKey publicKey = KeyStorageUtils.loadPublicKey(Path.of("public.pem"), "RSA");
+----
+
+WARNING: `savePrivateKey()` stores the key unencrypted. For production use, consider using encrypted storage (currently not implemented).
+
+=== Storing and Loading ECC Keys
+
+[source,java]
+.Save and load EC keys (secp256r1)
+----
+KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
+
+// Save keys
+KeyStorageUtils.savePrivateKey(keyPair.getPrivate(), Path.of("ec_private.pem"));
+KeyStorageUtils.savePublicKey(keyPair.getPublic(), Path.of("ec_public.pem"));
+
+// Load keys
+PrivateKey privateKey = KeyStorageUtils.loadPrivateKey(Path.of("ec_private.pem"), "EC");
+PublicKey publicKey = KeyStorageUtils.loadPublicKey(Path.of("ec_public.pem"), "EC");
+----
+
+[source,java]
+.Save and load Ed25519 keys
+----
+KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
+
+// Save keys
+KeyStorageUtils.savePrivateKey(keyPair.getPrivate(), Path.of("ed25519_private.pem"));
+KeyStorageUtils.savePublicKey(keyPair.getPublic(), Path.of("ed25519_public.pem"));
+
+// Load keys
+PrivateKey privateKey = KeyStorageUtils.loadPrivateKey(Path.of("ed25519_private.pem"), "Ed25519");
+PublicKey publicKey = KeyStorageUtils.loadPublicKey(Path.of("ed25519_public.pem"), "Ed25519");
+----
+
+=== Storing and Loading AES Keys
+
+[source,java]
+.Save and load AES key (unencrypted)
+----
+SecretKey secretKey = KeyGeneratorUtils.generateAesKey(AesKeySize.BIT_256);
+
+// Save key (Base64 encoded)
+KeyStorageUtils.saveAesKey(secretKey, Path.of("aes_key.txt"));
+
+// Load key
+SecretKey loadedKey = KeyStorageUtils.loadAesKey(Path.of("aes_key.txt"));
+----
+
+WARNING: `saveAesKey()` stores the key in Base64 format without encryption. For production use, use `saveAesKeyEncrypted()`.
+
+[source,java]
+.Save and load AES key (encrypted with password)
+----
+SecretKey secretKey = KeyGeneratorUtils.generateAesKey(AesKeySize.BIT_256);
+Password password = new Password("StrongPassword123!");
+
+// Save encrypted
+KeyStorageUtils.saveAesKeyEncrypted(secretKey, password, Path.of("aes_key_encrypted.txt"));
+
+// Load encrypted
+SecretKey loadedKey = KeyStorageUtils.loadAesKeyEncrypted(Path.of("aes_key_encrypted.txt"), password);
+----
+
+TIP: Encrypted AES key storage uses AES-256 encryption with the provided password, making it safe for production use.
+
+=== Key Format Conversion
+
+[source,java]
+.Convert keys to/from PEM format
+----
+KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair2048();
+
+// Convert to PEM format
+String pemPrivateKey = KeyStorageUtils.toPemFormat(keyPair.getPrivate().getEncoded(), "PRIVATE KEY");
+String pemPublicKey = KeyStorageUtils.toPemFormat(keyPair.getPublic().getEncoded(), "PUBLIC KEY");
+
+// Convert from PEM format
+byte[] privateKeyBytes = KeyStorageUtils.fromPemFormat(pemPrivateKey);
+byte[] publicKeyBytes = KeyStorageUtils.fromPemFormat(pemPublicKey);
+----
+
+[source,java]
+.Export and import public keys as Base64
+----
+KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair2048();
+
+// Export as Base64 string (convenient for sharing)
+String base64PublicKey = KeyStorageUtils.exportPublicKeyAsBase64(keyPair.getPublic());
+
+// Import from Base64 string
+PublicKey importedKey = KeyStorageUtils.importPublicKeyFromBase64(base64PublicKey, "RSA");
+----
+
+TIP: Base64 export is useful for sharing public keys via APIs, configuration files, or databases.
+
+=== Key Validation
+
+[source,java]
+.Validate RSA key strength
+----
+KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair3072();
+
+// Check if key meets minimum strength requirement
+boolean isSufficient = KeyStorageUtils.isRsaKeySufficient(keyPair, 2048); // true
+
+// Get key metadata
+KeyStorageUtils.KeyMetadata metadata = KeyStorageUtils.getKeyMetadata(keyPair);
+System.out.println("Algorithm: " + metadata.getAlgorithm()); // "RSA"
+System.out.println("Key size: " + metadata.getKeySize());     // 3072
+System.out.println("Format: " + metadata.getFormat());         // "PKCS#8"
+----
+
+NOTE: `isRsaKeySufficient()` helps ensure your keys meet security requirements. NIST recommends minimum 2048-bit RSA keys, but 3072-bit or higher is preferred for long-term security.
 
 == Password Encoder
 Key Derivation Functions (KDF)footnote:kdf[] from a password must be able to stand attacks like *brute-forcing*, *dictionary attacks*, *rainbow attacks* and more. Attempts to reverse hashed password values is common.

@@ -48,20 +48,20 @@ class AesEncryptorTest {
     }
 
     @Test
-    void withStrengthDefault() {
-        assertThat(encryptor.getStrength()).isEqualTo(EncryptionStrength.BIT_256);
+    void withKeySizeDefault() {
+        assertThat(encryptor.getAesKeySize()).isEqualTo(AesKeySize.BIT_256);
     }
 
     @Test
-    void withStrength128() {
+    void withKeySize128() {
         // Arrange
-        EncryptionStrength strength = EncryptionStrength.BIT_128;
+        AesKeySize aesKeySize = AesKeySize.BIT_128;
 
         // Act
-        encryptor.withStrength(strength);
+        encryptor.withKeySize(aesKeySize);
 
         // Assert
-        assertThat(encryptor.getStrength()).isEqualTo(strength);
+        assertThat(encryptor.getAesKeySize()).isEqualTo(aesKeySize);
     }
 
     @Test

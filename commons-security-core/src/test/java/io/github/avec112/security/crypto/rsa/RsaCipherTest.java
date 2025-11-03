@@ -1,7 +1,6 @@
 package io.github.avec112.security.crypto.rsa;
 
 import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
-import io.github.avec112.security.crypto.KeySize;
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.PlainText;
 import org.junit.jupiter.api.Test;
@@ -35,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RsaCipherTest extends BouncyCastleProviderInitializer {
 
     @ParameterizedTest
-    @EnumSource(KeySize.class)
-    void encryptAndDecrypt(KeySize keySize) throws Exception {
+    @EnumSource(RsaKeySize.class)
+    void encryptAndDecrypt(RsaKeySize keySize) throws Exception {
         // Arrange
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
         keyGen.initialize(keySize.getKeySize());
@@ -59,7 +58,7 @@ public class RsaCipherTest extends BouncyCastleProviderInitializer {
     void decryptFailsWithWrongPrivateKey() throws Exception {
         // Arrange
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-        keyGen.initialize(KeySize.BIT_2048.getKeySize());
+        keyGen.initialize(RsaKeySize.BIT_2048.getKeySize());
         KeyPair correct = keyGen.generateKeyPair();
         KeyPair wrong = keyGen.generateKeyPair();
 
@@ -77,7 +76,7 @@ public class RsaCipherTest extends BouncyCastleProviderInitializer {
     void decryptFailsWithCorruptedCipherText() throws Exception {
         // Arrange
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-        keyGen.initialize(KeySize.BIT_2048.getKeySize());
+        keyGen.initialize(RsaKeySize.BIT_2048.getKeySize());
         KeyPair keyPair = keyGen.generateKeyPair();
 
         RsaCipher cipher = new RsaCipher();

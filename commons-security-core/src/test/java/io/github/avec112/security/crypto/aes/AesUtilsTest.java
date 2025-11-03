@@ -32,13 +32,13 @@ class AesUtilsTest {
     }
 
     @ParameterizedTest
-    @EnumSource(EncryptionStrength.class)
-    void generateBase64Key_hasCorrectDecodedLength(EncryptionStrength strength) {
+    @EnumSource(AesKeySize.class)
+    void generateBase64Key_hasCorrectDecodedLength(AesKeySize aesKeySize) {
         // Arrange
-        int expectedBytes = strength.getLength() / 8;
+        int expectedBytes = aesKeySize.getKeySize() / 8;
 
         // Act
-        String key = AesUtils.generateBase64Key(strength);
+        String key = AesUtils.generateBase64Key(aesKeySize);
         byte[] decoded = Base64.getDecoder().decode(key);
 
         // Assert
@@ -46,7 +46,7 @@ class AesUtilsTest {
         assertNotNull(key, "Key must not be null");
         assertFalse(key.trim().isEmpty(), "Key should not be blank");
         assertEquals(expectedBytes, decoded.length,
-                "Decoded key length must match AES strength");
+                "Decoded key length must match AES keySize");
     }
 
     @Test

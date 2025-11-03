@@ -2,8 +2,8 @@ package io.github.avec112.security.crypto;
 
 import io.github.avec112.security.crypto.aes.AesDecryptor;
 import io.github.avec112.security.crypto.aes.AesEncryptor;
+import io.github.avec112.security.crypto.aes.AesKeySize;
 import io.github.avec112.security.crypto.aes.EncryptionMode;
-import io.github.avec112.security.crypto.aes.EncryptionStrength;
 import io.github.avec112.security.crypto.digest.DigestUtils;
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.Password;
@@ -13,6 +13,7 @@ import io.github.avec112.security.crypto.ecc.EciesCipher;
 import io.github.avec112.security.crypto.error.BadCipherConfigurationException;
 import io.github.avec112.security.crypto.hybrid.HybridEncryptionResult;
 import io.github.avec112.security.crypto.rsa.RsaCipher;
+import io.github.avec112.security.crypto.rsa.RsaKeySize;
 import io.github.avec112.security.crypto.shamir.Secret;
 import io.github.avec112.security.crypto.shamir.Share;
 import io.github.avec112.security.crypto.shamir.Shares;
@@ -48,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *     <li><b>AES interoperability</b> – Confirms {@link CryptoUtils} and
  *         {@link AesEncryptor}/{@link AesDecryptor}
  *         produce compatible results.</li>
- *     <li><b>RSA encryption/decryption</b> – Tests all {@link KeySize}
+ *     <li><b>RSA encryption/decryption</b> – Tests all {@link RsaKeySize}
  *         variants and validates bidirectional interoperability between
  *         {@link CryptoUtils} and {@link RsaCipher}.</li>
  *     <li><b>Shamir's Secret Sharing</b> – Verifies share generation and
@@ -126,7 +127,7 @@ class CryptoUtilsFacadeTest {
         final AesEncryptor encryptor = AesEncryptor
                 .withPasswordAndText(password, expected)
                 .withMode(EncryptionMode.GCM)
-                .withStrength(EncryptionStrength.BIT_256);
+                .withKeySize(AesKeySize.BIT_256);
 
         final CipherText directCipher = encryptor.encrypt();
         final CipherText utilCipher = CryptoUtils.aesEncrypt(expected, password);
@@ -135,7 +136,7 @@ class CryptoUtilsFacadeTest {
         final PlainText decryptedFromUtils = AesDecryptor
                 .withPasswordAndCipherText(password, utilCipher)
                 .withMode(EncryptionMode.GCM)
-                .withStrength(EncryptionStrength.BIT_256)
+                .withKeySize(AesKeySize.BIT_256)
                 .decrypt();
 
         assertEquals(expected, decryptedFromDirect);
@@ -143,11 +144,11 @@ class CryptoUtilsFacadeTest {
     }
 
     @ParameterizedTest
-    @EnumSource(KeySize.class)
-    void rsaEncryptAndDecrypt(KeySize keySize) throws Exception {
+    @EnumSource(RsaKeySize.class)
+    void rsaEncryptAndDecrypt(RsaKeySize keySize) throws Exception {
         final PlainText plainTextExpected = new PlainText("Some text");
 
-        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(keySize);
+        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(keySize);
 
         final CipherText cipherText = CryptoUtils.rsaEncrypt(plainTextExpected, keyPair.getPublic());
         final PlainText plainText = CryptoUtils.rsaDecrypt(cipherText, keyPair.getPrivate());
@@ -159,8 +160,8 @@ class CryptoUtilsFacadeTest {
     void compareRsaCipherWithCryptoUtils() throws Exception {
         final PlainText expected = new PlainText("RSA interoperability test");
 
-        // Generate RSA key pair (whatever your KeyUtils implementation supports)
-        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+        // Generate RSA key pair (whatever your KeyGeneratorUtils implementation supports)
+        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
 
         // Encrypt directly with RsaCipher
         final RsaCipher rsaCipher = new RsaCipher();
@@ -268,7 +269,7 @@ class CryptoUtilsFacadeTest {
     @Test
     void sign_shouldCreateValidSignature() throws Exception {
         final String data = "Data to sign";
-        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
 
         final byte[] signature = CryptoUtils.sign(data, keyPair.getPrivate());
 
@@ -278,7 +279,7 @@ class CryptoUtilsFacadeTest {
     @Test
     void verify_shouldReturnTrueForValidSignature() throws Exception {
         final String data = "Data to sign and verify";
-        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
 
         final byte[] signature = CryptoUtils.sign(data, keyPair.getPrivate());
         final boolean isValid = CryptoUtils.verify(signature, data, keyPair.getPublic());
@@ -290,7 +291,7 @@ class CryptoUtilsFacadeTest {
     void verify_shouldReturnFalseForTamperedData() throws Exception {
         final String originalData = "Original data";
         final String tamperedData = "Tampered data";
-        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
 
         final byte[] signature = CryptoUtils.sign(originalData, keyPair.getPrivate());
         final boolean isValid = CryptoUtils.verify(signature, tamperedData, keyPair.getPublic());
@@ -301,8 +302,8 @@ class CryptoUtilsFacadeTest {
     @Test
     void verify_shouldReturnFalseForWrongPublicKey() throws Exception {
         final String data = "Data to sign";
-        final KeyPair keyPair1 = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
-        final KeyPair keyPair2 = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+        final KeyPair keyPair1 = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
+        final KeyPair keyPair2 = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
 
         final byte[] signature = CryptoUtils.sign(data, keyPair1.getPrivate());
         final boolean isValid = CryptoUtils.verify(signature, data, keyPair2.getPublic());
@@ -313,7 +314,7 @@ class CryptoUtilsFacadeTest {
     @Test
     void signAndVerify_shouldMatchDirectSignatureUtilsCall() throws Exception {
         final String data = "Consistency check data";
-        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
 
         final byte[] signatureFromUtils = CryptoUtils.sign(data, keyPair.getPrivate());
         final byte[] signatureFromDirect = SignatureUtils.sign(data, keyPair.getPrivate());
@@ -332,7 +333,7 @@ class CryptoUtilsFacadeTest {
     @Test
     void signAndVerifyEd25519() throws Exception {
         final String data = "Ed25519 facade test";
-        final KeyPair keyPair = KeyUtils.generateEd25519KeyPair();
+        final KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
 
         final byte[] signature = CryptoUtils.signEd25519(data, keyPair.getPrivate());
         final boolean isValid = CryptoUtils.verifyEd25519(signature, data, keyPair.getPublic());
@@ -343,7 +344,7 @@ class CryptoUtilsFacadeTest {
     @Test
     void compareEd25519WithSignatureUtils() throws Exception {
         final String data = "Ed25519 interoperability test";
-        final KeyPair keyPair = KeyUtils.generateEd25519KeyPair();
+        final KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
 
         // Sign with both CryptoUtils and SignatureUtils
         final byte[] signatureFromUtils = CryptoUtils.signEd25519(data, keyPair.getPrivate());
@@ -359,7 +360,7 @@ class CryptoUtilsFacadeTest {
     @Test
     void signAndVerifyEcdsa() throws Exception {
         final String data = "ECDSA facade test";
-        final KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+        final KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
 
         final byte[] signature = CryptoUtils.signEcdsa(data, keyPair.getPrivate());
         final boolean isValid = CryptoUtils.verifyEcdsa(signature, data, keyPair.getPublic());
@@ -370,7 +371,7 @@ class CryptoUtilsFacadeTest {
     @Test
     void compareEcdsaWithSignatureUtils() throws Exception {
         final String data = "ECDSA interoperability test";
-        final KeyPair keyPair = KeyUtils.generateSecp384r1KeyPair();
+        final KeyPair keyPair = KeyGeneratorUtils.generateSecp384r1KeyPair();
 
         // Sign with both CryptoUtils and SignatureUtils
         final byte[] signatureFromUtils = CryptoUtils.signEcdsa(data, keyPair.getPrivate());
@@ -386,7 +387,7 @@ class CryptoUtilsFacadeTest {
     @Test
     void hybridEncrypt_shouldReturnValidResult() throws Exception {
         final PlainText plainText = new PlainText("Sensitive hybrid data");
-        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
 
         final HybridEncryptionResult result = CryptoUtils.hybridEncrypt(plainText, keyPair.getPublic());
 
@@ -394,13 +395,13 @@ class CryptoUtilsFacadeTest {
         assertThat(result.getCipherText()).isNotNull();
         assertThat(result.getEncryptedKey()).isNotNull().isNotEmpty();
         assertThat(result.getAesEncryptionMode()).isNotNull();
-        assertThat(result.getAesEncryptionStrength()).isNotNull();
+        assertThat(result.getAesKeySize()).isNotNull();
     }
 
     @Test
     void hybridDecrypt_shouldRecoverOriginalPlaintext() throws Exception {
         final PlainText expected = new PlainText("Hybrid encryption test data");
-        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
 
         final HybridEncryptionResult encrypted = CryptoUtils.hybridEncrypt(expected, keyPair.getPublic());
         final PlainText decrypted = CryptoUtils.hybridDecrypt(encrypted, keyPair.getPrivate());
@@ -413,7 +414,7 @@ class CryptoUtilsFacadeTest {
         // RSA can only encrypt small data, but hybrid encryption should handle larger data
         final String largeData = "A".repeat(10000); // 10KB of data
         final PlainText expected = new PlainText(largeData);
-        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(KeySize.BIT_2048);
+        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(RsaKeySize.BIT_2048);
 
         final HybridEncryptionResult encrypted = CryptoUtils.hybridEncrypt(expected, keyPair.getPublic());
         final PlainText decrypted = CryptoUtils.hybridDecrypt(encrypted, keyPair.getPrivate());
@@ -531,7 +532,7 @@ class CryptoUtilsFacadeTest {
     @Test
     void eciesEncryptAndDecrypt() throws Exception {
         final String plainTextExpected = "ECIES facade test message";
-        final KeyPair keyPair = KeyUtils.generateEcKeyPair(EccCurve.SECP256R1);
+        final KeyPair keyPair = KeyGeneratorUtils.generateEcKeyPair(EccCurve.SECP256R1);
 
         final byte[] ciphertext = CryptoUtils.eciesEncrypt(plainTextExpected, keyPair.getPublic());
         final String decrypted = CryptoUtils.eciesDecrypt(ciphertext, keyPair.getPrivate());
@@ -542,7 +543,7 @@ class CryptoUtilsFacadeTest {
     @Test
     void compareEciesCipherWithCryptoUtils() throws Exception {
         final String expected = "ECIES interoperability test";
-        final KeyPair keyPair = KeyUtils.generateEcKeyPair(EccCurve.SECP256R1);
+        final KeyPair keyPair = KeyGeneratorUtils.generateEcKeyPair(EccCurve.SECP256R1);
 
         // Encrypt directly with EciesCipher
         final byte[] directCipher = EciesCipher.encrypt(expected, keyPair.getPublic());

@@ -1,7 +1,7 @@
 package io.github.avec112.security.crypto.sign;
 
-import io.github.avec112.security.crypto.KeySize;
-import io.github.avec112.security.crypto.KeyUtils;
+import io.github.avec112.security.crypto.KeyGeneratorUtils;
+import io.github.avec112.security.crypto.rsa.RsaKeySize;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -23,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class SignatureUtilsTest {
 
     @ParameterizedTest
-    @EnumSource(KeySize.class)
-    void signAndVerifyBytes(KeySize keySize) throws Exception {
+    @EnumSource(RsaKeySize.class)
+    void signAndVerifyBytes(RsaKeySize keySize) throws Exception {
         // Arrange
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
         kpg.initialize(keySize.getKeySize());
@@ -140,7 +140,7 @@ class SignatureUtilsTest {
     @Test
     void testEd25519SignAndVerify() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyUtils.generateEd25519KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
         String testData = "Hello, Ed25519!";
 
         // Act
@@ -157,7 +157,7 @@ class SignatureUtilsTest {
     @Test
     void testEd25519SignAndVerifyBytes() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyUtils.generateEd25519KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
         String testData = "Hello, Ed25519!";
         byte[] data = testData.getBytes();
 
@@ -173,7 +173,7 @@ class SignatureUtilsTest {
     @Test
     void testEd25519VerifyWithWrongData() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyUtils.generateEd25519KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
         String testData = "Hello, Ed25519!";
         byte[] signature = SignatureUtils.signEd25519(testData, keyPair.getPrivate());
 
@@ -187,12 +187,12 @@ class SignatureUtilsTest {
     @Test
     void testEd25519VerifyWithWrongKey() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyUtils.generateEd25519KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
         String testData = "Hello, Ed25519!";
         byte[] signature = SignatureUtils.signEd25519(testData, keyPair.getPrivate());
 
         // Generate a different key pair
-        KeyPair wrongKeyPair = KeyUtils.generateEd25519KeyPair();
+        KeyPair wrongKeyPair = KeyGeneratorUtils.generateEd25519KeyPair();
 
         // Act
         boolean isValid = SignatureUtils.verifyEd25519(signature, testData, wrongKeyPair.getPublic());
@@ -204,7 +204,7 @@ class SignatureUtilsTest {
     @Test
     void testEd25519DeterministicSignatures() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyUtils.generateEd25519KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
         String testData = "Hello, Ed25519!";
 
         // Act
@@ -218,7 +218,7 @@ class SignatureUtilsTest {
     @Test
     void testEd25519SignWithNullData() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyUtils.generateEd25519KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
 
         // Act & Assert
         assertThrows(NullPointerException.class, () -> {
@@ -237,7 +237,7 @@ class SignatureUtilsTest {
 
     @Test
     void testEd25519VerifyWithNullSignature() throws Exception {
-        KeyPair keyPair = KeyUtils.generateEd25519KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
         String testData = "Hello, Ed25519!";
 
         assertThrows(NullPointerException.class, () -> {
@@ -247,7 +247,7 @@ class SignatureUtilsTest {
 
     @Test
     void testEd25519VerifyWithNullPublicKey() throws Exception {
-        KeyPair keyPair = KeyUtils.generateEd25519KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
         String testData = "Hello, Ed25519!";
         byte[] signature = SignatureUtils.signEd25519(testData, keyPair.getPrivate());
 
@@ -261,7 +261,7 @@ class SignatureUtilsTest {
     @Test
     void testEcdsaSignAndVerifyWithSecp256r1() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
         String testData = "Hello, ECDSA!";
 
         // Act
@@ -278,7 +278,7 @@ class SignatureUtilsTest {
     @Test
     void testEcdsaSignAndVerifyWithSecp384r1() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyUtils.generateSecp384r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateSecp384r1KeyPair();
         String testData = "Hello, ECDSA!";
 
         // Act
@@ -293,7 +293,7 @@ class SignatureUtilsTest {
     @Test
     void testEcdsaSignAndVerifyWithSecp521r1() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyUtils.generateSecp521r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateSecp521r1KeyPair();
         String testData = "Hello, ECDSA!";
 
         // Act
@@ -308,7 +308,7 @@ class SignatureUtilsTest {
     @Test
     void testEcdsaSignAndVerifyBytes() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
         String testData = "Hello, ECDSA!";
         byte[] data = testData.getBytes();
 
@@ -324,7 +324,7 @@ class SignatureUtilsTest {
     @Test
     void testEcdsaVerifyWithWrongData() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
         String testData = "Hello, ECDSA!";
         byte[] signature = SignatureUtils.signEcdsa(testData, keyPair.getPrivate());
 
@@ -338,12 +338,12 @@ class SignatureUtilsTest {
     @Test
     void testEcdsaVerifyWithWrongKey() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
         String testData = "Hello, ECDSA!";
         byte[] signature = SignatureUtils.signEcdsa(testData, keyPair.getPrivate());
 
         // Generate a different key pair
-        KeyPair wrongKeyPair = KeyUtils.generateSecp256r1KeyPair();
+        KeyPair wrongKeyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
 
         // Act
         boolean isValid = SignatureUtils.verifyEcdsa(signature, testData, wrongKeyPair.getPublic());
@@ -355,7 +355,7 @@ class SignatureUtilsTest {
     @Test
     void testEcdsaProbabilisticSignatures() throws Exception {
         // Arrange
-        KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
         String testData = "Hello, ECDSA!";
 
         // Act
@@ -370,7 +370,7 @@ class SignatureUtilsTest {
 
     @Test
     void testEcdsaSignWithNullData() throws Exception {
-        KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
 
         assertThrows(NullPointerException.class, () -> {
             SignatureUtils.signEcdsa((String) null, keyPair.getPrivate());
@@ -388,7 +388,7 @@ class SignatureUtilsTest {
 
     @Test
     void testEcdsaVerifyWithNullSignature() throws Exception {
-        KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
         String testData = "Hello, ECDSA!";
 
         assertThrows(NullPointerException.class, () -> {
@@ -398,7 +398,7 @@ class SignatureUtilsTest {
 
     @Test
     void testEcdsaVerifyWithNullPublicKey() throws Exception {
-        KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
         String testData = "Hello, ECDSA!";
         byte[] signature = SignatureUtils.signEcdsa(testData, keyPair.getPrivate());
 

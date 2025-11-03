@@ -33,7 +33,7 @@ public class AesDecryptor {
 
     private static final int SALT_LENGTH_BYTE = 16;
     private EncryptionMode mode = EncryptionMode.GCM;
-    private EncryptionStrength strength = EncryptionStrength.BIT_256;
+    private AesKeySize aesKeySize = AesKeySize.BIT_256;
 
     private AesDecryptor(Password password, CipherText cipherText) {
         this.password = password;
@@ -69,14 +69,14 @@ public class AesDecryptor {
     }
 
     /**
-     * Sets the encryption strength for the AesDecryptor instance.
+     * Sets the encryption keySize for the AesDecryptor instance.
      *
-     * @param strength the encryption strength to be set
+     * @param aesKeySize the encryption keySize to be set
      * @return the updated AesDecryptor instance
      */
-    public AesDecryptor withStrength(EncryptionStrength strength) {
-        Validate.notNull(strength, "Strength cannot be null");
-        this.strength = strength;
+    public AesDecryptor withKeySize(AesKeySize aesKeySize) {
+        Validate.notNull(aesKeySize, "aesKeySize cannot be null");
+        this.aesKeySize = aesKeySize;
         return this;
     }
 
@@ -124,7 +124,7 @@ public class AesDecryptor {
         byte[] cText = new byte[buffer.remaining()];
         buffer.get(cText);
 
-        Cipher cipher = AesUtils.createCipher(password, salt, iv, Cipher.DECRYPT_MODE, getMode(), getStrength().getLength());
+        Cipher cipher = AesUtils.createCipher(password, salt, iv, Cipher.DECRYPT_MODE, getMode(), getAesKeySize().getKeySize());
         return cipher.doFinal(cText);
     }
 

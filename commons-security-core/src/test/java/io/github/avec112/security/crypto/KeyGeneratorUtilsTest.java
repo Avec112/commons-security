@@ -1,12 +1,15 @@
 package io.github.avec112.security.crypto;
 
+import io.github.avec112.security.crypto.aes.AesKeySize;
 import io.github.avec112.security.crypto.ecc.EccCurve;
+import io.github.avec112.security.crypto.rsa.RsaKeySize;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
+import javax.crypto.SecretKey;
 import java.security.KeyPair;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -14,17 +17,38 @@ import java.security.interfaces.RSAPublicKey;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit tests for the methods in the {@code KeyUtils} class.
+ * Unit tests for the methods in the {@code KeyGeneratorUtils} class.
  * This test class validates the generation and integrity of RSA key pairs using different key sizes.
  * Additionally, it ensures that generated key pairs meet expected criteria.
  */
 @Execution(ExecutionMode.CONCURRENT)
-class KeyUtilsTest extends BouncyCastleProviderInitializer {
+class KeyGeneratorUtilsTest extends BouncyCastleProviderInitializer {
+
 
     @ParameterizedTest
-    @EnumSource(KeySize.class)
-    void generateKeyPair(KeySize keySize) throws Exception {
-        final KeyPair keyPair = KeyUtils.generateRsaKeyPair(keySize);
+    @EnumSource(AesKeySize.class)
+    void generateAesKey(AesKeySize keySize) throws Exception {
+        int expectedKeySizeInBytes = keySize.getKeySize()/8;
+        final SecretKey secretKey = KeyGeneratorUtils.generateAesKey(keySize);
+        assertNotNull(secretKey);
+        assertEquals(expectedKeySizeInBytes, secretKey.getEncoded().length);
+    }
+
+    @Test
+    void generateDefaultAesKey() throws Exception {
+        int expectedKeySizeInBytes = AesKeySize.BIT_256.getKeySize()/8;
+
+        final SecretKey secretKey = KeyGeneratorUtils.generateAesKey();
+
+        assertNotNull(secretKey);
+        assertEquals(expectedKeySizeInBytes, secretKey.getEncoded().length);
+    }
+
+
+    @ParameterizedTest
+    @EnumSource(RsaKeySize.class)
+    void generateRsaKeyPair(RsaKeySize keySize) throws Exception {
+        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair(keySize);
         assertKeyPairNotNull(keyPair);
         assertKeyPairBitLengthEquals(keyPair, keySize.getKeySize());
     }
@@ -33,10 +57,10 @@ class KeyUtilsTest extends BouncyCastleProviderInitializer {
     void generateDefaultRsaKeyPair() throws Exception {
 
         // Arrange
-        KeySize defaultKeySize = KeySize.BIT_3072;
+        RsaKeySize defaultKeySize = RsaKeySize.BIT_3072;
 
         // Act
-        final KeyPair keyPair = KeyUtils.generateRsaKeyPair();
+        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair();
 
         // Assert
         assertKeyPairNotNull(keyPair);
@@ -45,23 +69,23 @@ class KeyUtilsTest extends BouncyCastleProviderInitializer {
 
     @Test
     void generateRsaKeyPair4096() throws Exception {
-        final KeyPair keyPair = KeyUtils.generateRsaKeyPair4096();
+        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair4096();
         assertKeyPairNotNull(keyPair);
-        assertKeyPairBitLengthEquals(keyPair, KeySize.BIT_4096.getKeySize());
+        assertKeyPairBitLengthEquals(keyPair, RsaKeySize.BIT_4096.getKeySize());
     }
 
     @Test
     void generateRsaKeyPair3072() throws Exception {
-        final KeyPair keyPair = KeyUtils.generateRsaKeyPair3072();
+        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair3072();
         assertKeyPairNotNull(keyPair);
-        assertKeyPairBitLengthEquals(keyPair, KeySize.BIT_3072.getKeySize());
+        assertKeyPairBitLengthEquals(keyPair, RsaKeySize.BIT_3072.getKeySize());
     }
 
     @Test
     void generateRsaKeyPair2048() throws Exception {
-        final KeyPair keyPair = KeyUtils.generateRsaKeyPair2048();
+        final KeyPair keyPair = KeyGeneratorUtils.generateRsaKeyPair2048();
         assertKeyPairNotNull(keyPair);
-        assertKeyPairBitLengthEquals(keyPair, KeySize.BIT_2048.getKeySize());
+        assertKeyPairBitLengthEquals(keyPair, RsaKeySize.BIT_2048.getKeySize());
     }
 
     private static void assertKeyPairNotNull(KeyPair keyPair) {
@@ -80,7 +104,7 @@ class KeyUtilsTest extends BouncyCastleProviderInitializer {
 
     @Test
     void testGenerateEd25519KeyPair() throws Exception {
-        KeyPair keyPair = KeyUtils.generateEd25519KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateEd25519KeyPair();
 
         assertNotNull(keyPair);
         assertNotNull(keyPair.getPublic());
@@ -91,7 +115,7 @@ class KeyUtilsTest extends BouncyCastleProviderInitializer {
 
     @Test
     void testGenerateSecp256r1KeyPair() throws Exception {
-        KeyPair keyPair = KeyUtils.generateSecp256r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateSecp256r1KeyPair();
 
         assertNotNull(keyPair);
         assertNotNull(keyPair.getPublic());
@@ -102,7 +126,7 @@ class KeyUtilsTest extends BouncyCastleProviderInitializer {
 
     @Test
     void testGenerateSecp384r1KeyPair() throws Exception {
-        KeyPair keyPair = KeyUtils.generateSecp384r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateSecp384r1KeyPair();
 
         assertNotNull(keyPair);
         assertNotNull(keyPair.getPublic());
@@ -113,7 +137,7 @@ class KeyUtilsTest extends BouncyCastleProviderInitializer {
 
     @Test
     void testGenerateSecp521r1KeyPair() throws Exception {
-        KeyPair keyPair = KeyUtils.generateSecp521r1KeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateSecp521r1KeyPair();
 
         assertNotNull(keyPair);
         assertNotNull(keyPair.getPublic());
@@ -124,7 +148,7 @@ class KeyUtilsTest extends BouncyCastleProviderInitializer {
 
     @Test
     void testGenerateEcKeyPairWithDefaultCurve() throws Exception {
-        KeyPair keyPair = KeyUtils.generateEcKeyPair();
+        KeyPair keyPair = KeyGeneratorUtils.generateEcKeyPair();
 
         assertNotNull(keyPair);
         assertNotNull(keyPair.getPublic());
@@ -134,7 +158,7 @@ class KeyUtilsTest extends BouncyCastleProviderInitializer {
 
     @Test
     void testGenerateEcKeyPairWithSpecificCurve() throws Exception {
-        KeyPair keyPair = KeyUtils.generateEcKeyPair(EccCurve.SECP384R1);
+        KeyPair keyPair = KeyGeneratorUtils.generateEcKeyPair(EccCurve.SECP384R1);
 
         assertNotNull(keyPair);
         assertNotNull(keyPair.getPublic());
@@ -145,7 +169,7 @@ class KeyUtilsTest extends BouncyCastleProviderInitializer {
     @Test
     void testGenerateEcKeyPairThrowsExceptionForEd25519() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            KeyUtils.generateEcKeyPair(EccCurve.ED25519);
+            KeyGeneratorUtils.generateEcKeyPair(EccCurve.ED25519);
         });
 
         assertTrue(exception.getMessage().contains("Ed25519"));

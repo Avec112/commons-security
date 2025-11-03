@@ -2,8 +2,8 @@ package io.github.avec112.security.crypto.hybrid;
 
 
 import io.github.avec112.security.crypto.aes.AesEncryptor;
+import io.github.avec112.security.crypto.aes.AesKeySize;
 import io.github.avec112.security.crypto.aes.EncryptionMode;
-import io.github.avec112.security.crypto.aes.EncryptionStrength;
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.domain.PlainText;
@@ -32,7 +32,7 @@ import java.security.PublicKey;
  * <ul>
  *   <li>The AES-encrypted cipher text</li>
  *   <li>The RSA-encrypted AES password</li>
- *   <li>Metadata describing the chosen AES mode and strength</li>
+ *   <li>Metadata describing the chosen AES mode and key size</li>
  * </ul>
  * <p>
  * Example usage:
@@ -40,15 +40,15 @@ import java.security.PublicKey;
  * HybridEncryptionResult result = EncryptBuilder.encryptionBuilder()
  *     .key(publicKey)
  *     .plainText(new PlainText("Sensitive message"))
- *     .optional(EncryptionMode.GCM)
- *     .optional(EncryptionStrength.BIT_256)
+ *     .withMode(EncryptionMode.GCM)
+ *     .withKeySize(AesKeySize.BIT_256)
  *     .build();
  * }</pre>
  * <p>
  * This class automatically uses the modern RSA-OAEP-SHA256 transformation internally via {@link RsaCipher}.
  */
 public class EncryptBuilder {
-    private EncryptionStrength encryptionStrength = EncryptionStrength.BIT_128;
+    private AesKeySize aesKeySize = AesKeySize.BIT_256;
     private EncryptionMode encryptionMode = EncryptionMode.GCM;
 
     private PlainText plainText;
@@ -106,10 +106,10 @@ public class EncryptBuilder {
         final String rsaEncryptedKey = rsaEncryptedKey(publicKey, randomPassword);
         final CipherText cipherText = AesEncryptor.withPasswordAndText(new Password(randomPassword), plainText)
                 .withMode(encryptionMode)
-                .withStrength(encryptionStrength)
+                .withKeySize(aesKeySize)
                 .encrypt();
 
-        return new HybridEncryptionResult(cipherText, rsaEncryptedKey, encryptionMode, encryptionStrength);
+        return new HybridEncryptionResult(cipherText, rsaEncryptedKey, encryptionMode, aesKeySize);
     }
 
 
@@ -126,15 +126,15 @@ public class EncryptBuilder {
     }
 
     /**
-     * Sets the optional encryption strength for the EncryptBuilder object.
+     * Sets the optional encryption key size for the EncryptBuilder object.
      *
-     * @param encryptionStrength The encryption strength to set.
-     * @return The EncryptBuilder object with the encryption strength set.
-     * @throws NullPointerException if encryptionStrength is null
+     * @param aesKeySize The encryption keySize to set.
+     * @return The EncryptBuilder object with the encryption keySize set.
+     * @throws NullPointerException if aesKeySize is null
      */
-    public EncryptBuilder withStrength(EncryptionStrength encryptionStrength) {
-        Validate.nonNull(encryptionStrength, "encryptionStrength");
-        this.encryptionStrength = encryptionStrength;
+    public EncryptBuilder withKeySize(AesKeySize aesKeySize) {
+        Validate.nonNull(aesKeySize, "aesKeySize");
+        this.aesKeySize = aesKeySize;
         return this;
     }
 

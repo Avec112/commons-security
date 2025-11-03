@@ -301,7 +301,7 @@ public class CryptoUtils {
                 .cipherText(result.getCipherText())
                 .encryptedKey(result.getEncryptedKey())
                 .withMode(result.getAesEncryptionMode())
-                .withStrength(result.getAesEncryptionStrength())
+                .withKeySize(result.getAesKeySize())
                 .build();
     }
 

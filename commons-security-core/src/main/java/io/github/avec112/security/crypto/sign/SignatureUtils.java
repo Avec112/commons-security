@@ -25,17 +25,17 @@ import java.util.Objects;
  * <p><b>Example usage:</b></p>
  * <pre>{@code
  * // RSA signature
- * KeyPair rsaKeys = KeyUtils.generateRsaKeyPair();
+ * KeyPair rsaKeys = KeyGeneratorUtils.generateRsaKeyPair();
  * byte[] rsaSig = SignatureUtils.sign("data", rsaKeys.getPrivate());
  * boolean valid = SignatureUtils.verify(rsaSig, "data", rsaKeys.getPublic());
  *
  * // Ed25519 signature (recommended for new applications)
- * KeyPair ed25519Keys = KeyUtils.generateEd25519KeyPair();
+ * KeyPair ed25519Keys = KeyGeneratorUtils.generateEd25519KeyPair();
  * byte[] ed25519Sig = SignatureUtils.signEd25519("data", ed25519Keys.getPrivate());
  * boolean valid = SignatureUtils.verifyEd25519(ed25519Sig, "data", ed25519Keys.getPublic());
  *
  * // ECDSA signature
- * KeyPair ecKeys = KeyUtils.generateSecp256r1KeyPair();
+ * KeyPair ecKeys = KeyGeneratorUtils.generateSecp256r1KeyPair();
  * byte[] ecdsaSig = SignatureUtils.signEcdsa("data", ecKeys.getPrivate());
  * boolean valid = SignatureUtils.verifyEcdsa(ecdsaSig, "data", ecKeys.getPublic());
  * }</pre>

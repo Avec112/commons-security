@@ -1,10 +1,10 @@
 package io.github.avec112.security.crypto.hybrid;
 
-import io.github.avec112.security.crypto.aes.EncryptionMode;
-import io.github.avec112.security.crypto.aes.EncryptionStrength;
-import io.github.avec112.security.crypto.domain.CipherText;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.github.avec112.security.crypto.aes.AesKeySize;
+import io.github.avec112.security.crypto.aes.EncryptionMode;
+import io.github.avec112.security.crypto.domain.CipherText;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -23,14 +23,14 @@ public class HybridEncryptionResult {
     private final CipherText cipherText;
     private final String encryptedKey;
     private final EncryptionMode aesEncryptionMode;
-    private final EncryptionStrength aesEncryptionStrength;
+    private final AesKeySize aesKeySize;
 
     /**
      * Creates a new HybridEncryptionResult with the current version.
      */
     public HybridEncryptionResult(CipherText cipherText, String encryptedKey,
-                                  EncryptionMode aesEncryptionMode, EncryptionStrength aesEncryptionStrength) {
-        this(VERSION, cipherText, encryptedKey, aesEncryptionMode, aesEncryptionStrength);
+                                  EncryptionMode aesEncryptionMode, AesKeySize aesKeySize) {
+        this(VERSION, cipherText, encryptedKey, aesEncryptionMode, aesKeySize);
     }
 
     /**
@@ -56,9 +56,9 @@ public class HybridEncryptionResult {
     /**
      * Returns a human-readable description of the AES encryption configuration.
      *
-     * @return a string in the format "MODE@STRENGTH-bit" (e.g., "GCM@256-bit")
+     * @return a string in the format "MODE@KEY_SIZE-bit" (e.g., "GCM@256-bit")
      */
     public String describe() {
-        return String.format("%s@%d-bit", aesEncryptionMode, aesEncryptionStrength.getLength());
+        return String.format("%s@%d-bit", aesEncryptionMode, aesKeySize.getKeySize());
     }
 }
