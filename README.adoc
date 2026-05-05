@@ -788,6 +788,35 @@ if (PasswordEncoderUtil.needsUpgrade(storedEncodedPassword)) {
 
 TIP: Password upgrades happen transparently during user login, ensuring a smooth migration path without disrupting users.
 
+== Development
+
+=== Code formatting
+
+This project uses https://github.com/diffplug/spotless[Spotless] to keep Java source formatting consistent across IDEs and build environments.
+
+The Maven build is the source of truth for formatting. Do not rely on local IDE formatting settings as the final authority.
+
+[source,bash]
+----
+# Apply formatting locally
+mvn spotless:apply
+
+# Check formatting without changing files
+mvn spotless:check
+----
+
+`mvn verify` also runs the Spotless check, so formatting issues should be fixed before opening a pull request.
+
+The Java formatter is https://github.com/palantir/palantir-java-format[Palantir Java Format], a deterministic formatter derived from Google Java Format.
+
+For IntelliJ IDEA, the recommended setup is:
+
+* Install the `Spotless Applier` plugin.
+* Enable `Run spotless` under `Settings -> Tools -> Actions on Save`.
+* Leave IntelliJ's own `Reformat code` and `Optimize imports` actions disabled on save.
+
+This keeps the IDE aligned with the Maven configuration in `pom.xml`.
+
 == Documentation
 
 === PDF Version

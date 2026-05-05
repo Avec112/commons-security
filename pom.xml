@@ -25,6 +25,7 @@
         <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
         <jreleaser-maven-plugin.version>1.24.0</jreleaser-maven-plugin.version>
+        <spotless-maven-plugin.version>3.4.0</spotless-maven-plugin.version>
     </properties>
 
     <build>
@@ -130,6 +131,35 @@
                 <groupId>org.jreleaser</groupId>
                 <artifactId>jreleaser-maven-plugin</artifactId>
                 <version>${jreleaser-maven-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless-maven-plugin.version}</version>
+
+                <configuration>
+                    <java>
+                        <!-- Use Palantir Java Format for deterministic formatting -->
+                        <palantirJavaFormat/>
+                        <removeUnusedImports/>
+                        <importOrder/>
+                        <!-- Format annotations (one per line, improved readability) -->
+                        <formatAnnotations/>
+                        <endWithNewline/>
+                        <trimTrailingWhitespace/>
+                    </java>
+                </configuration>
+
+                <executions>
+                    <!-- Run format check during build -->
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>verify</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
