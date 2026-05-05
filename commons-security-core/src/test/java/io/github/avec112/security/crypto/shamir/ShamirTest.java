@@ -1,12 +1,11 @@
 package io.github.avec112.security.crypto.shamir;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class ShamirTest {
 
@@ -25,7 +24,6 @@ class ShamirTest {
         assertEquals(expectedSecret, actual);
     }
 
-
     @Test
     void testShamirToFewShares() {
         final Secret actual = Shamir.getSecret(shares.get(0), shares.get(2));
@@ -33,15 +31,15 @@ class ShamirTest {
         assertNotEquals(expectedSecret.getValue(), actual.getValue());
     }
 
-
     @Test
     void testShamirWrongShareEncodedOnce() {
 
         byte[] wrongShare = "just wrong".getBytes(StandardCharsets.UTF_8);
         String encodeOnce = encode(wrongShare);
 
-        assertThrows(IllegalArgumentException.class, () ->
-                Shamir.getSecret(shares.get(0), shares.get(2), new Share(encodeOnce)));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> Shamir.getSecret(shares.get(0), shares.get(2), new Share(encodeOnce)));
     }
 
     @Test
@@ -51,11 +49,11 @@ class ShamirTest {
         Share invalidShare = new Share("### definitely invalid base64 ###");
 
         // when / then
-        assertThrows(IllegalArgumentException.class, () ->
-                        Shamir.getSecret(shares.get(0), shares.get(2), invalidShare),
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> Shamir.getSecret(shares.get(0), shares.get(2), invalidShare),
                 "Invalid share should trigger IllegalArgumentException");
     }
-
 
     @Test
     void testShamirLargeSecret() {
@@ -69,21 +67,24 @@ class ShamirTest {
 
     @Test
     void testInvalidThresholdGreaterThanTotal() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> Shamir.getShares(expectedSecret, 3, 5),
                 "Should throw when threshold (k) is greater than total shares (n)");
     }
 
     @Test
     void testInvalidThresholdLessThanOne() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> Shamir.getShares(expectedSecret, 5, 0),
                 "Should throw when threshold (k) is less than 1");
     }
 
     @Test
     void testInvalidTotalSharesLessThanOne() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> Shamir.getShares(expectedSecret, 0, 0),
                 "Should throw when total shares (n) is less than 1");
     }
@@ -95,12 +96,10 @@ class ShamirTest {
         assertEquals(10, triples.size(), "Sanity check: C(5,3) must be 10");
 
         for (int[] idx : triples) {
-            Secret reconstructed = Shamir.getSecret(
-                    shares.get(idx[0]),
-                    shares.get(idx[1]),
-                    shares.get(idx[2])
-            );
-            assertEquals(expectedSecret, reconstructed,
+            Secret reconstructed = Shamir.getSecret(shares.get(idx[0]), shares.get(idx[1]), shares.get(idx[2]));
+            assertEquals(
+                    expectedSecret,
+                    reconstructed,
                     "Failed for indices: [" + idx[0] + "," + idx[1] + "," + idx[2] + "]");
         }
     }
@@ -113,19 +112,18 @@ class ShamirTest {
         assertEquals(10, pairs.size(), "Sanity check: C(5,2) must be 10");
 
         for (int[] idx : pairs) {
-            Secret reconstructed = Shamir.getSecret(
-                    shares.get(idx[0]),
-                    shares.get(idx[1])
-            );
-            assertNotEquals(expectedSecret, reconstructed,
-                    "Unexpected success for indices: [" + idx[0] + "," + idx[1] + "]");
+            Secret reconstructed = Shamir.getSecret(shares.get(idx[0]), shares.get(idx[1]));
+            assertNotEquals(
+                    expectedSecret, reconstructed, "Unexpected success for indices: [" + idx[0] + "," + idx[1] + "]");
         }
     }
 
     @Test
     void testFourAndFiveOfFiveAlsoReconstruct() {
         assertEquals(expectedSecret, Shamir.getSecret(shares.get(0), shares.get(1), shares.get(2), shares.get(3)));
-        assertEquals(expectedSecret, Shamir.getSecret(shares.get(0), shares.get(1), shares.get(2), shares.get(3), shares.get(4)));
+        assertEquals(
+                expectedSecret,
+                Shamir.getSecret(shares.get(0), shares.get(1), shares.get(2), shares.get(3), shares.get(4)));
     }
 
     @Test
@@ -161,17 +159,17 @@ class ShamirTest {
         Share validShare = shares.get(0);
 
         // when - encode the share value a second time
-        String doubleEncoded = Base64.getEncoder()
-                .encodeToString(validShare.getValue().getBytes(StandardCharsets.UTF_8));
+        String doubleEncoded =
+                Base64.getEncoder().encodeToString(validShare.getValue().getBytes(StandardCharsets.UTF_8));
         Share invalidShare = new Share(doubleEncoded);
 
         // then
         // reconstruction using the double-encoded share must not succeed
-        assertThrows(IllegalArgumentException.class, () ->
-                        Shamir.getSecret(shares.get(1), shares.get(2), invalidShare),
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> Shamir.getSecret(shares.get(1), shares.get(2), invalidShare),
                 "Double-encoded share should not be considered valid");
     }
-
 
     // --- Helpers ---
 
@@ -200,5 +198,4 @@ class ShamirTest {
     private String encode(byte[] b) {
         return Base64.getEncoder().encodeToString(b);
     }
-
 }

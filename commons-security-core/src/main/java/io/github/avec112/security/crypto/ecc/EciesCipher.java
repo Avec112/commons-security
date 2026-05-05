@@ -1,15 +1,14 @@
 package io.github.avec112.security.crypto.ecc;
 
 import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
-import org.bouncycastle.jce.interfaces.ECPrivateKey;
-import org.bouncycastle.jce.interfaces.ECPublicKey;
-import org.bouncycastle.jce.spec.IESParameterSpec;
-
-import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Objects;
+import javax.crypto.Cipher;
+import org.bouncycastle.jce.interfaces.ECPrivateKey;
+import org.bouncycastle.jce.interfaces.ECPublicKey;
+import org.bouncycastle.jce.spec.IESParameterSpec;
 
 /**
  * ECIES (Elliptic Curve Integrated Encryption Scheme) cipher implementation.
@@ -55,8 +54,7 @@ public class EciesCipher extends BouncyCastleProviderInitializer {
     private static final int MAC_KEY_SIZE = 128; // bits
     private static final int CIPHER_KEY_SIZE = 128; // bits
 
-    private EciesCipher() {
-    }
+    private EciesCipher() {}
 
     /**
      * Encrypts a plaintext string using ECIES with the recipient's public key.
@@ -91,13 +89,8 @@ public class EciesCipher extends BouncyCastleProviderInitializer {
             throw new IllegalArgumentException("Public key must be an EC key");
         }
 
-        IESParameterSpec params = new IESParameterSpec(
-                DEFAULT_DERIVATION,
-                DEFAULT_ENCODING,
-                MAC_KEY_SIZE,
-                CIPHER_KEY_SIZE,
-                null
-        );
+        IESParameterSpec params =
+                new IESParameterSpec(DEFAULT_DERIVATION, DEFAULT_ENCODING, MAC_KEY_SIZE, CIPHER_KEY_SIZE, null);
 
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, publicKey, params);
@@ -138,13 +131,8 @@ public class EciesCipher extends BouncyCastleProviderInitializer {
             throw new IllegalArgumentException("Private key must be an EC key");
         }
 
-        IESParameterSpec params = new IESParameterSpec(
-                DEFAULT_DERIVATION,
-                DEFAULT_ENCODING,
-                MAC_KEY_SIZE,
-                CIPHER_KEY_SIZE,
-                null
-        );
+        IESParameterSpec params =
+                new IESParameterSpec(DEFAULT_DERIVATION, DEFAULT_ENCODING, MAC_KEY_SIZE, CIPHER_KEY_SIZE, null);
 
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, privateKey, params);

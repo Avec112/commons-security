@@ -3,15 +3,14 @@ package io.github.avec112.security.crypto;
 import io.github.avec112.security.crypto.aes.AesKeySize;
 import io.github.avec112.security.crypto.ecc.EccCurve;
 import io.github.avec112.security.crypto.rsa.RsaKeySize;
-
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.RSAKeyGenParameterSpec;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 /**
  * A unified utility class for generating cryptographic key pairs.
@@ -42,8 +41,7 @@ public class KeyGeneratorUtil extends BouncyCastleProviderInitializer {
     private static final RsaKeySize DEFAULT_RSA_KEY_SIZE = RsaKeySize.BIT_3072;
     private static final EccCurve DEFAULT_EC_CURVE = EccCurve.SECP256R1;
 
-    private KeyGeneratorUtil() {
-    }
+    private KeyGeneratorUtil() {}
 
     // ========== AES Key Generation ==========
 
@@ -82,7 +80,8 @@ public class KeyGeneratorUtil extends BouncyCastleProviderInitializer {
      * @throws NoSuchAlgorithmException if the cryptographic algorithm "RSA" is not available in the environment.
      * @throws InvalidAlgorithmParameterException if the specified key size or parameters are invalid.
      */
-    public static KeyPair generateRsaKeyPair(RsaKeySize keySize) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+    public static KeyPair generateRsaKeyPair(RsaKeySize keySize)
+            throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         keyPairGenerator.initialize(new RSAKeyGenParameterSpec(keySize.getKeySize(), RSAKeyGenParameterSpec.F4));
         return keyPairGenerator.generateKeyPair();
@@ -123,7 +122,8 @@ public class KeyGeneratorUtil extends BouncyCastleProviderInitializer {
      * @throws InvalidAlgorithmParameterException if the curve is not supported
      * @throws IllegalArgumentException if Ed25519 curve is specified (use generateEd25519KeyPair instead)
      */
-    public static KeyPair generateEcKeyPair(EccCurve curve) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+    public static KeyPair generateEcKeyPair(EccCurve curve)
+            throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         if (curve == EccCurve.ED25519) {
             throw new IllegalArgumentException("Use generateEd25519KeyPair() for Ed25519 curve");
         }
@@ -161,7 +161,7 @@ public class KeyGeneratorUtil extends BouncyCastleProviderInitializer {
      * @throws NoSuchAlgorithmException if the Ed25519 algorithm is not available
      */
     public static KeyPair generateEd25519KeyPair() throws NoSuchAlgorithmException {
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("Ed25519" );
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("Ed25519");
         return keyPairGenerator.generateKeyPair();
     }
 
@@ -173,7 +173,8 @@ public class KeyGeneratorUtil extends BouncyCastleProviderInitializer {
      * @throws NoSuchAlgorithmException if the EC algorithm is not available
      * @throws InvalidAlgorithmParameterException if the curve is not supported
      */
-    public static KeyPair generateSecp256r1KeyPair() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+    public static KeyPair generateSecp256r1KeyPair()
+            throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         return generateEcKeyPair(EccCurve.SECP256R1);
     }
 
@@ -185,7 +186,8 @@ public class KeyGeneratorUtil extends BouncyCastleProviderInitializer {
      * @throws NoSuchAlgorithmException if the EC algorithm is not available
      * @throws InvalidAlgorithmParameterException if the curve is not supported
      */
-    public static KeyPair generateSecp384r1KeyPair() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+    public static KeyPair generateSecp384r1KeyPair()
+            throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         return generateEcKeyPair(EccCurve.SECP384R1);
     }
 
@@ -197,8 +199,8 @@ public class KeyGeneratorUtil extends BouncyCastleProviderInitializer {
      * @throws NoSuchAlgorithmException if the EC algorithm is not available
      * @throws InvalidAlgorithmParameterException if the curve is not supported
      */
-    public static KeyPair generateSecp521r1KeyPair() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+    public static KeyPair generateSecp521r1KeyPair()
+            throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         return generateEcKeyPair(EccCurve.SECP521R1);
     }
-
 }

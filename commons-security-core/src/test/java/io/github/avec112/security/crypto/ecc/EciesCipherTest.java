@@ -1,13 +1,12 @@
 package io.github.avec112.security.crypto.ecc;
 
-import io.github.avec112.security.crypto.KeyGeneratorUtil;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
+import io.github.avec112.security.crypto.KeyGeneratorUtil;
 import java.security.KeyPair;
 import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for ECIES encryption and decryption.
@@ -90,9 +89,12 @@ class EciesCipherTest {
         // Try to decrypt with a different key pair
         KeyPair wrongKeyPair = KeyGeneratorUtil.generateSecp256r1KeyPair();
 
-        assertThrows(Exception.class, () -> {
-            EciesCipher.decrypt(ciphertext, wrongKeyPair.getPrivate());
-        }, "Decryption with wrong key should fail");
+        assertThrows(
+                Exception.class,
+                () -> {
+                    EciesCipher.decrypt(ciphertext, wrongKeyPair.getPrivate());
+                },
+                "Decryption with wrong key should fail");
     }
 
     @Test

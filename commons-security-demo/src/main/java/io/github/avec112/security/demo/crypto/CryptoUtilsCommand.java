@@ -6,16 +6,12 @@ import picocli.CommandLine;
         name = "crypto",
         description = "Demonstrates commons-security cryptography features",
         mixinStandardHelpOptions = true,
-        subcommands = {
-                AesEncryptCommand.class,
-                AesDecryptCommand.class/*,
+        subcommands = {AesEncryptCommand.class, AesDecryptCommand.class /*,
                 RsaEncryptCommand.class,
                 RsaDecryptCommand.class,
                 DigestCommand.class,
                 SignCommand.class,
-                VerifyCommand.class*/
-        }
-)
+                VerifyCommand.class*/})
 public class CryptoUtilsCommand implements Runnable {
 
     @Override

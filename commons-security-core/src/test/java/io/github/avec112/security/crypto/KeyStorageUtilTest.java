@@ -1,21 +1,20 @@
 package io.github.avec112.security.crypto;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import io.github.avec112.security.crypto.aes.AesKeySize;
 import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.rsa.RsaKeySize;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-
-import javax.crypto.SecretKey;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-
-import static org.junit.jupiter.api.Assertions.*;
+import javax.crypto.SecretKey;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 /**
  * Unit tests for the {@code KeyStorageUtil} class.
@@ -204,9 +203,7 @@ class KeyStorageUtilTest extends BouncyCastleProviderInitializer {
         KeyStorageUtil.saveAesKeyEncrypted(secretKey, correctPassword, keyPath);
 
         // Act & Assert
-        assertThrows(Exception.class, () ->
-            KeyStorageUtil.loadAesKeyEncrypted(keyPath, wrongPassword)
-        );
+        assertThrows(Exception.class, () -> KeyStorageUtil.loadAesKeyEncrypted(keyPath, wrongPassword));
     }
 
     // ========== PEM Format Conversion Tests ==========
@@ -228,8 +225,7 @@ class KeyStorageUtilTest extends BouncyCastleProviderInitializer {
         // Verify 64-character line wrapping (excluding headers/footers)
         String[] lines = pem.split("\n");
         for (int i = 1; i < lines.length - 1; i++) {
-            assertTrue(lines[i].length() <= 64,
-                "Line " + i + " exceeds 64 characters: " + lines[i].length());
+            assertTrue(lines[i].length() <= 64, "Line " + i + " exceeds 64 characters: " + lines[i].length());
         }
     }
 
@@ -400,9 +396,7 @@ class KeyStorageUtilTest extends BouncyCastleProviderInitializer {
         Path nonExistentPath = tempDir.resolve("non_existent_key.pem");
 
         // Act & Assert
-        assertThrows(Exception.class, () ->
-            KeyStorageUtil.loadPrivateKey(nonExistentPath, "RSA")
-        );
+        assertThrows(Exception.class, () -> KeyStorageUtil.loadPrivateKey(nonExistentPath, "RSA"));
     }
 
     @Test
@@ -411,9 +405,7 @@ class KeyStorageUtilTest extends BouncyCastleProviderInitializer {
         Path nonExistentPath = tempDir.resolve("non_existent_key.pem");
 
         // Act & Assert
-        assertThrows(Exception.class, () ->
-            KeyStorageUtil.loadPublicKey(nonExistentPath, "RSA")
-        );
+        assertThrows(Exception.class, () -> KeyStorageUtil.loadPublicKey(nonExistentPath, "RSA"));
     }
 
     @Test
@@ -422,9 +414,7 @@ class KeyStorageUtilTest extends BouncyCastleProviderInitializer {
         String invalidBase64 = "this-is-not-valid-base64!!!";
 
         // Act & Assert
-        assertThrows(Exception.class, () ->
-            KeyStorageUtil.importPublicKeyFromBase64(invalidBase64, "RSA")
-        );
+        assertThrows(Exception.class, () -> KeyStorageUtil.importPublicKeyFromBase64(invalidBase64, "RSA"));
     }
 
     // ========== Encrypted Key Storage Tests (Note: Currently not implemented) ==========
@@ -437,9 +427,9 @@ class KeyStorageUtilTest extends BouncyCastleProviderInitializer {
         Path keyPath = tempDir.resolve("encrypted_private_key.pem");
 
         // Act & Assert
-        assertThrows(UnsupportedOperationException.class, () ->
-            KeyStorageUtil.savePrivateKeyEncrypted(keyPair.getPrivate(), password, keyPath)
-        );
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> KeyStorageUtil.savePrivateKeyEncrypted(keyPair.getPrivate(), password, keyPath));
     }
 
     @Test
@@ -450,9 +440,9 @@ class KeyStorageUtilTest extends BouncyCastleProviderInitializer {
         Files.writeString(keyPath, "dummy content");
 
         // Act & Assert
-        assertThrows(UnsupportedOperationException.class, () ->
-            KeyStorageUtil.loadPrivateKeyEncrypted(keyPath, password, "RSA")
-        );
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> KeyStorageUtil.loadPrivateKeyEncrypted(keyPath, password, "RSA"));
     }
 
     @Test
@@ -464,9 +454,9 @@ class KeyStorageUtilTest extends BouncyCastleProviderInitializer {
         Path publicKeyPath = tempDir.resolve("public_key.pem");
 
         // Act & Assert
-        assertThrows(UnsupportedOperationException.class, () ->
-            KeyStorageUtil.saveKeyPair(keyPair, password, privateKeyPath, publicKeyPath)
-        );
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> KeyStorageUtil.saveKeyPair(keyPair, password, privateKeyPath, publicKeyPath));
     }
 
     @Test
@@ -479,8 +469,8 @@ class KeyStorageUtilTest extends BouncyCastleProviderInitializer {
         Files.writeString(publicKeyPath, "dummy content");
 
         // Act & Assert
-        assertThrows(UnsupportedOperationException.class, () ->
-            KeyStorageUtil.loadKeyPair(privateKeyPath, publicKeyPath, password, "RSA")
-        );
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> KeyStorageUtil.loadKeyPair(privateKeyPath, publicKeyPath, password, "RSA"));
     }
 }

@@ -4,15 +4,12 @@ import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
 import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.random.RandomUtil;
 import io.github.avec112.security.encoding.EncodingUtil;
-
-import javax.crypto.*;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-
-
+import javax.crypto.*;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * This class provides utility methods for AES encryption and decryption.
@@ -21,8 +18,7 @@ import java.security.spec.KeySpec;
  */
 public class AesUtil extends BouncyCastleProviderInitializer {
 
-    private AesUtil() {
-    }
+    private AesUtil() {}
 
     /**
      * Generates a random nonce of the specified number of bytes.
@@ -31,11 +27,10 @@ public class AesUtil extends BouncyCastleProviderInitializer {
      * @return A byte array representing the random nonce.
      */
     public static byte[] getRandomNonce(int numBytes) {
-        byte [] nonce = new byte[numBytes];
+        byte[] nonce = new byte[numBytes];
         RandomUtil.secureRandom().nextBytes(nonce);
         return nonce;
     }
-
 
     /**
      * Generates an AES key of the specified key size.
@@ -58,7 +53,8 @@ public class AesUtil extends BouncyCastleProviderInitializer {
      * @param keyLength The desired key length.
      * @return The generated AES secret key.
      */
-    public static SecretKey getAESKeyFromPassword(char[] password, byte[] salt, int keyLength) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public static SecretKey getAESKeyFromPassword(char[] password, byte[] salt, int keyLength)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
         // PBE = Password-based Encryption
         KeySpec spec = new PBEKeySpec(password, salt, 65536, keyLength);
@@ -75,9 +71,12 @@ public class AesUtil extends BouncyCastleProviderInitializer {
      * @param encryptionMode    The encryption mode to be used. See {@link EncryptionMode} for available modes.
      * @param keyLength         The desired length of the AES key.
      * @return The created Cipher object.
-
+     *
      */
-    public static Cipher createCipher(Password password, byte[] salt, byte[] iv, int mode, EncryptionMode encryptionMode, int keyLength) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, InvalidKeySpecException {
+    public static Cipher createCipher(
+            Password password, byte[] salt, byte[] iv, int mode, EncryptionMode encryptionMode, int keyLength)
+            throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
+                    InvalidAlgorithmParameterException, InvalidKeySpecException {
         Key key = AesUtil.getAESKeyFromPassword(password.getValue().toCharArray(), salt, keyLength);
         Cipher cipher = Cipher.getInstance(encryptionMode.getAlgorithm());
         cipher.init(mode, key, encryptionMode.getAlgorithmParameterSpec(iv));
@@ -95,5 +94,4 @@ public class AesUtil extends BouncyCastleProviderInitializer {
         byte[] key = RandomUtil.randomBytes(keyBytes);
         return EncodingUtil.base64Encode(key);
     }
-
 }

@@ -16,13 +16,18 @@ import picocli.CommandLine.Option;
 @Command(
         name = "aes-decrypt",
         description = "Decrypts cipher using AES-GCM with PBKDF2-derived key.",
-        mixinStandardHelpOptions = true
-)
+        mixinStandardHelpOptions = true)
 public class AesDecryptCommand implements Runnable {
-    @Option(names = {"--cipher", "-c"}, required = true, description = "The ciphertext to decrypt (Base64).")
+    @Option(
+            names = {"--cipher", "-c"},
+            required = true,
+            description = "The ciphertext to decrypt (Base64).")
     private String cipher;
 
-    @Option(names = {"--password", "-p"}, required = true, description = "Password used to derive the encryption key.")
+    @Option(
+            names = {"--password", "-p"},
+            required = true,
+            description = "Password used to derive the encryption key.")
     private String password;
 
     @Override
@@ -31,7 +36,8 @@ public class AesDecryptCommand implements Runnable {
             CipherText cipherText = new CipherText(cipher);
             Password pw = new Password(password);
             // Alternative CryptoUtil.aesDecrypt(cipherText, pw);
-            PlainText plainText = AesDecryptor.withPasswordAndCipherText(pw, cipherText).decrypt();
+            PlainText plainText =
+                    AesDecryptor.withPasswordAndCipherText(pw, cipherText).decrypt();
             System.out.println("Decrypted: " + plainText.getValue());
         } catch (BadCipherConfigurationException | BadCipherTextException e) {
             throw new CommandLine.ExecutionException(new CommandLine(this), "Decryption failed: " + e.getMessage());

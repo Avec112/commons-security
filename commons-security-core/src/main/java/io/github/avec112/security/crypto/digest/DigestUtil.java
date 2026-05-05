@@ -2,11 +2,10 @@ package io.github.avec112.security.crypto.digest;
 
 import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
 import io.github.avec112.security.encoding.EncodingUtil;
-import org.apache.commons.lang3.Validate;
-
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Objects;
+import org.apache.commons.lang3.Validate;
 
 /**
  * This class might use algorithms from BouncyCastle so BouncyCastleProvider is added statically

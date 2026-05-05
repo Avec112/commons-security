@@ -3,14 +3,13 @@ package io.github.avec112.security.crypto.shamir;
 import com.codahale.shamir.Scheme;
 import io.github.avec112.security.crypto.random.RandomUtil;
 import io.github.avec112.security.encoding.EncodingUtil;
-import org.apache.commons.lang3.Validate;
-
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Provides static utility methods for splitting and reconstructing secrets using
@@ -53,7 +52,8 @@ public class Shamir {
         Shares shares = new Shares();
         shareMap.forEach((index, bytes) -> {
             final String indexAndShare = index + "+" + EncodingUtil.base64Encode(bytes);
-            final String indexAndShareEncoded = EncodingUtil.base64Encode(indexAndShare.getBytes(StandardCharsets.UTF_8));
+            final String indexAndShareEncoded =
+                    EncodingUtil.base64Encode(indexAndShare.getBytes(StandardCharsets.UTF_8));
             shares.add(new Share(indexAndShareEncoded));
         });
         return shares;
@@ -80,21 +80,22 @@ public class Shamir {
      * @throws IllegalArgumentException if {@code shares} is {@code null}, fewer than two shares are provided,
      *                                  or a share has an invalid format
      */
-    public static Secret getSecret(Share...shares) {
+    public static Secret getSecret(Share... shares) {
         Validate.notNull(shares, "Shares cannot be null");
-        if(shares.length < 2) {
+        if (shares.length < 2) {
             throw new IllegalArgumentException("Argument Share must have at least two shares");
         }
 
         // create map
         final Map<Integer, byte[]> providedParts = new HashMap<>(shares.length);
         // start loop
-        for(Share share:shares) {
+        for (Share share : shares) {
             // decode once
-            final String indexAndShare = new String(EncodingUtil.base64Decode(share.getValue()), StandardCharsets.UTF_8);
+            final String indexAndShare =
+                    new String(EncodingUtil.base64Decode(share.getValue()), StandardCharsets.UTF_8);
             // split out index and encoded share
             Matcher m = SHARE_PATTERN.matcher(indexAndShare);
-            if(m.matches()) {
+            if (m.matches()) {
                 String index = m.group(1);
                 String s = m.group(2);
                 // decode a second time
@@ -102,7 +103,8 @@ public class Shamir {
                 // add to map
                 providedParts.put(Integer.parseInt(index), shareDecoded);
             } else {
-                throw new IllegalArgumentException("Invalid share format. Expected 'index+data' but got: " + indexAndShare);
+                throw new IllegalArgumentException(
+                        "Invalid share format. Expected 'index+data' but got: " + indexAndShare);
             }
         }
         // schema join

@@ -1,6 +1,5 @@
 package io.github.avec112.security.crypto.hybrid;
 
-
 import io.github.avec112.security.crypto.aes.AesEncryptor;
 import io.github.avec112.security.crypto.aes.AesKeySize;
 import io.github.avec112.security.crypto.aes.EncryptionMode;
@@ -13,7 +12,6 @@ import io.github.avec112.security.crypto.error.MissingPublicKeyException;
 import io.github.avec112.security.crypto.random.RandomUtil;
 import io.github.avec112.security.crypto.rsa.RsaCipher;
 import io.github.avec112.security.crypto.validate.Validate;
-
 import java.security.PublicKey;
 
 /**
@@ -54,8 +52,7 @@ public class EncryptBuilder {
     private PlainText plainText;
     private PublicKey publicKey;
 
-    private EncryptBuilder() {
-    }
+    private EncryptBuilder() {}
 
     /**
      * Returns a builder for encryption operations.
@@ -101,7 +98,6 @@ public class EncryptBuilder {
         Validate.nonNull(plainText, MissingPlainTextException::new);
         Validate.nonBlank(plainText.getValue(), BlankPlainTextException::new);
 
-
         final String randomPassword = RandomUtil.randomString(20);
         final String rsaEncryptedKey = rsaEncryptedKey(publicKey, randomPassword);
         final CipherText cipherText = AesEncryptor.withPasswordAndText(new Password(randomPassword), plainText)
@@ -111,7 +107,6 @@ public class EncryptBuilder {
 
         return new HybridEncryptionResult(cipherText, rsaEncryptedKey, encryptionMode, aesKeySize);
     }
-
 
     /**
      * Sets the optional encryption mode for the EncryptBuilder object.
@@ -150,7 +145,5 @@ public class EncryptBuilder {
         RsaCipher rsaCipher = new RsaCipher();
         final CipherText rsaEncryptedKey = rsaCipher.encrypt(new PlainText(randomPassword), publicKey);
         return rsaEncryptedKey.getValue();
-
     }
-
 }

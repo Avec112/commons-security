@@ -12,7 +12,6 @@ import io.github.avec112.security.crypto.error.MissingEncryptedSymmetricalKeyExc
 import io.github.avec112.security.crypto.error.MissingPrivateKeyException;
 import io.github.avec112.security.crypto.rsa.RsaCipher;
 import io.github.avec112.security.crypto.validate.Validate;
-
 import java.security.PrivateKey;
 
 /**
@@ -30,8 +29,7 @@ public class DecryptBuilder {
 
     private PrivateKey privateKey;
 
-    private DecryptBuilder() {
-    }
+    private DecryptBuilder() {}
 
     /**
      * Creates a builder for decryption operations.
@@ -66,8 +64,7 @@ public class DecryptBuilder {
                 () -> Validate.nonNull(privateKey, MissingPrivateKeyException::new),
                 () -> Validate.nonBlank(encryptedKey, MissingEncryptedSymmetricalKeyException::new),
                 () -> Validate.nonNull(cipherText, MissingCipherTextException::new),
-                () -> Validate.nonBlank(cipherText.getValue(), BlankCipherTextException::new)
-        );
+                () -> Validate.nonBlank(cipherText.getValue(), BlankCipherTextException::new));
 
         final RsaCipher rsaCipher = new RsaCipher();
         final PlainText symKey = rsaCipher.decrypt(new CipherText(encryptedKey), privateKey);
@@ -88,5 +85,4 @@ public class DecryptBuilder {
         this.aesKeySize = aesKeySize;
         return this;
     }
-
 }

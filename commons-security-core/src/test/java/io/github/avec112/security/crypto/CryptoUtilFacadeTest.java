@@ -1,5 +1,8 @@
 package io.github.avec112.security.crypto;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import io.github.avec112.security.crypto.aes.AesDecryptor;
 import io.github.avec112.security.crypto.aes.AesEncryptor;
 import io.github.avec112.security.crypto.aes.AesKeySize;
@@ -18,6 +21,11 @@ import io.github.avec112.security.crypto.shamir.Secret;
 import io.github.avec112.security.crypto.shamir.Share;
 import io.github.avec112.security.crypto.shamir.Shares;
 import io.github.avec112.security.crypto.sign.SignatureUtil;
+import java.io.File;
+import java.security.KeyPair;
+import javax.crypto.BadPaddingException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,15 +33,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-
-import javax.crypto.BadPaddingException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
-import java.security.KeyPair;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Comprehensive test suite for the {@link CryptoUtil} facade.
@@ -90,7 +89,8 @@ class CryptoUtilFacadeTest {
     void aesDecrypt() throws Exception {
         final PlainText plainTextExpected = new PlainText("TEst");
         final Password password = new Password("Password");
-        final CipherText cipherText = new CipherText("lZu3cheVaQPY0qqLnsui8dytHNDC6fY9nt12yWHBCZFdwOl+zOZchXmUXC71b7uq");
+        final CipherText cipherText =
+                new CipherText("lZu3cheVaQPY0qqLnsui8dytHNDC6fY9nt12yWHBCZFdwOl+zOZchXmUXC71b7uq");
 
         final PlainText plainText = CryptoUtil.aesDecrypt(cipherText, password);
 
@@ -106,17 +106,18 @@ class CryptoUtilFacadeTest {
         final CipherText cipherText = CryptoUtil.aesEncrypt(plainTextExpected, correctPassword);
 
         // Expect project-specific wrapper exception
-        final BadCipherConfigurationException ex =
-                Assertions.assertThrows(
-                        BadCipherConfigurationException.class,
-                        () -> CryptoUtil.aesDecrypt(cipherText, wrongPassword),
-                        "Decrypting with the wrong password should fail with a wrapped crypto exception"
-                );
+        final BadCipherConfigurationException ex = Assertions.assertThrows(
+                BadCipherConfigurationException.class,
+                () -> CryptoUtil.aesDecrypt(cipherText, wrongPassword),
+                "Decrypting with the wrong password should fail with a wrapped crypto exception");
 
         // Optional: verify the root cause
         final Throwable cause = ex.getCause();
         Assertions.assertNotNull(cause, "Wrapped exception should carry the root cause");
-        Assertions.assertInstanceOf(BadPaddingException.class, cause, "Root cause should be BadPaddingException (including AEADBadTagException subclass)");
+        Assertions.assertInstanceOf(
+                BadPaddingException.class,
+                cause,
+                "Root cause should be BadPaddingException (including AEADBadTagException subclass)");
     }
 
     @Test
@@ -124,8 +125,7 @@ class CryptoUtilFacadeTest {
         final PlainText expected = new PlainText("Sensitive comparison test");
         final Password password = new Password("StrongPassword123!");
 
-        final AesEncryptor encryptor = AesEncryptor
-                .withPasswordAndText(password, expected)
+        final AesEncryptor encryptor = AesEncryptor.withPasswordAndText(password, expected)
                 .withMode(EncryptionMode.GCM)
                 .withKeySize(AesKeySize.BIT_256);
 
@@ -133,8 +133,7 @@ class CryptoUtilFacadeTest {
         final CipherText utilCipher = CryptoUtil.aesEncrypt(expected, password);
 
         final PlainText decryptedFromDirect = CryptoUtil.aesDecrypt(directCipher, password);
-        final PlainText decryptedFromUtils = AesDecryptor
-                .withPasswordAndCipherText(password, utilCipher)
+        final PlainText decryptedFromUtils = AesDecryptor.withPasswordAndCipherText(password, utilCipher)
                 .withMode(EncryptionMode.GCM)
                 .withKeySize(AesKeySize.BIT_256)
                 .decrypt();
@@ -174,10 +173,14 @@ class CryptoUtilFacadeTest {
         final PlainText decryptedFromDirect = CryptoUtil.rsaDecrypt(directCipher, keyPair.getPrivate());
         final PlainText decryptedFromUtils = rsaCipher.decrypt(utilCipher, keyPair.getPrivate());
 
-        assertEquals(expected, decryptedFromDirect,
+        assertEquals(
+                expected,
+                decryptedFromDirect,
                 "CryptoUtil.rsaDecrypt should correctly decrypt ciphertext from RsaCipher.encrypt");
 
-        assertEquals(expected, decryptedFromUtils,
+        assertEquals(
+                expected,
+                decryptedFromUtils,
                 "RsaCipher.decrypt should correctly decrypt ciphertext from CryptoUtil.rsaEncrypt");
     }
 
@@ -192,13 +195,15 @@ class CryptoUtilFacadeTest {
 
     @ParameterizedTest
     @CsvSource({
-            "MStLNHRHL2xxaWk0MlF0STNCTkZSeVF0Q2x4OTVT, MitFSUdpcmpuUi9qUDVFaDhnK3k4MFo5a2ZrUjhl, MythR0tGUFFvQkJwNDZ3L0dUcWc5bWRtSGJKS1Fv", // 1, 2, 3
-            "MStLNHRHL2xxaWk0MlF0STNCTkZSeVF0Q2x4OTVT, NCtMM0grSlJGUDhWWEFua0Zxc3E3K1kxUUUwYzNJ, NStWNUxadGlLZkNmZ0RUNi9aNDQ2c2N1ekFaSGIr", // 1, 4, 5
-            "MythR0tGUFFvQkJwNDZ3L0dUcWc5bWRtSGJKS1Fv, NCtMM0grSlJGUDhWWEFua0Zxc3E3K1kxUUUwYzNJ, NStWNUxadGlLZkNmZ0RUNi9aNDQ2c2N1ekFaSGIr", // 3, 4, 5
-            "NStWNUxadGlLZkNmZ0RUNi9aNDQ2c2N1ekFaSGIr, MStLNHRHL2xxaWk0MlF0STNCTkZSeVF0Q2x4OTVT, MythR0tGUFFvQkJwNDZ3L0dUcWc5bWRtSGJKS1Fv", // 5, 1, 3
+        "MStLNHRHL2xxaWk0MlF0STNCTkZSeVF0Q2x4OTVT, MitFSUdpcmpuUi9qUDVFaDhnK3k4MFo5a2ZrUjhl, MythR0tGUFFvQkJwNDZ3L0dUcWc5bWRtSGJKS1Fv", // 1, 2, 3
+        "MStLNHRHL2xxaWk0MlF0STNCTkZSeVF0Q2x4OTVT, NCtMM0grSlJGUDhWWEFua0Zxc3E3K1kxUUUwYzNJ, NStWNUxadGlLZkNmZ0RUNi9aNDQ2c2N1ekFaSGIr", // 1, 4, 5
+        "MythR0tGUFFvQkJwNDZ3L0dUcWc5bWRtSGJKS1Fv, NCtMM0grSlJGUDhWWEFua0Zxc3E3K1kxUUUwYzNJ, NStWNUxadGlLZkNmZ0RUNi9aNDQ2c2N1ekFaSGIr", // 3, 4, 5
+        "NStWNUxadGlLZkNmZ0RUNi9aNDQ2c2N1ekFaSGIr, MStLNHRHL2xxaWk0MlF0STNCTkZSeVF0Q2x4OTVT, MythR0tGUFFvQkJwNDZ3L0dUcWc5bWRtSGJKS1Fv", // 5, 1, 3
     })
     void getShamirSecret(Share share1, Share share2, Share share3) {
-        Assertions.assertEquals("Shamirs Secret Shared", CryptoUtil.getShamirSecret(share1, share2, share3).getValue());
+        Assertions.assertEquals(
+                "Shamirs Secret Shared",
+                CryptoUtil.getShamirSecret(share1, share2, share3).getValue());
     }
 
     @Test
@@ -216,8 +221,7 @@ class CryptoUtilFacadeTest {
         Exception ex = Assertions.assertThrows(
                 RuntimeException.class, // or your custom type if you have one
                 () -> CryptoUtil.getShamirSecret(valid1, valid2, invalid),
-                "Expected an exception when one of the shares is invalid"
-        );
+                "Expected an exception when one of the shares is invalid");
 
         // Optional: verify cause chain for debug clarity
         Assertions.assertNotNull(ex.getMessage());
@@ -320,12 +324,16 @@ class CryptoUtilFacadeTest {
         final byte[] signatureFromDirect = SignatureUtil.sign(data, keyPair.getPrivate());
 
         // Both should verify successfully
-        assertThat(CryptoUtil.verify(signatureFromUtils, data, keyPair.getPublic())).isTrue();
-        assertThat(SignatureUtil.verify(signatureFromDirect, data, keyPair.getPublic())).isTrue();
+        assertThat(CryptoUtil.verify(signatureFromUtils, data, keyPair.getPublic()))
+                .isTrue();
+        assertThat(SignatureUtil.verify(signatureFromDirect, data, keyPair.getPublic()))
+                .isTrue();
 
         // Cross-verification should work
-        assertThat(CryptoUtil.verify(signatureFromDirect, data, keyPair.getPublic())).isTrue();
-        assertThat(SignatureUtil.verify(signatureFromUtils, data, keyPair.getPublic())).isTrue();
+        assertThat(CryptoUtil.verify(signatureFromDirect, data, keyPair.getPublic()))
+                .isTrue();
+        assertThat(SignatureUtil.verify(signatureFromUtils, data, keyPair.getPublic()))
+                .isTrue();
     }
 
     // ========== Ed25519 Signature Tests ==========
@@ -351,8 +359,10 @@ class CryptoUtilFacadeTest {
         final byte[] signatureFromDirect = SignatureUtil.signEd25519(data, keyPair.getPrivate());
 
         // Cross-verification should work
-        assertThat(CryptoUtil.verifyEd25519(signatureFromDirect, data, keyPair.getPublic())).isTrue();
-        assertThat(SignatureUtil.verifyEd25519(signatureFromUtils, data, keyPair.getPublic())).isTrue();
+        assertThat(CryptoUtil.verifyEd25519(signatureFromDirect, data, keyPair.getPublic()))
+                .isTrue();
+        assertThat(SignatureUtil.verifyEd25519(signatureFromUtils, data, keyPair.getPublic()))
+                .isTrue();
     }
 
     // ========== ECDSA Signature Tests ==========
@@ -378,8 +388,10 @@ class CryptoUtilFacadeTest {
         final byte[] signatureFromDirect = SignatureUtil.signEcdsa(data, keyPair.getPrivate());
 
         // Cross-verification should work
-        assertThat(CryptoUtil.verifyEcdsa(signatureFromDirect, data, keyPair.getPublic())).isTrue();
-        assertThat(SignatureUtil.verifyEcdsa(signatureFromUtils, data, keyPair.getPublic())).isTrue();
+        assertThat(CryptoUtil.verifyEcdsa(signatureFromDirect, data, keyPair.getPublic()))
+                .isTrue();
+        assertThat(SignatureUtil.verifyEcdsa(signatureFromUtils, data, keyPair.getPublic()))
+                .isTrue();
     }
 
     // ========== Hybrid Encryption Tests ==========
@@ -478,7 +490,8 @@ class CryptoUtilFacadeTest {
     @Test
     void matchesPassword_shouldAutoDetectScrypt() {
         final String rawPassword = "Password";
-        final String scryptEncoded = "{scrypt}$e0801$3WQIalromBXCD0qL+q1j1R0pWmyHMkO0NteGGDc+TEBaIG25JMUNtmLtH/aNcMO+xbD21pv1hrM1zX29MwJ2oQ==$vmfA1aDb6vFKVH7JfqYOjM9iVMa2STgqJqFgHbcyNoA=";
+        final String scryptEncoded =
+                "{scrypt}$e0801$3WQIalromBXCD0qL+q1j1R0pWmyHMkO0NteGGDc+TEBaIG25JMUNtmLtH/aNcMO+xbD21pv1hrM1zX29MwJ2oQ==$vmfA1aDb6vFKVH7JfqYOjM9iVMa2STgqJqFgHbcyNoA=";
 
         final boolean matches = CryptoUtil.matchesPassword(rawPassword, scryptEncoded);
 
@@ -555,10 +568,14 @@ class CryptoUtilFacadeTest {
         final String decryptedFromDirect = CryptoUtil.eciesDecrypt(directCipher, keyPair.getPrivate());
         final String decryptedFromUtils = EciesCipher.decrypt(utilCipher, keyPair.getPrivate());
 
-        assertEquals(expected, decryptedFromDirect,
+        assertEquals(
+                expected,
+                decryptedFromDirect,
                 "CryptoUtil.eciesDecrypt should correctly decrypt ciphertext from EciesCipher.encrypt");
 
-        assertEquals(expected, decryptedFromUtils,
+        assertEquals(
+                expected,
+                decryptedFromUtils,
                 "EciesCipher.decrypt should correctly decrypt ciphertext from CryptoUtil.eciesEncrypt");
     }
 

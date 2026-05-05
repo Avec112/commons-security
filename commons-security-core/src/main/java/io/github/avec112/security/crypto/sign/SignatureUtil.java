@@ -1,8 +1,6 @@
 package io.github.avec112.security.crypto.sign;
 
 import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
-import org.apache.commons.lang3.Validate;
-
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
@@ -11,6 +9,7 @@ import java.security.Signature;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PSSParameterSpec;
 import java.util.Objects;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Unified utility class for creating and verifying digital signatures.
@@ -50,12 +49,11 @@ public class SignatureUtil extends BouncyCastleProviderInitializer {
             "SHA-256",
             "MGF1",
             MGF1ParameterSpec.SHA256,
-            32,  // salt length in bytes
-            1    // trailer field (always 1)
-    );
+            32, // salt length in bytes
+            1 // trailer field (always 1)
+            );
 
-    private SignatureUtil() {
-    }
+    private SignatureUtil() {}
 
     // ========== RSA Signatures (RSASSA-PSS) ==========
 

@@ -1,20 +1,19 @@
 package io.github.avec112.security.crypto;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import io.github.avec112.security.crypto.aes.AesKeySize;
 import io.github.avec112.security.crypto.ecc.EccCurve;
 import io.github.avec112.security.crypto.rsa.RsaKeySize;
+import java.security.KeyPair;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import javax.crypto.SecretKey;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-
-import javax.crypto.SecretKey;
-import java.security.KeyPair;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for the methods in the {@code KeyGeneratorUtil} class.
@@ -24,11 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Execution(ExecutionMode.CONCURRENT)
 class KeyGeneratorUtilTest extends BouncyCastleProviderInitializer {
 
-
     @ParameterizedTest
     @EnumSource(AesKeySize.class)
     void generateAesKey(AesKeySize keySize) throws Exception {
-        int expectedKeySizeInBytes = keySize.getKeySize()/8;
+        int expectedKeySizeInBytes = keySize.getKeySize() / 8;
         final SecretKey secretKey = KeyGeneratorUtil.generateAesKey(keySize);
         assertNotNull(secretKey);
         assertEquals(expectedKeySizeInBytes, secretKey.getEncoded().length);
@@ -36,14 +34,13 @@ class KeyGeneratorUtilTest extends BouncyCastleProviderInitializer {
 
     @Test
     void generateDefaultAesKey() throws Exception {
-        int expectedKeySizeInBytes = AesKeySize.BIT_256.getKeySize()/8;
+        int expectedKeySizeInBytes = AesKeySize.BIT_256.getKeySize() / 8;
 
         final SecretKey secretKey = KeyGeneratorUtil.generateAesKey();
 
         assertNotNull(secretKey);
         assertEquals(expectedKeySizeInBytes, secretKey.getEncoded().length);
     }
-
 
     @ParameterizedTest
     @EnumSource(RsaKeySize.class)

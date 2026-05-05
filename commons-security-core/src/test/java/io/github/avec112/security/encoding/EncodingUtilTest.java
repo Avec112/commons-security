@@ -1,79 +1,57 @@
 package io.github.avec112.security.encoding;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.codec.DecoderException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.nio.charset.StandardCharsets;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 class EncodingUtilTest {
 
     @ParameterizedTest
-    @CsvSource({
-            "Hello!, SGVsbG8h",
-            "æøåö, w6bDuMOlw7Y=",
-            "1234!#&, MTIzNCEjJg=="
-    })
+    @CsvSource({"Hello!, SGVsbG8h", "æøåö, w6bDuMOlw7Y=", "1234!#&, MTIzNCEjJg=="})
     void base64Encode(String input, String expected) {
-        byte [] src = input.getBytes(StandardCharsets.UTF_8);
+        byte[] src = input.getBytes(StandardCharsets.UTF_8);
         assertEquals(expected, EncodingUtil.base64Encode(src));
     }
 
     @Test
     void base64EncodeBadInput() {
         // null
-        assertThrows(NullPointerException.class, () ->
-                EncodingUtil.base64Encode(null));
+        assertThrows(NullPointerException.class, () -> EncodingUtil.base64Encode(null));
         // blank
         byte[] bytes = "".getBytes(StandardCharsets.UTF_8);
-        assertThrows(IllegalArgumentException.class, () ->
-                EncodingUtil.base64Encode(bytes));
+        assertThrows(IllegalArgumentException.class, () -> EncodingUtil.base64Encode(bytes));
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "Hello!, SGVsbG8h",
-            "æøåö, w6bDuMOlw7Y=",
-            "1234!#&, MTIzNCEjJg=="
-    })
+    @CsvSource({"Hello!, SGVsbG8h", "æøåö, w6bDuMOlw7Y=", "1234!#&, MTIzNCEjJg=="})
     void base64Decode(String expected, String input) {
         final String actual = new String(EncodingUtil.base64Decode(input), StandardCharsets.UTF_8);
         assertEquals(expected, actual);
     }
 
-
     @ParameterizedTest
-    @CsvSource({
-            "Hello!, 48656c6c6f21",
-            "æøåö, c3a6c3b8c3a5c3b6",
-            "1234!#&, 31323334212326"
-    })
+    @CsvSource({"Hello!, 48656c6c6f21", "æøåö, c3a6c3b8c3a5c3b6", "1234!#&, 31323334212326"})
     void hexEncode(String input, String expected) {
-        byte [] src = input.getBytes(StandardCharsets.UTF_8);
+        byte[] src = input.getBytes(StandardCharsets.UTF_8);
         assertEquals(expected, EncodingUtil.hexEncode(src));
     }
 
     @Test
     void hexEncodeBadInput() {
         // null
-        assertThrows(NullPointerException.class, () ->
-                EncodingUtil.hexEncode(null));
+        assertThrows(NullPointerException.class, () -> EncodingUtil.hexEncode(null));
         // blank
         byte[] bytes = "".getBytes(StandardCharsets.UTF_8);
-        assertThrows(IllegalArgumentException.class, () ->
-                EncodingUtil.hexEncode(bytes));
+        assertThrows(IllegalArgumentException.class, () -> EncodingUtil.hexEncode(bytes));
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "Hello!, 48656c6c6f21",
-            "æøåö, c3a6c3b8c3a5c3b6",
-            "1234!#&, 31323334212326"
-    })
+    @CsvSource({"Hello!, 48656c6c6f21", "æøåö, c3a6c3b8c3a5c3b6", "1234!#&, 31323334212326"})
     void hexDecode(String expected, String input) throws DecoderException {
         final String actual = new String(EncodingUtil.hexDecode(input), StandardCharsets.UTF_8);
         assertEquals(expected, actual);

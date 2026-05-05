@@ -1,5 +1,7 @@
 package io.github.avec112.security.crypto.aes;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.domain.PlainText;
@@ -8,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AesCipherTest {
@@ -22,25 +22,18 @@ class AesCipherTest {
         final Password password = new Password("SecretPassword123");
 
         // Act
-        CipherText cipherText = AesEncryptor.withPasswordAndText(password, plaintextExpected)
-                .encrypt();
+        CipherText cipherText =
+                AesEncryptor.withPasswordAndText(password, plaintextExpected).encrypt();
 
-        PlainText plainTextActual = AesDecryptor.withPasswordAndCipherText(password, cipherText)
-                .decrypt();
+        PlainText plainTextActual =
+                AesDecryptor.withPasswordAndCipherText(password, cipherText).decrypt();
 
         // Assert
         assertThat(plainTextActual).isEqualTo(plaintextExpected);
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "CTR, 128",
-            "CTR, 192",
-            "CTR, 256",
-            "GCM, 128",
-            "GCM, 192",
-            "GCM, 256"
-    })
+    @CsvSource({"CTR, 128", "CTR, 192", "CTR, 256", "GCM, 128", "GCM, 192", "GCM, 256"})
     void aesMoreConfigWithObjects(String mode, int keySize) throws Exception {
         final EncryptionMode encryptionMode = EncryptionMode.valueOf(mode);
         final AesKeySize aesKeySize = AesKeySize.getKeySize(keySize);
@@ -63,14 +56,7 @@ class AesCipherTest {
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "CTR, 128",
-            "CTR, 192",
-            "CTR, 256",
-            "GCM, 128",
-            "GCM, 192",
-            "GCM, 256"
-    })
+    @CsvSource({"CTR, 128", "CTR, 192", "CTR, 256", "GCM, 128", "GCM, 192", "GCM, 256"})
     void aesMoreConfigWithStrings(String mode, int keySize) throws Exception {
 
         // Arrange

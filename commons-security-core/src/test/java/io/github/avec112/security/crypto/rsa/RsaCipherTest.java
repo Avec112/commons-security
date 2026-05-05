@@ -1,16 +1,15 @@
 package io.github.avec112.security.crypto.rsa;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.PlainText;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link RsaCipher}.
@@ -30,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * These tests guarantee that {@link RsaCipher} behaves correctly and securely
  * under normal and error conditions using the OAEP-SHA256 configuration.
  */
-
 public class RsaCipherTest extends BouncyCastleProviderInitializer {
 
     @ParameterizedTest
@@ -68,7 +66,9 @@ public class RsaCipherTest extends BouncyCastleProviderInitializer {
         CipherText encrypted = cipher.encrypt(expected, correct.getPublic());
 
         // Act & Assert
-        assertThrows(Exception.class, () -> cipher.decrypt(encrypted, wrong.getPrivate()),
+        assertThrows(
+                Exception.class,
+                () -> cipher.decrypt(encrypted, wrong.getPrivate()),
                 "Decryption with wrong key should fail");
     }
 
@@ -84,11 +84,13 @@ public class RsaCipherTest extends BouncyCastleProviderInitializer {
         CipherText encrypted = cipher.encrypt(expected, keyPair.getPublic());
 
         // Corrupt the base64 value a bit
-        String corrupted = encrypted.getValue().substring(0, encrypted.getValue().length() - 4) + "ABCD";
+        String corrupted =
+                encrypted.getValue().substring(0, encrypted.getValue().length() - 4) + "ABCD";
 
         // Act
-        assertThrows(Exception.class, () -> cipher.decrypt(new CipherText(corrupted), keyPair.getPrivate()),
+        assertThrows(
+                Exception.class,
+                () -> cipher.decrypt(new CipherText(corrupted), keyPair.getPrivate()),
                 "Decrypting corrupted cipher text should throw exception");
     }
-
 }

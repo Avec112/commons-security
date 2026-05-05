@@ -4,10 +4,6 @@ import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.domain.PlainText;
 import io.github.avec112.security.encoding.EncodingUtil;
-import lombok.Value;
-
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -17,24 +13,25 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import lombok.Value;
 
 /**
- * Utility class for managing cryptographic keys, including generation, 
+ * Utility class for managing cryptographic keys, including generation,
  * storage, loading, and format conversion.
- * 
+ *
  * Supports RSA, EC (ECDSA/ECIES), Ed25519, and symmetric AES keys.
  */
 public class KeyStorageUtil extends BouncyCastleProviderInitializer {
 
-    private KeyStorageUtil() {
-    }
-
+    private KeyStorageUtil() {}
 
     // ========== Asymmetric Key Pair Storage (PEM Format) ==========
 
     /**
      * Saves a private key to disk in PKCS#8 PEM format (unencrypted).
-     * 
+     *
      * WARNING: Stores private key without password protection.
      * Use savePrivateKeyEncrypted() for production use.
      *
@@ -54,7 +51,7 @@ public class KeyStorageUtil extends BouncyCastleProviderInitializer {
      * @param password password for encryption
      * @param filePath path where to save the encrypted key
      */
-    public static void savePrivateKeyEncrypted(PrivateKey privateKey, Password password, Path filePath) 
+    public static void savePrivateKeyEncrypted(PrivateKey privateKey, Password password, Path filePath)
             throws GeneralSecurityException, IOException {
         // Implementation would use EncryptedPrivateKeyInfo
         byte[] encrypted = encryptPrivateKey(privateKey, password);
@@ -82,8 +79,7 @@ public class KeyStorageUtil extends BouncyCastleProviderInitializer {
      * @param privateKeyPath path for private key file
      * @param publicKeyPath path for public key file
      */
-    public static void saveKeyPair(KeyPair keyPair, Password password, 
-                                   Path privateKeyPath, Path publicKeyPath) 
+    public static void saveKeyPair(KeyPair keyPair, Password password, Path privateKeyPath, Path publicKeyPath)
             throws GeneralSecurityException, IOException {
         savePrivateKeyEncrypted(keyPair.getPrivate(), password, privateKeyPath);
         savePublicKey(keyPair.getPublic(), publicKeyPath);
@@ -98,11 +94,11 @@ public class KeyStorageUtil extends BouncyCastleProviderInitializer {
      * @param algorithm algorithm name ("RSA", "EC", "Ed25519")
      * @return loaded PrivateKey
      */
-    public static PrivateKey loadPrivateKey(Path filePath, String algorithm) 
+    public static PrivateKey loadPrivateKey(Path filePath, String algorithm)
             throws IOException, GeneralSecurityException {
         String pem = Files.readString(filePath, StandardCharsets.UTF_8);
         byte[] keyBytes = fromPemFormat(pem);
-        
+
         KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
         return keyFactory.generatePrivate(keySpec);
@@ -116,12 +112,12 @@ public class KeyStorageUtil extends BouncyCastleProviderInitializer {
      * @param algorithm algorithm name ("RSA", "EC", "Ed25519")
      * @return loaded PrivateKey
      */
-    public static PrivateKey loadPrivateKeyEncrypted(Path filePath, Password password, String algorithm) 
+    public static PrivateKey loadPrivateKeyEncrypted(Path filePath, Password password, String algorithm)
             throws IOException, GeneralSecurityException {
         String pem = Files.readString(filePath, StandardCharsets.UTF_8);
         byte[] encryptedBytes = fromPemFormat(pem);
         byte[] decryptedBytes = decryptPrivateKey(encryptedBytes, password);
-        
+
         KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decryptedBytes);
         return keyFactory.generatePrivate(keySpec);
@@ -134,11 +130,11 @@ public class KeyStorageUtil extends BouncyCastleProviderInitializer {
      * @param algorithm algorithm name ("RSA", "EC", "Ed25519")
      * @return loaded PublicKey
      */
-    public static PublicKey loadPublicKey(Path filePath, String algorithm) 
+    public static PublicKey loadPublicKey(Path filePath, String algorithm)
             throws IOException, GeneralSecurityException {
         String pem = Files.readString(filePath, StandardCharsets.UTF_8);
         byte[] keyBytes = fromPemFormat(pem);
-        
+
         KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
         return keyFactory.generatePublic(keySpec);
@@ -153,8 +149,7 @@ public class KeyStorageUtil extends BouncyCastleProviderInitializer {
      * @param algorithm algorithm name ("RSA", "EC", "Ed25519")
      * @return loaded KeyPair
      */
-    public static KeyPair loadKeyPair(Path privateKeyPath, Path publicKeyPath, 
-                                     Password password, String algorithm) 
+    public static KeyPair loadKeyPair(Path privateKeyPath, Path publicKeyPath, Password password, String algorithm)
             throws IOException, GeneralSecurityException {
         PrivateKey privateKey = loadPrivateKeyEncrypted(privateKeyPath, password, algorithm);
         PublicKey publicKey = loadPublicKey(publicKeyPath, algorithm);
@@ -165,7 +160,7 @@ public class KeyStorageUtil extends BouncyCastleProviderInitializer {
 
     /**
      * Saves an AES key to disk (Base64 encoded, unencrypted).
-     * 
+     *
      * WARNING: Stores key in plaintext. Use saveAesKeyEncrypted() for production.
      *
      * @param secretKey the AES key to save
@@ -183,8 +178,7 @@ public class KeyStorageUtil extends BouncyCastleProviderInitializer {
      * @param password password for encryption
      * @param filePath path where to save the encrypted key
      */
-    public static void saveAesKeyEncrypted(SecretKey secretKey, Password password, Path filePath) 
-            throws Exception {
+    public static void saveAesKeyEncrypted(SecretKey secretKey, Password password, Path filePath) throws Exception {
         PlainText keyData = new PlainText(EncodingUtil.base64Encode(secretKey.getEncoded()));
         CipherText encrypted = CryptoUtil.aesEncrypt(keyData, password);
         Files.writeString(filePath, encrypted.getValue(), StandardCharsets.UTF_8);
@@ -229,13 +223,13 @@ public class KeyStorageUtil extends BouncyCastleProviderInitializer {
         String base64 = EncodingUtil.base64Encode(keyBytes);
         StringBuilder pem = new StringBuilder();
         pem.append("-----BEGIN ").append(type).append("-----\n");
-        
+
         // Split into 64-character lines
         for (int i = 0; i < base64.length(); i += 64) {
             int end = Math.min(i + 64, base64.length());
             pem.append(base64, i, end).append("\n");
         }
-        
+
         pem.append("-----END ").append(type).append("-----\n");
         return pem.toString();
     }
@@ -247,8 +241,7 @@ public class KeyStorageUtil extends BouncyCastleProviderInitializer {
      * @return DER-encoded key bytes
      */
     public static byte[] fromPemFormat(String pem) {
-        String base64 = pem
-                .replaceAll("-----BEGIN.*-----", "")
+        String base64 = pem.replaceAll("-----BEGIN.*-----", "")
                 .replaceAll("-----END.*-----", "")
                 .replaceAll("\\s", "");
         return EncodingUtil.base64Decode(base64);
@@ -271,7 +264,7 @@ public class KeyStorageUtil extends BouncyCastleProviderInitializer {
      * @param algorithm algorithm name ("RSA", "EC", "Ed25519")
      * @return PublicKey
      */
-    public static PublicKey importPublicKeyFromBase64(String base64Key, String algorithm) 
+    public static PublicKey importPublicKeyFromBase64(String base64Key, String algorithm)
             throws GeneralSecurityException {
         byte[] keyBytes = EncodingUtil.base64Decode(base64Key);
         KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
@@ -310,15 +303,13 @@ public class KeyStorageUtil extends BouncyCastleProviderInitializer {
 
     // ========== Helper Methods ==========
 
-    private static byte[] encryptPrivateKey(PrivateKey privateKey, Password password) 
-            throws GeneralSecurityException {
+    private static byte[] encryptPrivateKey(PrivateKey privateKey, Password password) throws GeneralSecurityException {
         // Simplified - full implementation would use PBKDF2 + AES
         // This is a placeholder for the actual encryption logic
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    private static byte[] decryptPrivateKey(byte[] encrypted, Password password) 
-            throws GeneralSecurityException {
+    private static byte[] decryptPrivateKey(byte[] encrypted, Password password) throws GeneralSecurityException {
         // Simplified - full implementation would use PBKDF2 + AES
         throw new UnsupportedOperationException("Not yet implemented");
     }

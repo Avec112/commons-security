@@ -1,17 +1,16 @@
 package io.github.avec112.security.crypto.aes;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.ValueSource;
+import static org.junit.jupiter.api.Assertions.*;
 
-import javax.crypto.SecretKey;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
+import javax.crypto.SecretKey;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class AesUtilTest {
 
@@ -30,8 +29,7 @@ class AesUtilTest {
         // Assert
         assertNotNull(nonce1);
         assertEquals(length, nonce1.length);
-        assertFalse(java.util.Arrays.equals(nonce1, nonce2),
-                "Nonces should be different on each call");
+        assertFalse(java.util.Arrays.equals(nonce1, nonce2), "Nonces should be different on each call");
     }
 
     /**
@@ -52,7 +50,9 @@ class AesUtilTest {
         }
 
         // Assert
-        assertEquals(129, uniqueValues.size(),
+        assertEquals(
+                129,
+                uniqueValues.size(),
                 "1-byte nonce should produce all 129 possible byte values over " + iterations + " iterations");
     }
 
@@ -70,8 +70,7 @@ class AesUtilTest {
         assertNotNull(key);
         assertNotNull(key, "Key must not be null");
         assertFalse(key.trim().isEmpty(), "Key should not be blank");
-        assertEquals(expectedBytes, decoded.length,
-                "Decoded key length must match AES keySize");
+        assertEquals(expectedBytes, decoded.length, "Decoded key length must match AES keySize");
     }
 
     @ParameterizedTest
@@ -84,7 +83,9 @@ class AesUtilTest {
         SecretKey secretKey = AesUtil.getAESKey(keySize);
 
         // Assert
-        assertEquals(expectedBytes, secretKey.getEncoded().length,
+        assertEquals(
+                expectedBytes,
+                secretKey.getEncoded().length,
                 "AES-" + keySize + " key should be " + expectedBytes + " bytes");
     }
 
@@ -100,7 +101,9 @@ class AesUtilTest {
         SecretKey key2 = AesUtil.getAESKeyFromPassword(password, salt, 256);
 
         // Assert
-        assertArrayEquals(key1.getEncoded(), key2.getEncoded(),
+        assertArrayEquals(
+                key1.getEncoded(),
+                key2.getEncoded(),
                 "PBKDF2 should produce deterministic keys for same password+salt");
     }
 
@@ -118,7 +121,8 @@ class AesUtilTest {
         SecretKey key2 = AesUtil.getAESKeyFromPassword(password, salt2, 256);
 
         // Assert
-        assertFalse(java.util.Arrays.equals(key1.getEncoded(), key2.getEncoded()),
+        assertFalse(
+                java.util.Arrays.equals(key1.getEncoded(), key2.getEncoded()),
                 "Different salts should produce different keys");
     }
 }

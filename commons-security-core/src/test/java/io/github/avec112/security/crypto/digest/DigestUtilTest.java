@@ -1,27 +1,20 @@
 package io.github.avec112.security.crypto.digest;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import io.github.avec112.security.crypto.BouncyCastleProviderInitializer;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 class DigestUtilTest extends BouncyCastleProviderInitializer {
 
-
-
     @ParameterizedTest
-    @CsvSource({
-            "Hello!",
-            "æøåö",
-            "1234!#&"
-    })
+    @CsvSource({"Hello!", "æøåö", "1234!#&"})
     void digest(String data) throws Exception {
         // Arrange
         final byte[] expected = MessageDigest.getInstance("SHA-512/256").digest(data.getBytes(StandardCharsets.UTF_8));
@@ -35,9 +28,9 @@ class DigestUtilTest extends BouncyCastleProviderInitializer {
 
     @ParameterizedTest
     @CsvSource({
-            "Hello!, wntqA71ep8/rMKDKhsgUT68U/8Kbfm3v6Um8seOypUo=",
-            "æøåö, Y8MszG0XyMjkj+0SNqKyZ/R9sSOYjyFbRsOkVT2WonY=",
-            "1234!#&, 7tFYVk6O4ihJ4xSoT7b1owFEy+9ObozhGQKrIWI1EKo="
+        "Hello!, wntqA71ep8/rMKDKhsgUT68U/8Kbfm3v6Um8seOypUo=",
+        "æøåö, Y8MszG0XyMjkj+0SNqKyZ/R9sSOYjyFbRsOkVT2WonY=",
+        "1234!#&, 7tFYVk6O4ihJ4xSoT7b1owFEy+9ObozhGQKrIWI1EKo="
     })
     void base64Digest(String data, String expected) throws Exception {
         final String actual = DigestUtil.base64Digest(data);
@@ -46,9 +39,9 @@ class DigestUtilTest extends BouncyCastleProviderInitializer {
 
     @ParameterizedTest
     @CsvSource({
-            "Hello!, c27b6a03bd5ea7cfeb30a0ca86c8144faf14ffc29b7e6defe949bcb1e3b2a54a",
-            "æøåö, 63c32ccc6d17c8c8e48fed1236a2b267f47db123988f215b46c3a4553d96a276",
-            "1234!#&, eed158564e8ee22849e314a84fb6f5a30144cbef4e6e8ce11902ab21623510aa"
+        "Hello!, c27b6a03bd5ea7cfeb30a0ca86c8144faf14ffc29b7e6defe949bcb1e3b2a54a",
+        "æøåö, 63c32ccc6d17c8c8e48fed1236a2b267f47db123988f215b46c3a4553d96a276",
+        "1234!#&, eed158564e8ee22849e314a84fb6f5a30144cbef4e6e8ce11902ab21623510aa"
     })
     void hexDigest(String data, String expected) throws Exception {
         final String actual = DigestUtil.hexDigest(data);
@@ -60,7 +53,8 @@ class DigestUtilTest extends BouncyCastleProviderInitializer {
     void digestWithAlgorithm(DigestAlgorithm digestAlgorithm) throws Exception {
         final String data = "test data";
         final byte[] actual = DigestUtil.digest(data, digestAlgorithm);
-        final byte[] expected = MessageDigest.getInstance(digestAlgorithm.getAlgorithm()).digest(data.getBytes(StandardCharsets.UTF_8));
+        final byte[] expected =
+                MessageDigest.getInstance(digestAlgorithm.getAlgorithm()).digest(data.getBytes(StandardCharsets.UTF_8));
         assertArrayEquals(expected, actual);
     }
 
@@ -80,5 +74,4 @@ class DigestUtilTest extends BouncyCastleProviderInitializer {
         // Assert
         assertEquals(expectedHex, actualHex);
     }
-
 }

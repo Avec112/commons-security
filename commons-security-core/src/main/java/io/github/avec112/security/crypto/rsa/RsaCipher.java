@@ -7,15 +7,14 @@ import io.github.avec112.security.crypto.error.*;
 import io.github.avec112.security.crypto.random.RandomUtil;
 import io.github.avec112.security.crypto.validate.Validate;
 import io.github.avec112.security.encoding.EncodingUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-
+import java.nio.charset.StandardCharsets;
+import java.security.*;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.nio.charset.StandardCharsets;
-import java.security.*;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
  * RsaCipher is a class that provides methods for encrypting and decrypting texts using the RSA encryption algorithm.
@@ -38,8 +37,7 @@ public class RsaCipher extends BouncyCastleProviderInitializer {
      * @return the encrypted cipher text
      * @throws BadCipherConfigurationException if the RSA cipher cannot be initialized properly
      */
-    public CipherText encrypt(PlainText plainText, PublicKey publicKey)
-            throws BadCipherConfigurationException {
+    public CipherText encrypt(PlainText plainText, PublicKey publicKey) throws BadCipherConfigurationException {
 
         Validate.nonNull(plainText, MissingPlainTextException::new);
         Validate.nonBlank(plainText.getValue(), BlankPlainTextException::new);
@@ -94,8 +92,7 @@ public class RsaCipher extends BouncyCastleProviderInitializer {
      * @throws BadCipherTextException if the output is empty, unreadable, or otherwise invalid
      */
     private void validateDecryptedOutput(String plain) throws BadCipherTextException {
-        if (StringUtils.isBlank(plain) || plain.length() < 2 ||
-                !plain.matches("[\\p{Print}\\p{Space}]+")) {
+        if (StringUtils.isBlank(plain) || plain.length() < 2 || !plain.matches("[\\p{Print}\\p{Space}]+")) {
             throw new BadCipherTextException("Decrypted data appears invalid or produced using wrong key");
         }
     }
@@ -114,8 +111,8 @@ public class RsaCipher extends BouncyCastleProviderInitializer {
      * @throws BadPaddingException if padding is incorrect (often indicates wrong key)
      */
     private byte[] processCipher(int cipherMode, Key key, byte[] input)
-            throws NoSuchPaddingException, NoSuchAlgorithmException,
-            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException,
+                    BadPaddingException {
 
         Validate.nonNull(key, MissingKeyException::new);
         Cipher cipher = initiateCipher(cipherMode, key);

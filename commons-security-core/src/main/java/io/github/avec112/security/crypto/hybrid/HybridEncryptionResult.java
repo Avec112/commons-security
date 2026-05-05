@@ -28,8 +28,8 @@ public class HybridEncryptionResult {
     /**
      * Creates a new HybridEncryptionResult with the current version.
      */
-    public HybridEncryptionResult(CipherText cipherText, String encryptedKey,
-                                  EncryptionMode aesEncryptionMode, AesKeySize aesKeySize) {
+    public HybridEncryptionResult(
+            CipherText cipherText, String encryptedKey, EncryptionMode aesEncryptionMode, AesKeySize aesKeySize) {
         this(VERSION, cipherText, encryptedKey, aesEncryptionMode, aesKeySize);
     }
 

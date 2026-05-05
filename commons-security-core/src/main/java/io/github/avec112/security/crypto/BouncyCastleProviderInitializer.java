@@ -1,11 +1,9 @@
 package io.github.avec112.security.crypto;
 
+import java.security.Security;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import java.security.Security;
-
 public class BouncyCastleProviderInitializer {
-
 
     static {
         // Remove existing BC to prevent duplicates
@@ -21,5 +19,4 @@ public class BouncyCastleProviderInitializer {
     }
 
     protected BouncyCastleProviderInitializer() {}
-
 }

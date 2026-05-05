@@ -1,9 +1,8 @@
 package io.github.avec112.security.crypto.aes;
 
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.stream.Stream;
 
 /**
  * Enum representing predefined key sizes for AES symmetric encryption.
@@ -31,6 +30,7 @@ public enum AesKeySize {
         return Stream.of(AesKeySize.values())
                 .filter(k -> k.keySize == keySize)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("AES keySize " + keySize + " not supported. Valid sizes: 128, 192, 256"));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "AES keySize " + keySize + " not supported. Valid sizes: 128, 192, 256"));
     }
 }

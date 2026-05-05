@@ -19,7 +19,6 @@ import io.github.avec112.security.crypto.shamir.Shamir;
 import io.github.avec112.security.crypto.shamir.Share;
 import io.github.avec112.security.crypto.shamir.Shares;
 import io.github.avec112.security.crypto.sign.SignatureUtil;
-
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
@@ -38,8 +37,7 @@ public class CryptoUtil {
      */
     private static final String VERSION = "0.9.0-SNAPSHOT";
 
-    private CryptoUtil() {
-    }
+    private CryptoUtil() {}
 
     // ========== Symmetric Encryption Methods ==========
 
@@ -64,7 +62,8 @@ public class CryptoUtil {
      * @throws BadCipherConfigurationException if an error occurs during decryption configuration
      * @throws BadCipherTextException if the provided ciphertext is invalid or decryption fails
      */
-    public static PlainText aesDecrypt(CipherText ciperText, Password password) throws BadCipherConfigurationException, BadCipherTextException {
+    public static PlainText aesDecrypt(CipherText ciperText, Password password)
+            throws BadCipherConfigurationException, BadCipherTextException {
         return AesDecryptor.withPasswordAndCipherText(password, ciperText).decrypt();
     }
 
@@ -145,7 +144,7 @@ public class CryptoUtil {
      * @param shares the shares to be combined to reconstruct the secret
      * @return the reconstructed secret
      */
-    public static Secret getShamirSecret(Share...shares) {
+    public static Secret getShamirSecret(Share... shares) {
         return Shamir.getSecret(shares);
     }
 
@@ -354,7 +353,6 @@ public class CryptoUtil {
     public static String upgradePassword(String rawPassword, String oldEncodedPassword) {
         return PasswordEncoderUtil.upgradePassword(rawPassword, oldEncodedPassword);
     }
-
 
     /**
      * Retrieves the current version of the CryptoUtil utility.

@@ -1,22 +1,20 @@
 package io.github.avec112.security.crypto.hybrid;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import io.github.avec112.security.crypto.KeyGeneratorUtil;
 import io.github.avec112.security.crypto.aes.AesKeySize;
 import io.github.avec112.security.crypto.aes.EncryptionMode;
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.PlainText;
 import io.github.avec112.security.crypto.error.*;
+import java.security.KeyPair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import java.security.KeyPair;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 
 class HybridCryptoTest {
 
@@ -44,26 +42,17 @@ class HybridCryptoTest {
                 .cipherText(hybridEncryptionResult.getCipherText())
                 .build();
 
-
         assertAll(
-                () -> assertThat(hybridEncryptionResult.getCipherText().getValue()).isNotEqualTo(plainText.getValue()),
+                () -> assertThat(hybridEncryptionResult.getCipherText().getValue())
+                        .isNotEqualTo(plainText.getValue()),
                 () -> assertThat(hybridEncryptionResult.getAesKeySize()).isEqualTo(AesKeySize.BIT_256),
                 () -> assertThat(hybridEncryptionResult.getAesEncryptionMode()).isEqualTo(EncryptionMode.GCM),
                 () -> assertThat(hybridEncryptionResult.getEncryptedKey()).isNotBlank(),
-                () -> assertThat(plainTextResult).isEqualTo(plainText)
-        );
-
+                () -> assertThat(plainTextResult).isEqualTo(plainText));
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "CTR, 128",
-            "CTR, 192",
-            "CTR, 256",
-            "GCM, 128",
-            "GCM, 192",
-            "GCM, 256"
-    })
+    @CsvSource({"CTR, 128", "CTR, 192", "CTR, 256", "GCM, 128", "GCM, 192", "GCM, 256"})
     void encryptAndDecrypt(String mode, int keySize) throws Exception {
         final EncryptionMode encryptionMode = EncryptionMode.valueOf(mode);
         final AesKeySize aesKeySize = AesKeySize.getKeySize(keySize);
@@ -87,22 +76,24 @@ class HybridCryptoTest {
                 .build();
 
         assertAll(
-                () -> assertThat(hybridEncryptionResult.getCipherText().getValue()).isNotEqualTo(plainText.getValue()),
+                () -> assertThat(hybridEncryptionResult.getCipherText().getValue())
+                        .isNotEqualTo(plainText.getValue()),
                 () -> assertThat(hybridEncryptionResult.getAesKeySize()).isEqualTo(aesKeySize),
                 () -> assertThat(hybridEncryptionResult.getAesEncryptionMode()).isEqualTo(encryptionMode),
                 () -> assertThat(hybridEncryptionResult.getEncryptedKey()).isNotBlank(),
-                () -> assertThat(plainTextResult).isEqualTo(plainText)
-        );
-
-
+                () -> assertThat(plainTextResult).isEqualTo(plainText));
     }
 
     @Test
     void encryptionException() {
         assertAll(
-                () -> assertThrows(Exception.class, () -> EncryptBuilder.encryptionBuilder().build()), // missing PublicKey and plainText
-                () -> assertThrows(Exception.class, () -> EncryptBuilder.encryptionBuilder().key(keyPair.getPublic()).build()) // missing plainText
-        );
+                () -> assertThrows(
+                        Exception.class,
+                        () -> EncryptBuilder.encryptionBuilder().build()), // missing PublicKey and plainText
+                () -> assertThrows(Exception.class, () -> EncryptBuilder.encryptionBuilder()
+                        .key(keyPair.getPublic())
+                        .build()) // missing plainText
+                );
     }
 
     /**
@@ -113,17 +104,40 @@ class HybridCryptoTest {
         DecryptBuilder builder = DecryptBuilder.decryptionBuilder();
         assertAll(
                 () -> assertThrows(MultipleMissingArgumentsError.class, builder::build),
-                () -> assertThrows(MissingPrivateKeyException.class, () -> builder.key(null).build()),
-                () -> assertThrows(MissingPrivateKeyException.class, () -> builder.cipherText(new CipherText("cipherText")).encryptedKey("symKey").build()),
-                () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate()).build()),
-                () -> assertThrows(MissingCipherTextException.class, () -> builder.key(keyPair.getPrivate()).cipherText(null).build()),
-                () -> assertThrows(BlankCipherTextException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("")).build()),
-                () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate()).encryptedKey("symKey").build()),
-                () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("cipherText")).build()),
-                () -> assertThrows(MissingEncryptedSymmetricalKeyException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("cipherText")).encryptedKey(null).build()),
-                () -> assertThrows(MissingEncryptedSymmetricalKeyException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("cipherText")).encryptedKey("").build()),
-                () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate()).cipherText(new CipherText("cipherText")).encryptedKey("symKey").build())
-        );
+                () -> assertThrows(MissingPrivateKeyException.class, () -> builder.key(null)
+                        .build()),
+                () -> assertThrows(
+                        MissingPrivateKeyException.class, () -> builder.cipherText(new CipherText("cipherText"))
+                                .encryptedKey("symKey")
+                                .build()),
+                () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate())
+                        .build()),
+                () -> assertThrows(
+                        MissingCipherTextException.class,
+                        () -> builder.key(keyPair.getPrivate()).cipherText(null).build()),
+                () -> assertThrows(BlankCipherTextException.class, () -> builder.key(keyPair.getPrivate())
+                        .cipherText(new CipherText(""))
+                        .build()),
+                () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate())
+                        .encryptedKey("symKey")
+                        .build()),
+                () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate())
+                        .cipherText(new CipherText("cipherText"))
+                        .build()),
+                () -> assertThrows(
+                        MissingEncryptedSymmetricalKeyException.class, () -> builder.key(keyPair.getPrivate())
+                                .cipherText(new CipherText("cipherText"))
+                                .encryptedKey(null)
+                                .build()),
+                () -> assertThrows(
+                        MissingEncryptedSymmetricalKeyException.class, () -> builder.key(keyPair.getPrivate())
+                                .cipherText(new CipherText("cipherText"))
+                                .encryptedKey("")
+                                .build()),
+                () -> assertThrows(BadCipherTextException.class, () -> builder.key(keyPair.getPrivate())
+                        .cipherText(new CipherText("cipherText"))
+                        .encryptedKey("symKey")
+                        .build()));
     }
 
     // ========== JSON Serialization Tests ==========
@@ -139,7 +153,8 @@ class HybridCryptoTest {
 
         String json = result.toJson();
 
-        assertThat(json).isNotNull()
+        assertThat(json)
+                .isNotNull()
                 .contains("\"version\"")
                 .contains("\"cipherText\"")
                 .contains("\"encryptedKey\"")
@@ -170,8 +185,7 @@ class HybridCryptoTest {
                 () -> assertThat(deserialized.getCipherText()).isEqualTo(original.getCipherText()),
                 () -> assertThat(deserialized.getEncryptedKey()).isEqualTo(original.getEncryptedKey()),
                 () -> assertThat(deserialized.getAesEncryptionMode()).isEqualTo(EncryptionMode.GCM),
-                () -> assertThat(deserialized.getAesKeySize()).isEqualTo(AesKeySize.BIT_256)
-        );
+                () -> assertThat(deserialized.getAesKeySize()).isEqualTo(AesKeySize.BIT_256));
     }
 
     @Test
@@ -215,12 +229,12 @@ class HybridCryptoTest {
 
     @ParameterizedTest
     @CsvSource({
-            "GCM, 128, GCM@128-bit",
-            "GCM, 192, GCM@192-bit",
-            "GCM, 256, GCM@256-bit",
-            "CTR, 128, CTR@128-bit",
-            "CTR, 192, CTR@192-bit",
-            "CTR, 256, CTR@256-bit"
+        "GCM, 128, GCM@128-bit",
+        "GCM, 192, GCM@192-bit",
+        "GCM, 256, GCM@256-bit",
+        "CTR, 128, CTR@128-bit",
+        "CTR, 192, CTR@192-bit",
+        "CTR, 256, CTR@256-bit"
     })
     void describe_shouldReturnHumanReadableFormat(String mode, int keySize, String expected) throws Exception {
         final PlainText plainText = new PlainText("Test data");
@@ -236,5 +250,4 @@ class HybridCryptoTest {
 
         assertThat(result.describe()).isEqualTo(expected);
     }
-
 }

@@ -1,24 +1,22 @@
 package io.github.avec112.security.crypto.sign;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import io.github.avec112.security.crypto.KeyGeneratorUtil;
 import io.github.avec112.security.crypto.rsa.RsaKeySize;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import java.nio.charset.StandardCharsets;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Unit tests for the methods in the {@code SignatureUtil} class.
  * This test class validates RSA signatures (RSASSA-PSS), Ed25519 signatures, and ECDSA signatures.
  */
-
 @Execution(ExecutionMode.SAME_THREAD)
 class SignatureUtilTest {
 
@@ -79,7 +77,6 @@ class SignatureUtilTest {
         assertFalse(verified, "Signature should not verify with wrong public key");
     }
 
-
     @Test
     void verifyFailsWhenDataTampered() throws Exception {
         // Arrange
@@ -126,12 +123,14 @@ class SignatureUtilTest {
         String data = "Cross check equivalence";
 
         byte[] sigFromString = SignatureUtil.sign(data, keyPair.getPrivate());
-        assertTrue(SignatureUtil.verify(sigFromString, data, keyPair.getPublic()),
+        assertTrue(
+                SignatureUtil.verify(sigFromString, data, keyPair.getPublic()),
                 "Signature from String API should verify");
 
         // Sign via byte[] API
         byte[] sigFromBytes = SignatureUtil.sign(data.getBytes(StandardCharsets.UTF_8), keyPair.getPrivate());
-        assertTrue(SignatureUtil.verify(sigFromBytes, data, keyPair.getPublic()),
+        assertTrue(
+                SignatureUtil.verify(sigFromBytes, data, keyPair.getPublic()),
                 "Signature from byte[] API should verify");
     }
 
@@ -406,5 +405,4 @@ class SignatureUtilTest {
             SignatureUtil.verifyEcdsa(signature, testData, null);
         });
     }
-
 }

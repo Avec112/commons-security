@@ -14,5 +14,4 @@ public enum DigestAlgorithm {
     // end::algorithms[]
 
     private final String algorithm;
-
 }

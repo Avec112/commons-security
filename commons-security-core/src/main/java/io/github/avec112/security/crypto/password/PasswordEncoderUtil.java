@@ -1,5 +1,11 @@
 package io.github.avec112.security.crypto.password;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.Validate;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -7,13 +13,6 @@ import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Utility class for handling password encoding and matching using various encoding schemes.
@@ -55,7 +54,7 @@ public class PasswordEncoderUtil {
      * This class is designed to provide static utility methods related to password encoding
      * and matching, and should not be instantiated.
      */
-    private PasswordEncoderUtil(){}
+    private PasswordEncoderUtil() {}
 
     /**
      * Returns a cached delegating password encoder for the specified type.
@@ -110,7 +109,6 @@ public class PasswordEncoderUtil {
         PasswordEncoderType detectedType = getPasswordEncoderType(encodedPassword);
         return matches(password, encodedPassword, detectedType);
     }
-
 
     /**
      * Verifies whether a plaintext password matches an encoded password using a specified password encoder type.
@@ -205,7 +203,8 @@ public class PasswordEncoderUtil {
      * @return the newly encoded password with the target encoder type
      * @throws IllegalArgumentException if the raw password does not match the old encoded password
      */
-    public static String upgradePassword(String rawPassword, String oldEncodedPassword, PasswordEncoderType targetType) {
+    public static String upgradePassword(
+            String rawPassword, String oldEncodedPassword, PasswordEncoderType targetType) {
         Validate.notBlank(rawPassword);
         Validate.notBlank(oldEncodedPassword);
         Objects.requireNonNull(targetType);
@@ -235,5 +234,4 @@ public class PasswordEncoderUtil {
     public static String upgradePassword(String rawPassword, String oldEncodedPassword) {
         return upgradePassword(rawPassword, oldEncodedPassword, DEFAULT_ENCODER);
     }
-
 }

@@ -1,8 +1,8 @@
 package io.github.avec112.security.crypto.aes;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 class AesKeySizeTest {
 

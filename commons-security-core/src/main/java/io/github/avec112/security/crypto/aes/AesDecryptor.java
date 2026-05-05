@@ -6,13 +6,6 @@ import io.github.avec112.security.crypto.domain.PlainText;
 import io.github.avec112.security.crypto.error.BadCipherConfigurationException;
 import io.github.avec112.security.crypto.error.BadCipherTextException;
 import io.github.avec112.security.encoding.EncodingUtil;
-import lombok.Getter;
-import org.apache.commons.lang3.Validate;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -20,6 +13,12 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import lombok.Getter;
+import org.apache.commons.lang3.Validate;
 
 /**
  * A class that represents an AES Decryptor.
@@ -93,8 +92,13 @@ public class AesDecryptor {
             return new PlainText(new String(bytes, StandardCharsets.UTF_8));
         } catch (BufferUnderflowException e) {
             throw new BadCipherTextException("Please provide valid cipher text");
-        } catch (InvalidAlgorithmParameterException | NoSuchPaddingException | IllegalBlockSizeException |
-                 NoSuchAlgorithmException | InvalidKeySpecException | BadPaddingException | InvalidKeyException e) {
+        } catch (InvalidAlgorithmParameterException
+                | NoSuchPaddingException
+                | IllegalBlockSizeException
+                | NoSuchAlgorithmException
+                | InvalidKeySpecException
+                | BadPaddingException
+                | InvalidKeyException e) {
             throw new BadCipherConfigurationException(e);
         }
     }
@@ -106,7 +110,9 @@ public class AesDecryptor {
      * @param password   the password used for decryption
      * @return the decrypted data as a byte array
      */
-    private byte[] decryptCipherText(CipherText cipherText, Password password) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+    private byte[] decryptCipherText(CipherText cipherText, Password password)
+            throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException,
+                    InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         final String cipherTextEncoded = cipherText.getValue();
         final byte[] cipherTextBytes = EncodingUtil.base64Decode(cipherTextEncoded);
 
@@ -124,8 +130,13 @@ public class AesDecryptor {
         byte[] cText = new byte[buffer.remaining()];
         buffer.get(cText);
 
-        Cipher cipher = AesUtil.createCipher(password, salt, iv, Cipher.DECRYPT_MODE, getMode(), getAesKeySize().getKeySize());
+        Cipher cipher = AesUtil.createCipher(
+                password,
+                salt,
+                iv,
+                Cipher.DECRYPT_MODE,
+                getMode(),
+                getAesKeySize().getKeySize());
         return cipher.doFinal(cText);
     }
-
 }

@@ -1,8 +1,6 @@
 package io.github.avec112.security.crypto.random;
 
-
 import io.github.avec112.security.encoding.EncodingUtil;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
@@ -25,8 +23,7 @@ public class RandomUtil {
         SECURE_RANDOM = tmp;
     }
 
-    private RandomUtil() {
-    }
+    private RandomUtil() {}
 
     /**
      * Populates array with random bytes using SecureRandom
@@ -56,5 +53,4 @@ public class RandomUtil {
     public static SecureRandom secureRandom() {
         return SECURE_RANDOM;
     }
-
 }

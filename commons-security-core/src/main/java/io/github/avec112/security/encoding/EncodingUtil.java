@@ -1,15 +1,14 @@
 package io.github.avec112.security.encoding;
 
+import java.util.Objects;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.Validate;
 
-import java.util.Objects;
-
 public class EncodingUtil {
 
-    public static String base64Encode(byte [] src) {
+    public static String base64Encode(byte[] src) {
         Objects.requireNonNull(src, "Argument src cannot be null");
         Validate.isTrue(src.length > 0);
 
@@ -21,7 +20,7 @@ public class EncodingUtil {
         return Base64.decodeBase64(src);
     }
 
-    public static String hexEncode(byte [] src) {
+    public static String hexEncode(byte[] src) {
         Objects.requireNonNull(src, "Argument src cannot be null");
         Validate.isTrue(src.length > 0);
 
@@ -32,5 +31,4 @@ public class EncodingUtil {
         Validate.notBlank(src, "Argument src cannot be null or blank");
         return Hex.decodeHex(src);
     }
-
 }

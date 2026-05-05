@@ -5,13 +5,6 @@ import io.github.avec112.security.crypto.domain.Password;
 import io.github.avec112.security.crypto.domain.PlainText;
 import io.github.avec112.security.crypto.error.BadCipherConfigurationException;
 import io.github.avec112.security.encoding.EncodingUtil;
-import lombok.Getter;
-import org.apache.commons.lang3.Validate;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -19,6 +12,12 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import lombok.Getter;
+import org.apache.commons.lang3.Validate;
 
 /**
  * A class that provides AES encryption functionality.
@@ -95,8 +94,13 @@ public class AesEncryptor {
             final String cipherTextEncoded = EncodingUtil.base64Encode(cipherText);
             return new CipherText(cipherTextEncoded);
 
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidAlgorithmParameterException | NoSuchPaddingException | IllegalBlockSizeException |
-                 BadPaddingException | InvalidKeyException e) {
+        } catch (NoSuchAlgorithmException
+                | InvalidKeySpecException
+                | InvalidAlgorithmParameterException
+                | NoSuchPaddingException
+                | IllegalBlockSizeException
+                | BadPaddingException
+                | InvalidKeyException e) {
             throw new BadCipherConfigurationException(e);
         }
     }
@@ -108,14 +112,17 @@ public class AesEncryptor {
      * @param password  The password for encryption. Cannot be null.
      * @return The encrypted cipher text.
      */
-    private byte[] encryptPlainText(PlainText plainText, Password password) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+    private byte[] encryptPlainText(PlainText plainText, Password password)
+            throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException,
+                    InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         byte[] salt = AesUtil.getRandomNonce(SALT_LENGTH_BYTE);
         byte[] iv = AesUtil.getRandomNonce(getMode().getIvLength());
 
         Charset encoding = StandardCharsets.UTF_8;
         int encryptionMode = Cipher.ENCRYPT_MODE;
 
-        Cipher cipher = AesUtil.createCipher(password, salt, iv, encryptionMode, getMode(), getAesKeySize().getKeySize());
+        Cipher cipher = AesUtil.createCipher(
+                password, salt, iv, encryptionMode, getMode(), getAesKeySize().getKeySize());
         byte[] cText = cipher.doFinal(plainText.getValue().getBytes(encoding));
 
         return ByteBuffer.allocate(iv.length + salt.length + cText.length)

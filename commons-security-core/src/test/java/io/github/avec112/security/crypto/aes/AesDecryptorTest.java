@@ -1,5 +1,8 @@
 package io.github.avec112.security.crypto.aes;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 import io.github.avec112.security.crypto.domain.CipherText;
 import io.github.avec112.security.crypto.domain.Password;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,14 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
 class AesDecryptorTest {
-
 
     public static final String PASSWORD = "password";
     public static final String ENCRYPTED_TEXT = "xyz";
+
     @Mock
     private Password password;
 
@@ -74,5 +74,4 @@ class AesDecryptorTest {
     void getCipherText() {
         assertThat(decryptor.getCipherText().getValue()).isEqualTo(ENCRYPTED_TEXT);
     }
-
 }

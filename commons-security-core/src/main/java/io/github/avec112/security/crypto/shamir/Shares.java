@@ -1,13 +1,11 @@
 package io.github.avec112.security.crypto.shamir;
 
-import lombok.NonNull;
-import lombok.Value;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
-
+import lombok.NonNull;
+import lombok.Value;
 
 @Value
 public class Shares implements Iterable<Share> {
@@ -25,8 +23,7 @@ public class Shares implements Iterable<Share> {
         return shares.size();
     }
 
-    @NonNull
-    @Override
+    @NonNull @Override
     public Iterator<Share> iterator() {
         return shares.iterator();
     }

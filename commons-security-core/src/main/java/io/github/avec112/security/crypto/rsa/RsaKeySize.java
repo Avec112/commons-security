@@ -1,9 +1,8 @@
 package io.github.avec112.security.crypto.rsa;
 
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.stream.Stream;
 
 /**
  * Enum representing predefined key sizes for cryptographic operations.
