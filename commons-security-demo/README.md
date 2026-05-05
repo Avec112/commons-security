@@ -54,10 +54,10 @@ Encrypted (Base64): hDltHRPoiksSOecpYo7T3jW7nRLAqPtuDSJREb/4bwrxOODHDtSr/oaX2e9j
 
 ## Commands
 
-| Command | Description |
-|----------|-------------|
-| `aes` | Encrypts text using AES-GCM with a PBKDF2-derived key. |
-| *(more commands will be added later)* | |
+| Command                               | Description                                            |
+|---------------------------------------|--------------------------------------------------------|
+| `aes`                                 | Encrypts text using AES-GCM with a PBKDF2-derived key. |
+| *(more commands will be added later)* |                                                        |
 
 To view all commands:
 

@@ -1,3 +1,77 @@
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
+// suppress inspection "Annotator" for whole file
 // Settings:
 :idprefix:
 :idseparator: -
@@ -745,7 +819,7 @@ final boolean isMatching = PasswordEncoderUtil.matches(rawPassword, encodedPassw
 final boolean isMatching = PasswordEncoderUtil.matches(rawPassword, encodedPassword, PasswordEncoderType.BCRYPT);
 ----
 
-TIP: `matchesPassword()` automatically detects the encoder type from the `{id}` prefix (e.g., `{argon2}`, `{bcrypt}`), making it work seamlessly with passwords encoded using different algorithms.
+TIP: `matchesPassword()` automatically detects the encoder type from the `+{id}+` prefix (e.g., `+{argon2}+`, `+{bcrypt}+`), making it work seamlessly with passwords encoded using different algorithms.
 
 === Upgrading Passwords
 
