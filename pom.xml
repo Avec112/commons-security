@@ -131,6 +131,9 @@
                 <groupId>org.jreleaser</groupId>
                 <artifactId>jreleaser-maven-plugin</artifactId>
                 <version>${jreleaser-maven-plugin.version}</version>
+                <configuration>
+                    <configFile>jreleaser.yml</configFile>
+                </configuration>
             </plugin>
 
             <plugin>
