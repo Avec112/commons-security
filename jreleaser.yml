@@ -50,8 +50,6 @@ deploy:
         applyMavenCentralRules: true
         stagingRepositories:
           - target/staging-deploy
-        username: "{{env.JRELEASER_MAVEN_CENTRAL_USERNAME}}"
-        password: "{{env.JRELEASER_MAVEN_CENTRAL_PASSWORD}}"
         authorization: BASIC
         verifyPom: true
         sourceJar: true

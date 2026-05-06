@@ -6,7 +6,7 @@
 
     <groupId>io.github.avec112</groupId>
     <artifactId>commons-security</artifactId>
-    <version>0.9.0</version>
+    <version>0.9.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>commons-security</name>
