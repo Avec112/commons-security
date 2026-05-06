@@ -46,7 +46,15 @@ deploy:
       sonatype:
         active: RELEASE
         url: https://central.sonatype.com/api/v1/publisher
+        snapshotSupported: false
+        applyMavenCentralRules: true
         stagingRepositories:
           - target/staging-deploy
         username: "{{env.JRELEASER_MAVEN_CENTRAL_USERNAME}}"
         password: "{{env.JRELEASER_MAVEN_CENTRAL_PASSWORD}}"
+        authorization: BASIC
+        verifyPom: true
+        sourceJar: true
+        javadocJar: true
+        sign: true
+        checksums: true

@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.avec112</groupId>
         <artifactId>commons-security</artifactId>
-        <version>0.9.0-SNAPSHOT</version>
+        <version>0.9.0</version>
     </parent>
 
     <artifactId>commons-security-core</artifactId>
@@ -33,6 +33,7 @@
         <gson.version>2.14.0</gson.version>
         <equalsverifier.version>4.5</equalsverifier.version>
 
+        <maven-failsafe-plugin.version>3.5.5</maven-failsafe-plugin.version>
     </properties>
 
     <dependencies>
@@ -134,6 +135,26 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven-failsafe-plugin.version}</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <projectVersion>${project.version}</projectVersion>
+                        <projectBuildFinalName>${project.build.finalName}</projectBuildFinalName>
+                    </systemPropertyVariables>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -1,5 +1,6 @@
 package io.github.avec112.security.crypto;
 
+import io.github.avec112.security.VersionProvider;
 import io.github.avec112.security.crypto.aes.AesDecryptor;
 import io.github.avec112.security.crypto.aes.AesEncryptor;
 import io.github.avec112.security.crypto.digest.DigestUtil;
@@ -33,9 +34,9 @@ public class CryptoUtil {
     /**
      * The version of the commons-security library.
      * This follows semantic versioning (MAJOR.MINOR.PATCH).
-     * Should match version inside pom.xml.
+     * Should match version inside pom.properties.
      */
-    private static final String VERSION = "0.9.0-SNAPSHOT";
+    private static final String VERSION = VersionProvider.getVersion();
 
     private CryptoUtil() {}
 

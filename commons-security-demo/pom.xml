@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.avec112</groupId>
         <artifactId>commons-security</artifactId>
-        <version>0.9.0-SNAPSHOT</version>
+        <version>0.9.0</version>
     </parent>
 
     <artifactId>commons-security-demo</artifactId>
@@ -16,6 +16,7 @@
 
     <properties>
         <maven.compiler.release>11</maven.compiler.release>
+        <maven.deploy.skip>true</maven.deploy.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <picocli.version>4.7.7</picocli.version>
         <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
