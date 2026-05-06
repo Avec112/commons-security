@@ -12,6 +12,8 @@
     <artifactId>commons-security-core</artifactId>
     <packaging>jar</packaging>
     <name>commons-security-core</name>
+    <description>Core cryptography utilities for commons-security</description>
+    <url>https://github.com/Avec112/commons-security</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
