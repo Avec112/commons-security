@@ -20,7 +20,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Dependencies -->
-        <bouncycastle.version>1.84</bouncycastle.version>
+        <bouncycastle.version>1.85</bouncycastle.version>
         <commons-codec.version>1.22.0</commons-codec.version>
         <commons-lang.version>3.20.0</commons-lang.version>
         <commons-logging.version>1.3.6</commons-logging.version>
